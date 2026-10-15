@@ -20,7 +20,7 @@ export default function SiteFooter() {
           </div>
         ))}
         <p className="footer__legal">
-          © {new Date().getFullYear()} {footer.copyright ?? 'DuDu Technology Ltd.'}
+          © {new Date().getFullYear()} {footer.copyright}
         </p>
       </div>
     </footer>

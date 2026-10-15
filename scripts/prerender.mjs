@@ -9,14 +9,17 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
 const dist = join(root, 'dist');
 
-const { content, LOCALE_META, SITE_URL, GITHUB } = await import(join(root, 'src/i18n.js'));
+const { content, LOCALE_META, SITE_URL, GITHUB, pagePath } = await import(join(root, 'src/i18n.js'));
+const { legal, LEGAL_PAGES, LEGAL_NAME_EN, LEGAL_NAME_ZH } = await import(join(root, 'src/legal.js'));
+const { PLAN } = await import(join(root, 'src/plan.js'));
 const { render } = await import(join(root, 'dist-server/entry-server.js'));
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
 const ORG = {
   '@type': 'Organization',
-  name: '嘟嘟數位科技有限公司',
+  name: LEGAL_NAME_ZH,
+  legalName: LEGAL_NAME_EN,
   alternateName: 'DuDu Studio',
   url: 'https://www.dudustudio.monster/',
   email: 'info@dudustudio.monster',
@@ -32,7 +35,11 @@ function softwareApp(locale) {
     description: c.meta.description,
     url: SITE_URL + LOCALE_META[locale].path,
     softwareHelp: GITHUB,
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', description: 'Open-source core (Apache 2.0)' },
+    offers: [
+      { '@type': 'Offer', price: '0', priceCurrency: 'USD', description: 'Open-source core (Apache 2.0)' },
+      { '@type': 'Offer', price: PLAN.proPrice.replace(/\D/g, ''), priceCurrency: 'USD', description: 'Vettalon Pro, one-time purchase' },
+      { '@type': 'Offer', price: PLAN.teamPrice.replace(/\D/g, ''), priceCurrency: 'USD', description: `Vettalon Team, per year, ${PLAN.teamSeats} seats` },
+    ],
     publisher: ORG,
     inLanguage: locale === 'en' ? 'en' : 'zh-Hant',
   };
@@ -51,22 +58,32 @@ function faqPage(locale) {
   };
 }
 
-function jsonLd(locale) {
-  return JSON.stringify({
-    '@context': 'https://schema.org',
-    '@graph': [ORG, softwareApp(locale), faqPage(locale)],
-  });
+function jsonLd(locale, page) {
+  const lang = locale === 'en' ? 'en' : 'zh-Hant';
+  const graph = page
+    ? [ORG, { '@type': 'WebPage', name: legal[locale][page].title, url: SITE_URL + pagePath(locale, page), inLanguage: lang, publisher: ORG }]
+    : [ORG, softwareApp(locale), faqPage(locale)];
+  return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
 }
 
-function headFor(locale) {
+// Title/description per page: legal pages use their own, the landing page the site meta.
+function metaFor(locale, page) {
+  const c = content[locale];
+  if (!page) return { title: c.meta.title, description: c.meta.description };
+  const doc = legal[locale][page];
+  return { title: doc.title + (locale === 'en' ? ' | ' : '｜') + 'Vettalon', description: doc.metaDescription };
+}
+
+function headFor(locale, page) {
   const c = content[locale];
   const lm = LOCALE_META[locale];
-  const url = SITE_URL + lm.path;
-  const altZh = SITE_URL + LOCALE_META.zh.path;
-  const altEn = SITE_URL + LOCALE_META.en.path;
+  const m = metaFor(locale, page);
+  const url = SITE_URL + pagePath(locale, page);
+  const altZh = SITE_URL + pagePath('zh', page);
+  const altEn = SITE_URL + pagePath('en', page);
   return [
-    `<title>${esc(c.meta.title)}</title>`,
-    `<meta name="description" content="${esc(c.meta.description)}" />`,
+    `<title>${esc(m.title)}</title>`,
+    `<meta name="description" content="${esc(m.description)}" />`,
     `<meta name="keywords" content="${esc(c.meta.keywords)}" />`,
     `<meta name="author" content="嘟嘟數位科技有限公司" />`,
     `<meta name="robots" content="index, follow" />`,
@@ -76,44 +93,45 @@ function headFor(locale) {
     `<link rel="alternate" hreflang="x-default" href="${altZh}" />`,
     `<meta property="og:type" content="website" />`,
     `<meta property="og:url" content="${url}" />`,
-    `<meta property="og:title" content="${esc(c.meta.title)}" />`,
-    `<meta property="og:description" content="${esc(c.meta.description)}" />`,
+    `<meta property="og:title" content="${esc(m.title)}" />`,
+    `<meta property="og:description" content="${esc(m.description)}" />`,
     `<meta property="og:image" content="${SITE_URL}/og.png" />`,
     `<meta property="og:site_name" content="Vettalon" />`,
     `<meta property="og:locale" content="${lm.ogLocale}" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
-    `<meta name="twitter:title" content="${esc(c.meta.title)}" />`,
-    `<meta name="twitter:description" content="${esc(c.meta.description)}" />`,
+    `<meta name="twitter:title" content="${esc(m.title)}" />`,
+    `<meta name="twitter:description" content="${esc(m.description)}" />`,
     `<meta name="twitter:image" content="${SITE_URL}/og.png" />`,
-    `<script type="application/ld+json">${jsonLd(locale)}</script>`,
+    `<script type="application/ld+json">${jsonLd(locale, page)}</script>`,
   ].join('\n    ');
 }
 
 const template = await readFile(join(dist, 'index.html'), 'utf8');
 
-async function writeLocale(locale) {
+const PAGES = ['', ...LEGAL_PAGES];
+
+async function writePage(locale, page) {
   const lm = LOCALE_META[locale];
-  const appHtml = render(locale);
-  let html = template
-    .replace('<!--app-head-->', headFor(locale))
+  const appHtml = render(locale, page);
+  const html = template
+    .replace('<!--app-head-->', headFor(locale, page))
     .replace('<!--app-html-->', appHtml)
     .replace('<html lang="zh-Hant">', `<html lang="${lm.lang}">`);
-  if (locale === 'zh') {
-    await writeFile(join(dist, 'index.html'), html);
-  } else {
-    await mkdir(join(dist, 'en'), { recursive: true });
-    await writeFile(join(dist, 'en/index.html'), html);
-  }
-  console.log(`prerendered ${locale} → ${lm.path}`);
+  const path = pagePath(locale, page);
+  const dir = join(dist, path);
+  await mkdir(dir, { recursive: true });
+  await writeFile(join(dir, 'index.html'), html);
+  console.log(`prerendered ${locale} → ${path}`);
 }
 
-for (const locale of Object.keys(LOCALE_META)) await writeLocale(locale);
+for (const locale of Object.keys(LOCALE_META)) {
+  for (const page of PAGES) await writePage(locale, page);
+}
 
 // ── SEO/GEO files ──────────────────────────────────────────────────────────
-const urls = [
-  { loc: SITE_URL + '/', lang: 'zh-Hant', alt: SITE_URL + '/en/' },
-  { loc: SITE_URL + '/en/', lang: 'en', alt: SITE_URL + '/' },
-];
+const urls = PAGES.flatMap((page) =>
+  Object.keys(LOCALE_META).map((locale) => ({ page, loc: SITE_URL + pagePath(locale, page) })),
+);
 
 const sitemap =
   `<?xml version="1.0" encoding="UTF-8"?>\n` +
@@ -122,10 +140,10 @@ const sitemap =
     .map(
       (u) =>
         `  <url>\n    <loc>${u.loc}</loc>\n` +
-        `    <xhtml:link rel="alternate" hreflang="zh-Hant" href="${SITE_URL}/" />\n` +
-        `    <xhtml:link rel="alternate" hreflang="en" href="${SITE_URL}/en/" />\n` +
-        `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}/" />\n` +
-        `    <changefreq>monthly</changefreq>\n    <priority>1.0</priority>\n  </url>`,
+        `    <xhtml:link rel="alternate" hreflang="zh-Hant" href="${SITE_URL}${pagePath('zh', u.page)}" />\n` +
+        `    <xhtml:link rel="alternate" hreflang="en" href="${SITE_URL}${pagePath('en', u.page)}" />\n` +
+        `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}${pagePath('zh', u.page)}" />\n` +
+        `    <changefreq>monthly</changefreq>\n    <priority>${u.page ? '0.3' : '1.0'}</priority>\n  </url>`,
     )
     .join('\n') +
   `\n</urlset>\n`;
@@ -152,6 +170,12 @@ function llms(locale) {
     `${L('原始碼', 'Source')}: ${GITHUB}\n\n` +
     `## ${L('核心能力', 'Capabilities')}\n` +
     c.product.cards.map((x) => `- ${x.name}: ${x.desc}`).join('\n') +
+    `\n\n## ${L('價格', 'Pricing')}\n` +
+    c.editions.cards.map((x) => `- ${x.name}: ${x.price}. ${x.priceNote}`).join('\n') +
+    `\n${c.editions.note}\n` +
+    `${L('服務條款', 'Terms')}: ${SITE_URL}${pagePath(locale, 'terms')} · ` +
+    `${L('隱私權政策', 'Privacy')}: ${SITE_URL}${pagePath(locale, 'privacy')} · ` +
+    `${L('退款政策', 'Refunds')}: ${SITE_URL}${pagePath(locale, 'refund')}` +
     `\n\n## ${L('基準', 'Benchmarks')}\n` +
     c.benchmarks.items.map((x) => `- ${x.v} ${x.k}: ${x.d}`).join('\n') +
     `\n\n## FAQ\n` +

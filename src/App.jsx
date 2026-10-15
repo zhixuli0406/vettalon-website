@@ -10,25 +10,34 @@ import Editions from './components/Editions.jsx';
 import Faq from './components/Faq.jsx';
 import Contact from './components/Contact.jsx';
 import SiteFooter from './components/SiteFooter.jsx';
+import LegalPage from './components/LegalPage.jsx';
 
-export default function App({ locale = 'zh' }) {
+// page: '' renders the landing page; 'terms' | 'privacy' | 'refund' render a
+// legal page inside the same shell (nav + footer).
+export default function App({ locale = 'zh', page = '' }) {
   useReveal();
   const t = content[locale] ?? content.zh;
   return (
-    <LocaleCtx.Provider value={{ locale, t }}>
+    <LocaleCtx.Provider value={{ locale, t, page }}>
       <div className="island">
         <a className="sr-only" href="#main-content">
           {locale === 'en' ? 'Skip to content' : '跳到主要內容'}
         </a>
         <Nav />
         <main id="main-content">
-          <Hero />
-          <Product />
-          <HowItWorks />
-          <Benchmarks />
-          <Editions />
-          <Faq />
-          <Contact />
+          {page ? (
+            <LegalPage page={page} />
+          ) : (
+            <>
+              <Hero />
+              <Product />
+              <HowItWorks />
+              <Benchmarks />
+              <Editions />
+              <Faq />
+              <Contact />
+            </>
+          )}
         </main>
         <SiteFooter />
       </div>

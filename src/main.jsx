@@ -4,14 +4,16 @@ import '@fontsource-variable/inter';
 import '@fontsource-variable/geist-mono';
 import './index.css';
 import App from './App.jsx';
+import { parseRoute } from './route.js';
 
-// Locale from the path: /en/ → English, anything else → zh-TW.
-const locale = window.location.pathname.startsWith('/en') ? 'en' : 'zh';
+// Locale and page from the path: /en/... → English, else zh-TW;
+// /terms/, /privacy/, /refund/ → legal pages.
+const { locale, page } = parseRoute(window.location.pathname);
 
 const root = document.getElementById('root');
 const app = (
   <StrictMode>
-    <App locale={locale} />
+    <App locale={locale} page={page} />
   </StrictMode>
 );
 

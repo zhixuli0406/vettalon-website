@@ -343,3 +343,29 @@ summary { cursor: pointer; }
   border: 1px solid var(--surface-border); color: var(--muted-foreground);
 }
 .nav__lang:hover { color: var(--brand); border-color: color-mix(in oklch, var(--brand) 30%, var(--surface-border)); }
+
+/* pricing cards */
+.plan { display: flex; flex-direction: column; }
+.plan .prod__head { flex-direction: column-reverse; align-items: flex-start; gap: 0.55rem; }
+.plan .prod__oss { margin-left: 0; }
+.plan .prod__name { font-size: 1.15rem; }
+.plan__price { margin-top: 1rem; font-size: 2rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
+.plan__note { margin-top: 0.45rem; font-size: 0.84rem; color: var(--muted-foreground); min-height: 2.6em; }
+.plan .prod__desc { font-size: 0.9rem; }
+.plan .prod__points { grid-template-columns: minmax(0, 1fr); }
+.plan .prod__cta { margin-top: auto; padding-top: 1.6rem; }
+.plan__terms { margin-top: 1.4rem; max-width: 72ch; font-size: 0.84rem; color: var(--muted-foreground); }
+@media (max-width: 1000px) and (min-width: 761px) {
+  #editions .cols--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* legal pages */
+.legal { max-width: 72ch; }
+.legal__back { font-size: 0.86rem; color: var(--muted-foreground); text-decoration: none; }
+.legal__back:hover { color: var(--brand); }
+.legal__title { margin-top: 1.2rem; font-size: clamp(1.6rem, 3.4vw, 2.1rem); font-weight: 600; line-height: 1.3; }
+.legal__date { margin-top: 0.5rem; font-size: 0.84rem; color: var(--muted-foreground); }
+.legal__sect { margin-top: 2rem; }
+.legal__sect h2 { font-size: 1.05rem; font-weight: 600; }
+.legal__sect p { margin-top: 0.7rem; line-height: 1.85; color: var(--foreground); overflow-wrap: anywhere; }
+.legal__sect a { color: var(--brand); text-underline-offset: 0.22em; }

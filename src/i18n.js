@@ -1,11 +1,23 @@
 // Vettalon 官網雙語內容。zh-TW 為主、en 為輔。
 // 內容紀律：誠實、不誇大，數字直接呈現並附限制。
 
+import { PLAN, LEGAL_NAME_EN, LEGAL_NAME_ZH } from './plan.js';
+
 export const GITHUB = 'https://github.com/zhixuli0406/vettalon';
 export const SITE_URL = 'https://vettalon.dudustudio.monster';
 export const EMAIL = 'info@dudustudio.monster';
 // Commercial / enterprise inquiries go to the vendor directly.
 export const CONTACT = 'mailto:' + EMAIL;
+// Purchase links. Until a payment provider approves the store these open a
+// pre-filled email; swap in the hosted checkout URLs once it goes live.
+export const BUY_PRO = 'mailto:' + EMAIL + '?subject=' + encodeURIComponent('Vettalon Pro purchase');
+export const BUY_TEAM = 'mailto:' + EMAIL + '?subject=' + encodeURIComponent('Vettalon Team purchase');
+
+// Locale-aware path for a site page ('' = home).
+export const pagePath = (locale, page = '') =>
+  (locale === 'en' ? '/en/' : '/') + (page ? page + '/' : '');
+
+const P = PLAN;
 
 export const LOCALES = ['zh', 'en'];
 export const DEFAULT_LOCALE = 'zh';
@@ -30,10 +42,10 @@ export const content = {
         { href: '#product', label: '功能' },
         { href: '#how', label: '怎麼運作' },
         { href: '#benchmarks', label: '基準數字' },
-        { href: '#editions', label: '版本' },
+        { href: '#editions', label: '價格' },
         { href: '#faq', label: '常見問題' },
       ],
-      cta: '企業版',
+      cta: '購買',
       github: 'GitHub',
     },
     hero: {
@@ -90,24 +102,41 @@ export const content = {
       note: '整庫召回 5/9（脆弱檔是超大檔、落在頁數上限外時會漏）；我們把限制也寫清楚。',
     },
     editions: {
-      tag: 'EDITIONS｜版本',
-      lead: '開源核心夠你在 CLI／CI 裡用；企業版加上給人看的報告與桌面體驗。',
+      tag: 'PRICING｜版本與價格',
+      lead: '開源核心夠你在 CLI／CI 裡用。要給人看的報告和桌面 App，選 Pro 或 Team。',
       cards: [
         {
           name: 'vettalon（開源核心）',
           type: 'Apache 2.0',
+          price: '免費',
+          priceNote: '開源授權，可商用',
           desc: '命令列稽核器：開源靜態掃描 + 多模型 AI 審查 + 對抗式覆核 + SARIF 輸出。適合塞進 CI、設政策門檻。',
           points: ['scan / hunt / disclose 子命令', 'SARIF 2.1 可上 GitHub code scanning', '政策門檻 --gate 控 CI 結果'],
           cta: '看 GitHub',
+          href: GITHUB,
         },
         {
           name: 'Vettalon Pro',
-          type: '企業版',
+          type: '個人',
+          price: P.proPrice,
+          priceNote: `一次買斷，含 ${P.updateMonths} 個月更新。之後續訂更新 ${P.proRenewal}／年，不續也能永久使用。`,
           desc: '桌面 App 與本機 dashboard、對齊台灣資安檢測報告慣例的企業報告（PDF／Word／HTML）、供應鏈獵捕與上游揭露草稿。讀同一份掃描 JSON，核心不依賴 Pro。',
-          points: ['桌面 App＋本機 dashboard', '企業報告 PDF／Word／HTML', '供應鏈獵捕＋揭露草稿'],
-          cta: '洽談企業版',
+          points: ['桌面 App＋本機 dashboard', '企業報告 PDF／Word／HTML', '供應鏈獵捕＋揭露草稿', `單人授權，最多 ${P.proDevices} 台裝置`],
+          cta: '洽購 Pro',
+          href: BUY_PRO,
+        },
+        {
+          name: 'Vettalon Team',
+          type: '團隊',
+          price: P.teamPrice,
+          priceNote: `年費，含 ${P.teamSeats} 席。`,
+          desc: `給資安或開發團隊。Pro 的全部功能，同一組織最多 ${P.teamSeats} 人使用，訂閱期間持續更新並有優先 email 支援。`,
+          points: ['Pro 全部功能', `最多 ${P.teamSeats} 位具名使用者`, '訂閱期間所有更新', '優先 email 支援'],
+          cta: '洽購 Team',
+          href: BUY_TEAM,
         },
       ],
+      note: `價格以美元計，未含稅，結帳時依所在地計算。付款完成後，授權金鑰與下載連結會寄到你的 email。首次購買與續訂 ${P.refundDays} 天內可全額退款。台灣企業與政府採購可來信索取新台幣報價。`,
     },
     faq: {
       tag: 'FAQ｜常見問題',
@@ -117,6 +146,7 @@ export const content = {
         { q: '選配的 Jev 排序會外洩程式碼嗎？', a: '不會。Jev 只排序模組審查順序，送出的只有 metadata（路徑、大小、git 熱點數），送出前逐檔比對原始碼 fail-closed。預設關閉，要明確開啟才連網。' },
         { q: '供應鏈獵捕會送出我的私有碼嗎？', a: '不會。獵捕只連套件登錄處與 OSV，送出的只有相依的 name@version。審查的是相依套件的公開原始碼，你的私有碼不出境。揭露一律只產草稿，由人決定送不送。' },
         { q: '開源版和企業版差在哪？', a: '開源核心是完整的命令列稽核器，CI 需要的都有。企業版加上桌面 App、本機 dashboard、企業報告排版與供應鏈獵捕，讀的是同一份掃描 JSON。' },
+        { q: '買了不合用可以退款嗎？', a: `可以。Pro 與 Team 首次購買和每次續訂，付款後 ${P.refundDays} 天內來信就能全額退款，不用說明原因。` },
       ],
     },
     contact: {
@@ -131,11 +161,12 @@ export const content = {
     footer: {
       tagline: '多模型對抗式資安稽核。由嘟嘟數位科技開發。',
       groups: [
-        { title: '產品', links: [{ t: 'GitHub 原始碼', href: GITHUB }, { t: '企業版', href: CONTACT }] },
+        { title: '產品', links: [{ t: 'GitHub 原始碼', href: GITHUB }, { t: '價格', href: pagePath('zh') + '#editions' }, { t: '企業版', href: CONTACT }] },
         { title: '原廠', links: [{ t: '嘟嘟數位', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
         { title: '聯絡', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
+        { title: '法律', links: [{ t: '服務條款', href: pagePath('zh', 'terms') }, { t: '隱私權政策', href: pagePath('zh', 'privacy') }, { t: '退款政策', href: pagePath('zh', 'refund') }] },
       ],
-      copyright: '嘟嘟數位科技有限公司',
+      copyright: `${LEGAL_NAME_ZH}（${LEGAL_NAME_EN}）`,
     },
   },
 
@@ -152,10 +183,10 @@ export const content = {
         { href: '#product', label: 'Features' },
         { href: '#how', label: 'How it works' },
         { href: '#benchmarks', label: 'Benchmarks' },
-        { href: '#editions', label: 'Editions' },
+        { href: '#editions', label: 'Pricing' },
         { href: '#faq', label: 'FAQ' },
       ],
-      cta: 'Enterprise',
+      cta: 'Buy',
       github: 'GitHub',
     },
     hero: {
@@ -212,24 +243,41 @@ export const content = {
       note: 'Whole-repo recall is 5/9 (a vulnerable file that is huge and falls past the page cap can be missed); we state the limits too.',
     },
     editions: {
-      tag: 'EDITIONS',
-      lead: 'The open-source core is enough for CLI and CI. The enterprise edition adds reports for people and a desktop experience.',
+      tag: 'PRICING',
+      lead: 'The open-source core is enough for CLI and CI. For reports people can read and a desktop app, pick Pro or Team.',
       cards: [
         {
-          name: 'vettalon (open-source core)',
-          type: 'Apache 2.0',
+          name: 'vettalon core',
+          type: 'Open source · Apache 2.0',
+          price: 'Free',
+          priceNote: 'Open-source license, commercial use allowed',
           desc: 'The command-line auditor: OSS static scanners + multi-model AI review + adversarial cross-checking + SARIF output. Drop it into CI and set policy gates.',
           points: ['scan / hunt / disclose subcommands', 'SARIF 2.1 for GitHub code scanning', 'Policy gates (--gate) control CI outcome'],
           cta: 'View on GitHub',
+          href: GITHUB,
         },
         {
           name: 'Vettalon Pro',
-          type: 'Enterprise',
+          type: 'Individual',
+          price: P.proPrice,
+          priceNote: `One-time purchase with ${P.updateMonths} months of updates. Renew updates for ${P.proRenewal}/year after that, or keep using your version forever.`,
           desc: 'Desktop app and local dashboard, enterprise reports aligned with Taiwan security-assessment conventions (PDF / Word / HTML), supply-chain hunting and upstream disclosure drafts. Reads the same scan JSON; the core never depends on Pro.',
-          points: ['Desktop app + local dashboard', 'Enterprise reports: PDF / Word / HTML', 'Supply-chain hunting + disclosure drafts'],
-          cta: 'Contact DuDu Studio',
+          points: ['Desktop app + local dashboard', 'Enterprise reports: PDF / Word / HTML', 'Supply-chain hunting + disclosure drafts', `One user, up to ${P.proDevices} devices`],
+          cta: 'Get Pro',
+          href: BUY_PRO,
+        },
+        {
+          name: 'Vettalon Team',
+          type: 'Team',
+          price: P.teamPrice,
+          priceNote: `Per year, ${P.teamSeats} seats included.`,
+          desc: `For security and engineering teams. Everything in Pro for up to ${P.teamSeats} people in one organisation, with updates and priority email support for the whole term.`,
+          points: ['Everything in Pro', `Up to ${P.teamSeats} named users`, 'All updates during the term', 'Priority email support'],
+          cta: 'Get Team',
+          href: BUY_TEAM,
         },
       ],
+      note: `Prices in USD, excluding tax, which is calculated at checkout for your location. Your license key and download link are emailed once payment completes. Full refund within ${P.refundDays} days of a first purchase or renewal. Businesses and government agencies in Taiwan can request a TWD quote.`,
     },
     faq: {
       tag: 'FAQ',
@@ -239,6 +287,7 @@ export const content = {
         { q: 'Does the optional Jev ranker leak code?', a: 'No. Jev only reorders which modules are audited first, and sends metadata only (paths, sizes, git hotspot counts), checked against the source file-by-file and failing closed before each request. It is off by default and only reaches the network when you explicitly enable it.' },
         { q: 'Does supply-chain hunting send my private code?', a: "No. Hunting only reaches package registries and OSV, sending each dependency's name@version. It audits the dependency's public source; your private code stays put. Disclosures are always drafts a human decides to send." },
         { q: 'Open-source vs enterprise?', a: 'The open-source core is a complete command-line auditor with everything CI needs. The enterprise edition adds a desktop app, local dashboard, enterprise report layouts and supply-chain hunting, all reading the same scan JSON.' },
+        { q: "Can I get a refund if it doesn't fit?", a: `Yes. Email us within ${P.refundDays} days of a first purchase or any renewal of Pro or Team for a full refund, no reason needed.` },
       ],
     },
     contact: {
@@ -253,10 +302,12 @@ export const content = {
     footer: {
       tagline: 'Multi-model adversarial security auditing. Built by DuDu Studio.',
       groups: [
-        { title: 'Product', links: [{ t: 'Source on GitHub', href: GITHUB }, { t: 'Enterprise', href: CONTACT }] },
+        { title: 'Product', links: [{ t: 'Source on GitHub', href: GITHUB }, { t: 'Pricing', href: pagePath('en') + '#editions' }, { t: 'Enterprise', href: CONTACT }] },
         { title: 'Vendor', links: [{ t: 'DuDu Studio', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
         { title: 'Contact', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
+        { title: 'Legal', links: [{ t: 'Terms of Service', href: pagePath('en', 'terms') }, { t: 'Privacy Policy', href: pagePath('en', 'privacy') }, { t: 'Refund Policy', href: pagePath('en', 'refund') }] },
       ],
+      copyright: LEGAL_NAME_EN,
     },
   },
 };
