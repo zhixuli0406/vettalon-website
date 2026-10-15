@@ -117,7 +117,7 @@ export const legal = {
           p: [
             '付款由我們的線上經銷商（Merchant of Record）處理，信用卡等付款資料由經銷商直接蒐集，我們看不到完整卡號。',
             '經銷商會提供我們以下資料：姓名、email、帳單國家、公司名稱（若有填寫）、訂單內容與授權資訊。我們用這些資料寄送授權金鑰、提供客服、處理退款，以及依法記帳。',
-            '啟用授權時，以及之後每 30 天一次，App 會把授權金鑰、一組裝置識別值與 App 版本號送到經銷商的授權服務，用來核對授權是否有效與已啟用的裝置數。裝置識別值是安裝時隨機產生的值，不包含你的程式碼、檔案內容或電腦的硬體資訊。',
+            '啟用授權時，以及之後每 30 天一次，App 會把授權金鑰、一組裝置識別值與 App 版本號送到經銷商的授權服務，用來核對授權是否有效與已啟用的裝置數。裝置識別值是把作業系統的電腦識別碼加上本產品專用前綴後做單向雜湊（SHA-256）得到的值，無法還原成原本的識別碼或硬體資訊，也不包含你的程式碼或檔案內容；讀不到電腦識別碼時，改用安裝時隨機產生的值。',
           ],
         },
         {
@@ -303,7 +303,7 @@ export const legal = {
           p: [
             'Payments are processed by our online reseller (the Merchant of Record). The reseller collects card and other payment details directly; we never see your full card number.',
             'The reseller shares with us your name, email, billing country, company name (if provided), order details and license information. We use these to deliver your license key, provide support, handle refunds and keep legally required accounting records.',
-            "When you activate a license, and then once every 30 days, the app sends the license key, a device identifier and the app version to the reseller's licensing service to check that the license is valid and how many devices are activated. The device identifier is generated randomly at install time and contains none of your code, file contents or hardware details.",
+            "When you activate a license, and then once every 30 days, the app sends the license key, a device identifier and the app version to the reseller's licensing service to check that the license is valid and how many devices are activated. The device identifier is a one-way SHA-256 hash of the operating system's computer identifier under a product-specific prefix; it cannot be turned back into that identifier or any hardware detail, and it contains none of your code or file contents. Where no computer identifier can be read, a value generated randomly at install time is used instead.",
           ],
         },
         {
