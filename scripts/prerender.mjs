@@ -20,7 +20,7 @@ const ORG = {
   '@type': 'Organization',
   name: LEGAL_NAME_ZH,
   legalName: LEGAL_NAME_EN,
-  alternateName: 'DuDu Studio',
+  alternateName: '嘟嘟數位科技有限公司',
   url: 'https://www.dudustudio.monster/',
   email: 'info@dudustudio.monster',
 };

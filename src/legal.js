@@ -107,7 +107,7 @@ export const legal = {
           h: '2. Vettalon 產品本身',
           p: [
             'Vettalon 在你的電腦上執行，預設不連網，也不回傳使用統計或遙測資料。你的程式碼與掃描報告存在你自己的機器上，不會傳給我們。',
-            '你啟用 AI 審查時，程式碼片段會從你的機器直接送到你設定的模型供應商，這部分受該供應商的隱私權政策規範。使用本機 Ollama 等本機模型時，程式碼不會離開你的機器。',
+            '你啟用 AI 審查時，程式碼片段會從你的機器直接送到你設定的模型供應商，這部分受該供應商的隱私權政策規範。若你設定的模型全部在本機執行（例如 Ollama），程式碼就不會離開你的機器。',
             '選配的 Jev 模組排序功能預設關閉。開啟後只會把 metadata（檔案路徑、大小、git 修改熱度）送到 TypeSafe 的服務，不含程式碼內容。',
             '供應鏈獵捕模式會連到套件登錄處（crates.io、npm、PyPI、Go proxy）與 OSV 漏洞資料庫（api.osv.dev），只送出相依套件的名稱與版本號。',
           ],
@@ -293,7 +293,7 @@ export const legal = {
           h: '2. The Vettalon product',
           p: [
             "Vettalon runs on your computer, makes no network connections by default, and sends no usage statistics or telemetry. Your code and scan reports stay on your machine and are never sent to us.",
-            "When you enable AI review, code snippets go straight from your machine to the model provider you configure, under that provider's privacy policy. With a local model such as Ollama, your code never leaves your machine.",
+            "When you enable AI review, code snippets go straight from your machine to the model provider you configure, under that provider's privacy policy. If every model you configure runs locally (for example Ollama), your code stays on your machine.",
             'The optional Jev module ranker is off by default. When enabled, it sends only metadata (file paths, sizes, git change hotspots) to the TypeSafe service, never code content.',
             'Supply-chain hunting connects to package registries (crates.io, npm, PyPI, the Go proxy) and the OSV vulnerability database (api.osv.dev), sending only dependency names and versions.',
           ],

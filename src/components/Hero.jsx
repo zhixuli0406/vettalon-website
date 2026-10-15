@@ -1,24 +1,52 @@
 import { useT } from '../locale.js';
 import { GITHUB } from '../i18n.js';
 
+// Real sample output, copied verbatim from the public README
+// (github.com/zhixuli0406/vettalon, "Sample output"). Update it from there,
+// never by hand-writing results.
+const SAMPLE_CMD =
+  'vettalon scan fixtures/demo-app --profile deep --poc --finders claude --verifiers codex';
+const SAMPLE_OUT = [
+  { t: '程式碼安全審計（vettalon）' },
+  { t: '  ...', dim: true },
+  { t: 'AI 深度審計／對抗式覆核／PoC（deep profile）：' },
+  { t: '  AI 候選：2　已證偽：0（其中前置檢查證偽 0）　待人工覆核：2　PoC 已執行：2' },
+  { t: '  模組覆蓋：共 4　已審 4（無候選 2、有候選 2）　延後 0　失敗 0' },
+  { t: '  覆核獨立性：全部跨家族覆核（找洞：claude；覆核：codex）' },
+  { t: '結論：未達 --fail-on 門檻（high），視為通過。', hi: true },
+];
+
 export default function Hero() {
   const { hero } = useT();
   return (
     <section className="hero">
       <div className="hero__in">
-        <p className="hero__kicker rv">{hero.kicker}</p>
-        <h1 className="rv">
-          {hero.h1a}
-          <em>{hero.h1em}</em>
-          {hero.h1b}
-        </h1>
-        <p className="hero__lead rv">{hero.lead}</p>
-        <div className="hero__cta rv">
-          <a className="btn btn--brand" href={GITHUB} target="_blank" rel="noopener noreferrer">{hero.ctaPrimary}</a>
-          <a className="btn btn--ghost" href="#how">{hero.ctaSecondary}</a>
-          <a className="btn btn--ghost" href="#editions">{hero.ctaTertiary}</a>
+        <div className="hero__text">
+          <p className="eyebrow rv">{hero.kicker}</p>
+          <h1 className="rv">
+            {hero.h1a}
+            <em>{hero.h1em}</em>
+            {hero.h1b}
+          </h1>
+          <p className="hero__lead rv">{hero.lead}</p>
+          <div className="hero__cta rv">
+            <a className="btn btn--primary" href={GITHUB} target="_blank" rel="noopener noreferrer">{hero.ctaPrimary}</a>
+            <a className="btn btn--secondary" href="#how">{hero.ctaSecondary}</a>
+            <a className="btn btn--secondary" href="#editions">{hero.ctaTertiary}</a>
+          </div>
+          <p className="hero__note rv">{hero.note}</p>
         </div>
-        <p className="hero__note rv">{hero.note}</p>
+        <figure className="term rv">
+          <pre className="term__body" tabIndex={0}>
+            <code>
+              <span className="term__line"><span className="term__prompt">$ </span>{SAMPLE_CMD}</span>
+              {SAMPLE_OUT.map((l, i) => (
+                <span key={i} className={`term__line${l.dim ? ' is-dim' : ''}${l.hi ? ' is-hi' : ''}`}>{l.t}</span>
+              ))}
+            </code>
+          </pre>
+          <figcaption>{hero.terminalCaption}</figcaption>
+        </figure>
       </div>
     </section>
   );

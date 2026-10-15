@@ -1,7 +1,7 @@
 // Vettalon 官網雙語內容。zh-TW 為主、en 為輔。
 // 內容紀律：誠實、不誇大，數字直接呈現並附限制。
 
-import { PLAN, LEGAL_NAME_EN, LEGAL_NAME_ZH } from './plan.js';
+import { PLAN, LEGAL_NAME_EN, LEGAL_NAME_ZH, TAX_ID } from './plan.js';
 
 export const GITHUB = 'https://github.com/zhixuli0406/vettalon';
 export const SITE_URL = 'https://vettalon.dudustudio.monster';
@@ -33,9 +33,9 @@ export const content = {
     meta: {
       title: 'Vettalon｜多模型對抗式資安稽核器',
       description:
-        'Vettalon 用多個 AI 模型互相對抗覆核，找出程式碼漏洞並壓低誤報；程式碼不離開你的機器。開源核心加上企業版報告、供應鏈獵捕與桌面 App。',
+        'Vettalon 用多個 AI 模型互相對抗覆核，找出程式碼漏洞並壓低誤報。預設掃描只在本機跑開源掃描器；深掃時，程式碼片段只送到你自己設定的模型。開源核心加上企業版報告、供應鏈獵捕與桌面 App。',
       keywords:
-        'Vettalon, 程式碼安全稽核, SAST, 多模型, AI 資安, 供應鏈安全, 漏洞掃描, 嘟嘟數位',
+        'Vettalon, 程式碼安全稽核, SAST, 多模型, AI 資安, 供應鏈安全, 漏洞掃描, Dudu Technology Ltd., 嘟嘟數位科技有限公司',
     },
     nav: {
       links: [
@@ -47,20 +47,22 @@ export const content = {
       ],
       cta: '購買',
       github: 'GitHub',
+      menu: '選單',
     },
     hero: {
-      kicker: 'DUDU STUDIO · 多模型對抗式資安稽核',
+      kicker: 'Dudu Technology Ltd. · 多模型對抗式資安稽核',
       h1a: '讓多個 AI 模型',
       h1em: '互相拆台',
       h1b: '，把真漏洞挑出來',
-      lead: 'Vettalon 不靠單一模型的自我判斷。它讓不同家族的模型分頭找洞、再交叉覆核彼此的發現，壓下誤報，留下值得人看的候選。程式碼在你的機器上分析，不經我們手。',
+      lead: 'Vettalon 不靠單一模型的自我判斷。它讓不同家族的模型分頭找洞、再交叉覆核彼此的發現，壓下誤報，留下值得人看的候選。預設掃描只在你的機器上跑；深掃時程式碼片段送到你自己設定的模型，不經我們手。',
+      terminalCaption: '範例輸出，取自 GitHub README（fixtures/demo-app，deep 模式）。',
       ctaPrimary: '看 GitHub 原始碼',
       ctaSecondary: '快速開始',
       ctaTertiary: '看版本',
-      note: '開源核心採 Apache 2.0，可自行取用。企業版與商業授權由嘟嘟數位直接提供。',
+      note: '開源核心採 Apache 2.0，可自行取用。企業版與商業授權由 Dudu Technology Ltd. 直接提供。',
     },
     product: {
-      tag: 'CAPABILITIES｜核心能力',
+      tag: '核心能力',
       lead: '一條管線把靜態掃描、多模型 AI 審查、對抗式覆核與沙箱 PoC 串起來。',
       cards: [
         {
@@ -69,7 +71,7 @@ export const content = {
           points: ['跨家族 finder／verifier 分工', '每個候選都記錄覆核投票', '誤報在報告裡看得到被誰、用什麼理由駁回'],
         },
         {
-          name: '碼不離機',
+          name: '程式碼去向由你決定',
           desc: '檢測在你的電腦上跑。AI 審查時，程式碼片段只送到你自己設定的模型（你的 CLI 帳號或 API 金鑰，本機 Ollama 則完全不出機器）。Vettalon 不經手、不轉售。',
           points: ['預設零網路', '模型後端你自己挑', '報告與 SARIF 寫出前自動遮蔽秘密'],
         },
@@ -81,7 +83,7 @@ export const content = {
       ],
     },
     how: {
-      tag: 'HOW IT WORKS｜怎麼運作',
+      tag: '怎麼運作',
       lead: '深掃的每個階段都留痕，報告寫出前先跑驗證器。',
       steps: [
         { n: '01', t: 'Intake', d: '統計語言、找進入點、讀 git 歷史把常出安全修補的檔案標為熱點，再依風險排序模組。' },
@@ -92,17 +94,17 @@ export const content = {
       ],
     },
     benchmarks: {
-      tag: 'BENCHMARKS｜基準數字',
+      tag: '基準數字',
       lead: '以下數字來自可重現的基準測試，照實寫，連限制也一併列出。',
       items: [
         { v: '9/9', k: '聚焦召回', d: '脆弱檔在掃描範圍內時，9 個真實 CVE 全部識別出正確檔案、行號與漏洞類別。' },
         { v: '0', k: 'OWASP 誤報', d: 'OWASP Benchmark 160 案：91% 召回、0 誤報（上界 ≤ 3.8%）。跨家族覆核把 7B 本機模型的誤報率 57%→0%。' },
-        { v: '8/9', k: 'Jev 排序 hit@40', d: '選配的 metadata-only 排序把深掃命中從啟發式的 6/9 提到 8/9，只送 metadata、碼不離機。' },
+        { v: '8/9', k: 'Jev 排序 hit@40', d: '選配的 metadata-only 排序把深掃命中從啟發式的 6/9 提到 8/9，只送 metadata，不送程式碼。' },
       ],
       note: '整庫召回 5/9（脆弱檔是超大檔、落在頁數上限外時會漏）；我們把限制也寫清楚。',
     },
     editions: {
-      tag: 'PRICING｜版本與價格',
+      tag: '版本與價格',
       lead: '開源核心夠你在 CLI／CI 裡用。要給人看的報告和桌面 App，選 Pro 或 Team。',
       cards: [
         {
@@ -139,7 +141,7 @@ export const content = {
       note: `價格以美元計，未含稅，結帳時依所在地計算。付款完成後，授權金鑰與下載連結會寄到你的 email。首次購買與續訂 ${P.refundDays} 天內可全額退款。台灣企業與政府採購可來信索取新台幣報價。`,
     },
     faq: {
-      tag: 'FAQ｜常見問題',
+      tag: '常見問題',
       items: [
         { q: '程式碼會被送到哪裡？', a: '檢測在你的機器上執行。AI 審查時程式碼片段只送到你自己設定的模型（你的 CLI 帳號或 API 金鑰）；用本機 Ollama 則完全不出機器。Vettalon 不經手、不留存、不轉售。' },
         { q: '為什麼要多個模型？', a: '單一模型對自己的判斷沒有抵抗力。讓不同家族的模型互相覆核，才壓得下誤報。OWASP Benchmark 上，跨家族覆核把 7B 本機模型的誤報率從 57% 降到 0%。' },
@@ -151,23 +153,23 @@ export const content = {
       ],
     },
     contact: {
-      tag: 'GET STARTED｜開始使用',
+      tag: '開始使用',
       lead: '',
       options: [
         { t: '自助試用', d: '從 GitHub 取得開源核心，在你的 repo 上跑一次深掃。', cta: '看 GitHub', href: GITHUB },
-        { t: '企業版', d: '企業版（桌面 App、企業報告、供應鏈獵捕）與商業授權由嘟嘟數位直接提供。', cta: '聯絡嘟嘟數位', href: CONTACT },
+        { t: '企業版', d: '企業版（桌面 App、企業報告、供應鏈獵捕）與商業授權由 Dudu Technology Ltd. 直接提供。', cta: '聯絡 Dudu Technology Ltd.', href: CONTACT },
         { t: '原廠回饋', d: '找到 bug 或有功能需求，直接到 GitHub 開 issue。', cta: '回報問題', href: GITHUB + '/issues' },
       ],
     },
     footer: {
-      tagline: '多模型對抗式資安稽核。由嘟嘟數位科技開發。',
+      tagline: '多模型對抗式資安稽核。由 Dudu Technology Ltd. 開發。',
       groups: [
         { title: '產品', links: [{ t: 'GitHub 原始碼', href: GITHUB }, { t: '價格', href: pagePath('zh') + '#editions' }, { t: '企業版', href: CONTACT }] },
-        { title: '原廠', links: [{ t: '嘟嘟數位', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
+        { title: '原廠', links: [{ t: 'Dudu Technology Ltd.', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
         { title: '聯絡', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
         { title: '法律', links: [{ t: '服務條款', href: pagePath('zh', 'terms') }, { t: '隱私權政策', href: pagePath('zh', 'privacy') }, { t: '退款政策', href: pagePath('zh', 'refund') }] },
       ],
-      copyright: `${LEGAL_NAME_ZH}（${LEGAL_NAME_EN}）`,
+      company: `${LEGAL_NAME_EN} · ${LEGAL_NAME_ZH} · 統編 ${TAX_ID}`,
     },
   },
 
@@ -175,9 +177,9 @@ export const content = {
     meta: {
       title: 'Vettalon | Multi-model adversarial security auditor',
       description:
-        'Vettalon has multiple AI models cross-check each other to surface real code vulnerabilities and cut false positives. Your code never leaves your machine. Open-source core plus an enterprise edition with reports, supply-chain hunting and a desktop app.',
+        'Vettalon has multiple AI models cross-check each other to surface real code vulnerabilities and cut false positives. The default scan runs open-source scanners locally; deep mode sends code snippets only to the models you configure. Open-source core plus an enterprise edition with reports, supply-chain hunting and a desktop app.',
       keywords:
-        'Vettalon, code security audit, SAST, multi-model, AI security, supply chain security, vulnerability scanning, DuDu Studio',
+        'Vettalon, code security audit, SAST, multi-model, AI security, supply chain security, vulnerability scanning, Dudu Technology Ltd.',
     },
     nav: {
       links: [
@@ -189,20 +191,22 @@ export const content = {
       ],
       cta: 'Buy',
       github: 'GitHub',
+      menu: 'Menu',
     },
     hero: {
-      kicker: 'DUDU STUDIO · MULTI-MODEL SECURITY AUDIT',
+      kicker: 'Dudu Technology Ltd. · Multi-model security audit',
       h1a: 'Let several AI models ',
       h1em: 'argue each other down',
       h1b: ' and keep the real bugs',
-      lead: "Vettalon doesn't trust one model's own judgment. Different model families hunt for issues, then cross-check each other's findings, cutting false positives and leaving candidates worth a human's time. Your code is analysed on your machine; we never touch it.",
+      lead: "Vettalon doesn't trust one model's own judgment. Different model families hunt for issues, then cross-check each other's findings, cutting false positives and leaving candidates worth a human's time. The default scan runs on your machine; deep mode sends code snippets only to the models you configure, never through us.",
+      terminalCaption: 'Sample output from the GitHub README (fixtures/demo-app, deep mode). The terminal summary prints in Traditional Chinese.',
       ctaPrimary: 'View source on GitHub',
       ctaSecondary: 'Quick start',
       ctaTertiary: 'See editions',
-      note: 'Open-source core under Apache 2.0, free to use. The enterprise edition and commercial licensing come directly from DuDu Studio.',
+      note: 'Open-source core under Apache 2.0, free to use. The enterprise edition and commercial licensing come directly from Dudu Technology Ltd.',
     },
     product: {
-      tag: 'CAPABILITIES',
+      tag: 'Capabilities',
       lead: 'One pipeline ties together OSS static scanners, multi-model AI review, adversarial cross-checking and sandboxed PoCs.',
       cards: [
         {
@@ -211,7 +215,7 @@ export const content = {
           points: ['Cross-family finder / verifier split', 'Every candidate records its review votes', 'The report shows which model refuted a false positive and why'],
         },
         {
-          name: 'Code never leaves your machine',
+          name: 'You decide where code goes',
           desc: 'Analysis runs on your computer. During AI review, code snippets go only to the models you configure (your own CLI account or API key; a local Ollama keeps everything on-device). Vettalon never handles or resells them.',
           points: ['Zero-network by default', 'You choose the model backend', 'Secrets are redacted before any report or SARIF is written'],
         },
@@ -223,7 +227,7 @@ export const content = {
       ],
     },
     how: {
-      tag: 'HOW IT WORKS',
+      tag: 'How it works',
       lead: 'Every stage of a deep audit is recorded, and a validator runs before any report is written.',
       steps: [
         { n: '01', t: 'Intake', d: 'Census languages, find entry points, read git history to flag files that keep getting security fixes, then rank modules by risk.' },
@@ -234,17 +238,17 @@ export const content = {
       ],
     },
     benchmarks: {
-      tag: 'BENCHMARKS',
+      tag: 'Benchmarks',
       lead: 'The numbers below come from reproducible benchmarks; we report them as measured, limits included.',
       items: [
         { v: '9/9', k: 'Focused recall', d: 'With the vulnerable file in scope, all 9 real CVEs were identified with the right file, line and vulnerability class.' },
         { v: '0', k: 'OWASP false positives', d: 'OWASP Benchmark, 160 cases: 91% recall, 0 false positives (upper bound ≤ 3.8%). Cross-family review took a 7B local model from 57% FP to 0%.' },
-        { v: '8/9', k: 'Jev ranking hit@40', d: 'The optional metadata-only ranker lifts deep-audit recall from 6/9 to 8/9, sending metadata only — code never leaves the machine.' },
+        { v: '8/9', k: 'Jev ranking hit@40', d: 'The optional metadata-only ranker lifts deep-audit recall from 6/9 to 8/9, sending metadata only, never code.' },
       ],
       note: 'Whole-repo recall is 5/9 (a vulnerable file that is huge and falls past the page cap can be missed); we state the limits too.',
     },
     editions: {
-      tag: 'PRICING',
+      tag: 'Pricing',
       lead: 'The open-source core is enough for CLI and CI. For reports people can read and a desktop app, pick Pro or Team.',
       cards: [
         {
@@ -293,23 +297,23 @@ export const content = {
       ],
     },
     contact: {
-      tag: 'GET STARTED',
+      tag: 'Get started',
       lead: '',
       options: [
         { t: 'Self-serve', d: 'Get the open-source core from GitHub and run a deep audit on your repo.', cta: 'View on GitHub', href: GITHUB },
-        { t: 'Enterprise', d: 'The enterprise edition (desktop app, reports, supply-chain hunting) and commercial licensing come directly from DuDu Studio.', cta: 'Contact DuDu Studio', href: CONTACT },
+        { t: 'Enterprise', d: 'The enterprise edition (desktop app, reports, supply-chain hunting) and commercial licensing come directly from Dudu Technology Ltd.', cta: 'Contact Dudu Technology Ltd.', href: CONTACT },
         { t: 'Feedback', d: 'Found a bug or want a feature? Open an issue on GitHub.', cta: 'Report an issue', href: GITHUB + '/issues' },
       ],
     },
     footer: {
-      tagline: 'Multi-model adversarial security auditing. Built by DuDu Studio.',
+      tagline: 'Multi-model adversarial security auditing. Built by Dudu Technology Ltd.',
       groups: [
         { title: 'Product', links: [{ t: 'Source on GitHub', href: GITHUB }, { t: 'Pricing', href: pagePath('en') + '#editions' }, { t: 'Enterprise', href: CONTACT }] },
-        { title: 'Vendor', links: [{ t: 'DuDu Studio', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
+        { title: 'Vendor', links: [{ t: 'Dudu Technology Ltd.', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
         { title: 'Contact', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
         { title: 'Legal', links: [{ t: 'Terms of Service', href: pagePath('en', 'terms') }, { t: 'Privacy Policy', href: pagePath('en', 'privacy') }, { t: 'Refund Policy', href: pagePath('en', 'refund') }] },
       ],
-      copyright: LEGAL_NAME_EN,
+      company: `${LEGAL_NAME_EN} · ${LEGAL_NAME_ZH} · Tax ID ${TAX_ID}`,
     },
   },
 };

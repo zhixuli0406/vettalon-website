@@ -1,7 +1,5 @@
 import { StrictMode } from 'react';
 import { hydrateRoot, createRoot } from 'react-dom/client';
-import '@fontsource-variable/inter';
-import '@fontsource-variable/geist-mono';
 import './index.css';
 import App from './App.jsx';
 import { parseRoute } from './route.js';

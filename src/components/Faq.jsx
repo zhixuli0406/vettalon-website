@@ -1,10 +1,11 @@
 import { useT } from '../locale.js';
+import SectionHead from './SectionHead.jsx';
 
 export default function Faq() {
   const { faq } = useT();
   return (
-    <section className="sect sect--compact" id="faq">
-      <p className="sect__tag rv">{faq.tag}</p>
+    <section className="sect" id="faq">
+      <SectionHead tag={faq.tag} />
       <div className="faq rv">
         {faq.items.map((it) => (
           <details key={it.q}>

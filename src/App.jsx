@@ -19,7 +19,7 @@ export default function App({ locale = 'zh', page = '' }) {
   const t = content[locale] ?? content.zh;
   return (
     <LocaleCtx.Provider value={{ locale, t, page }}>
-      <div className="island">
+      <div className="site">
         <a className="sr-only" href="#main-content">
           {locale === 'en' ? 'Skip to content' : '跳到主要內容'}
         </a>
