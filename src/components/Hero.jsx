@@ -1,5 +1,5 @@
 import { useT } from '../locale.js';
-import { GITHUB, ENTERPRISE_URL } from '../i18n.js';
+import { GITHUB } from '../i18n.js';
 
 export default function Hero() {
   const { hero } = useT();
@@ -16,7 +16,7 @@ export default function Hero() {
         <div className="hero__cta rv">
           <a className="btn btn--brand" href={GITHUB} target="_blank" rel="noopener noreferrer">{hero.ctaPrimary}</a>
           <a className="btn btn--ghost" href="#how">{hero.ctaSecondary}</a>
-          <a className="btn btn--ghost" href={ENTERPRISE_URL} target="_blank" rel="noopener noreferrer">{hero.ctaTertiary}</a>
+          <a className="btn btn--ghost" href="#editions">{hero.ctaTertiary}</a>
         </div>
         <p className="hero__note rv">{hero.note}</p>
       </div>

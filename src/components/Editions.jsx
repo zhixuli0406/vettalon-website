@@ -1,10 +1,10 @@
 import { Check } from 'lucide-react';
 import { useT } from '../locale.js';
-import { GITHUB, ENTERPRISE_URL } from '../i18n.js';
+import { GITHUB, CONTACT } from '../i18n.js';
 
 export default function Editions() {
   const { editions } = useT();
-  const hrefs = [GITHUB, ENTERPRISE_URL];
+  const hrefs = [GITHUB, CONTACT];
   return (
     <section className="sect" id="editions">
       <p className="sect__tag rv">{editions.tag}</p>

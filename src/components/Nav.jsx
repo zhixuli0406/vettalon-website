@@ -1,6 +1,5 @@
 import { ArrowUpRight, ShieldCheck } from 'lucide-react';
 import { useT, useLocale } from '../locale.js';
-import { ENTERPRISE_URL } from '../i18n.js';
 
 // Preserve the current in-page hash when switching language so the reader
 // stays on the same section.
@@ -26,7 +25,7 @@ export default function Nav() {
           <a className="nav__lang" href={otherLocaleHref(locale)} hrefLang={locale === 'en' ? 'zh-Hant' : 'en'}>
             {locale === 'en' ? '中文' : 'EN'}
           </a>
-          <a className="nav__prod" href={ENTERPRISE_URL} target="_blank" rel="noopener noreferrer">
+          <a className="nav__prod" href="#editions">
             {t.nav.cta} <ArrowUpRight size={13} aria-hidden="true" />
           </a>
         </nav>

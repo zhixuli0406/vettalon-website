@@ -1,10 +1,11 @@
 // Vettalon 官網雙語內容。zh-TW 為主、en 為輔。
-// 內容紀律：誠實、不誇大、數字標來源（全部來自 vettalon-pro 的 benchmarks）。
+// 內容紀律：誠實、不誇大，數字直接呈現並附限制。
 
-export const GITHUB = 'https://github.com/zhixuli0406/vettalon-pro';
-export const ENTERPRISE_URL = 'https://futurecorp.tw/';
+export const GITHUB = 'https://github.com/zhixuli0406/vettalon';
 export const SITE_URL = 'https://vettalon.dudustudio.monster';
 export const EMAIL = 'info@dudustudio.monster';
+// Commercial / enterprise inquiries go to the vendor directly.
+export const CONTACT = 'mailto:' + EMAIL;
 
 export const LOCALES = ['zh', 'en'];
 export const DEFAULT_LOCALE = 'zh';
@@ -32,7 +33,7 @@ export const content = {
         { href: '#editions', label: '版本' },
         { href: '#faq', label: '常見問題' },
       ],
-      cta: '企業導入',
+      cta: '企業版',
       github: 'GitHub',
     },
     hero: {
@@ -43,8 +44,8 @@ export const content = {
       lead: 'Vettalon 不靠單一模型的自我判斷。它讓不同家族的模型分頭找洞、再交叉覆核彼此的發現，壓下誤報，留下值得人看的候選。程式碼在你的機器上分析，不經我們手。',
       ctaPrimary: '看 GitHub 原始碼',
       ctaSecondary: '快速開始',
-      ctaTertiary: '企業導入',
-      note: '開源核心採 Apache 2.0。企業商業授權、導入與支援由正式總經銷 Future Corp 提供。',
+      ctaTertiary: '看版本',
+      note: '開源核心採 Apache 2.0，可自行取用。企業版與商業授權由嘟嘟數位直接提供。',
     },
     product: {
       tag: 'CAPABILITIES｜核心能力',
@@ -80,7 +81,7 @@ export const content = {
     },
     benchmarks: {
       tag: 'BENCHMARKS｜基準數字',
-      lead: '數字都來自可重現的 harness（vettalon-pro/benchmarks），這裡照實寫。',
+      lead: '以下數字來自可重現的基準測試，照實寫，連限制也一併列出。',
       items: [
         { v: '9/9', k: '聚焦召回', d: '脆弱檔在掃描範圍內時，9 個真實 CVE 全部識別出正確檔案、行號與漏洞類別。' },
         { v: '0', k: 'OWASP 誤報', d: 'OWASP Benchmark 160 案：91% 召回、0 誤報（上界 ≤ 3.8%）。跨家族覆核把 7B 本機模型的誤報率 57%→0%。' },
@@ -104,7 +105,7 @@ export const content = {
           type: '企業版',
           desc: '桌面 App 與本機 dashboard、對齊台灣資安檢測報告慣例的企業報告（PDF／Word／HTML）、供應鏈獵捕與上游揭露草稿。讀同一份掃描 JSON，核心不依賴 Pro。',
           points: ['桌面 App＋本機 dashboard', '企業報告 PDF／Word／HTML', '供應鏈獵捕＋揭露草稿'],
-          cta: '洽談導入',
+          cta: '洽談企業版',
         },
       ],
     },
@@ -123,14 +124,14 @@ export const content = {
       lead: '',
       options: [
         { t: '自助試用', d: '從 GitHub 取得開源核心，在你的 repo 上跑一次深掃。', cta: '看 GitHub', href: GITHUB },
-        { t: '企業導入', d: '商業授權、導入、教育訓練與支援由正式總經銷 Future Corp 提供。', cta: '洽談 Future Corp', href: ENTERPRISE_URL },
+        { t: '企業版', d: '企業版（桌面 App、企業報告、供應鏈獵捕）與商業授權由嘟嘟數位直接提供。', cta: '聯絡嘟嘟數位', href: CONTACT },
         { t: '原廠回饋', d: '找到 bug 或有功能需求，直接到 GitHub 開 issue。', cta: '回報問題', href: GITHUB + '/issues' },
       ],
     },
     footer: {
       tagline: '多模型對抗式資安稽核。由嘟嘟數位科技開發。',
       groups: [
-        { title: '產品', links: [{ t: 'GitHub 原始碼', href: GITHUB }, { t: '企業導入', href: ENTERPRISE_URL }] },
+        { title: '產品', links: [{ t: 'GitHub 原始碼', href: GITHUB }, { t: '企業版', href: CONTACT }] },
         { title: '原廠', links: [{ t: '嘟嘟數位', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
         { title: '聯絡', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
       ],
@@ -165,8 +166,8 @@ export const content = {
       lead: "Vettalon doesn't trust one model's own judgment. Different model families hunt for issues, then cross-check each other's findings, cutting false positives and leaving candidates worth a human's time. Your code is analysed on your machine; we never touch it.",
       ctaPrimary: 'View source on GitHub',
       ctaSecondary: 'Quick start',
-      ctaTertiary: 'Enterprise',
-      note: 'Open-source core under Apache 2.0. Commercial licensing, rollout and support are provided by the official distributor, Future Corp.',
+      ctaTertiary: 'See editions',
+      note: 'Open-source core under Apache 2.0, free to use. The enterprise edition and commercial licensing come directly from DuDu Studio.',
     },
     product: {
       tag: 'CAPABILITIES',
@@ -202,7 +203,7 @@ export const content = {
     },
     benchmarks: {
       tag: 'BENCHMARKS',
-      lead: 'Every number comes from a reproducible harness (vettalon-pro/benchmarks); we report it as measured.',
+      lead: 'The numbers below come from reproducible benchmarks; we report them as measured, limits included.',
       items: [
         { v: '9/9', k: 'Focused recall', d: 'With the vulnerable file in scope, all 9 real CVEs were identified with the right file, line and vulnerability class.' },
         { v: '0', k: 'OWASP false positives', d: 'OWASP Benchmark, 160 cases: 91% recall, 0 false positives (upper bound ≤ 3.8%). Cross-family review took a 7B local model from 57% FP to 0%.' },
@@ -226,7 +227,7 @@ export const content = {
           type: 'Enterprise',
           desc: 'Desktop app and local dashboard, enterprise reports aligned with Taiwan security-assessment conventions (PDF / Word / HTML), supply-chain hunting and upstream disclosure drafts. Reads the same scan JSON; the core never depends on Pro.',
           points: ['Desktop app + local dashboard', 'Enterprise reports: PDF / Word / HTML', 'Supply-chain hunting + disclosure drafts'],
-          cta: 'Talk to us',
+          cta: 'Contact DuDu Studio',
         },
       ],
     },
@@ -245,14 +246,14 @@ export const content = {
       lead: '',
       options: [
         { t: 'Self-serve', d: 'Get the open-source core from GitHub and run a deep audit on your repo.', cta: 'View on GitHub', href: GITHUB },
-        { t: 'Enterprise', d: 'Commercial licensing, rollout, training and support are provided by the official distributor, Future Corp.', cta: 'Contact Future Corp', href: ENTERPRISE_URL },
+        { t: 'Enterprise', d: 'The enterprise edition (desktop app, reports, supply-chain hunting) and commercial licensing come directly from DuDu Studio.', cta: 'Contact DuDu Studio', href: CONTACT },
         { t: 'Feedback', d: 'Found a bug or want a feature? Open an issue on GitHub.', cta: 'Report an issue', href: GITHUB + '/issues' },
       ],
     },
     footer: {
       tagline: 'Multi-model adversarial security auditing. Built by DuDu Studio.',
       groups: [
-        { title: 'Product', links: [{ t: 'Source on GitHub', href: GITHUB }, { t: 'Enterprise', href: ENTERPRISE_URL }] },
+        { title: 'Product', links: [{ t: 'Source on GitHub', href: GITHUB }, { t: 'Enterprise', href: CONTACT }] },
         { title: 'Vendor', links: [{ t: 'DuDu Studio', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
         { title: 'Contact', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
       ],
