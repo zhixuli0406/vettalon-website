@@ -22,7 +22,6 @@
   --rule: #D4D7D8;
   --accent: var(--teal);
   --accent-text: #0C7580;
-  --logo-ink: var(--navy);
   --focus: var(--accent);
 
   --btn-bg: var(--navy);
@@ -68,7 +67,6 @@
     --text-muted: #B7BDC4;
     --rule: #24405F;
     --accent-text: #3FA7B3;
-    --logo-ink: var(--cream);
     --focus: #3FA7B3;
 
     --btn-bg: var(--cream);
@@ -131,11 +129,8 @@ img, svg { display: block; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
 [id] { scroll-margin-top: calc(var(--nav-h) + 24px); }
 
-/* logo layers: ink follows the theme, accent stays teal (spec §1) */
-.logo { flex-shrink: 0; }
-.logo .ink { fill: var(--logo-ink); }
-.logo .accent { fill: var(--teal); }
-.logo.logo--mono .ink, .logo.logo--mono .accent { fill: currentColor; }
+/* Preserve the delivered PNG colors and transparency in every theme. */
+.logo { display: block; flex-shrink: 0; object-fit: contain; }
 
 /* shared eyebrow label */
 .eyebrow {
@@ -409,7 +404,6 @@ html[lang="zh-Hant"] .hero h1 { word-break: keep-all; overflow-wrap: anywhere; }
   font-size: var(--fs-small); color: var(--text-muted);
 }
 .footer__co { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; }
-.footer__co .logo { color: var(--text); }
 .footer__co:hover span { text-decoration: underline; text-underline-offset: 4px; }
 @media (max-width: 760px) {
   .footer__groups { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 24px; width: 100%; }
