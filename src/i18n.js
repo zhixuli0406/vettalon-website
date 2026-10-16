@@ -8,10 +8,11 @@ export const SITE_URL = 'https://vettalon.dudustudio.monster';
 export const EMAIL = 'info@dudustudio.monster';
 // Commercial / enterprise inquiries go to the vendor directly.
 export const CONTACT = 'mailto:' + EMAIL;
-// Purchase links. Until a payment provider approves the store these open a
-// pre-filled email; swap in the hosted checkout URLs once it goes live.
-export const BUY_PRO = 'mailto:' + EMAIL + '?subject=' + encodeURIComponent('Vettalon Pro purchase');
-export const BUY_TEAM = 'mailto:' + EMAIL + '?subject=' + encodeURIComponent('Vettalon Team purchase');
+// Hosted checkout (Polar, merchant of record). The license key is emailed by
+// Polar; installers live on the public releases repo.
+export const BUY_PRO = 'https://buy.polar.sh/polar_cl_Ho83TonhMJOzLP6RoHLuT5tu84UZlilt7qkKw393Lvt';
+export const BUY_TEAM = 'https://buy.polar.sh/polar_cl_EJBhntqvKHajZm2HspEXqIx8ChPPKwirmH4Z33b57co';
+export const DOWNLOADS = 'https://github.com/zhixuli0406/vettalon-releases/releases/latest';
 
 // Locale-aware path for a site page ('' = home).
 export const pagePath = (locale, page = '') =>
@@ -124,7 +125,7 @@ export const content = {
           priceNote: `一次買斷，含 ${P.updateMonths} 個月更新。之後續訂更新 ${P.proRenewal}／年，不續也能永久使用。`,
           desc: '桌面 App 與本機 dashboard、對齊台灣資安檢測報告慣例的企業報告（PDF／Word／HTML）、供應鏈獵捕與上游揭露草稿。讀同一份掃描 JSON，核心不依賴 Pro。',
           points: ['桌面 App＋本機 dashboard', '企業報告 PDF／Word／HTML', '供應鏈獵捕＋揭露草稿', `單人授權，最多 ${P.proDevices} 台裝置`],
-          cta: '洽購 Pro',
+          cta: '購買 Pro',
           href: BUY_PRO,
         },
         {
@@ -134,11 +135,12 @@ export const content = {
           priceNote: `年費，含 ${P.teamSeats} 席。`,
           desc: `給資安或開發團隊。Pro 的全部功能，同一組織最多 ${P.teamSeats} 人使用，訂閱期間持續更新並有優先 email 支援。`,
           points: ['Pro 全部功能', `最多 ${P.teamSeats} 位具名使用者`, '訂閱期間所有更新', '優先 email 支援'],
-          cta: '洽購 Team',
+          cta: '購買 Team',
           href: BUY_TEAM,
         },
       ],
-      note: `價格以美元計，未含稅，結帳時依所在地計算。付款完成後，授權金鑰與下載連結會寄到你的 email。首次購買與續訂 ${P.refundDays} 天內可全額退款。台灣企業與政府採購可來信索取新台幣報價。`,
+      note: `價格以美元計，未含稅，結帳時依所在地計算。付款完成後，授權金鑰會寄到你的 email，桌面 App 從下載頁安裝（macOS、Windows、Linux）。首次購買與續訂 ${P.refundDays} 天內可全額退款。台灣企業與政府採購可來信索取新台幣報價。`,
+      download: { label: '下載桌面 App', href: DOWNLOADS },
     },
     faq: {
       tag: '常見問題',
@@ -164,7 +166,7 @@ export const content = {
     footer: {
       tagline: '多模型對抗式資安稽核。由 Dudu Technology Ltd. 開發。',
       groups: [
-        { title: '產品', links: [{ t: 'GitHub 原始碼', href: GITHUB }, { t: '價格', href: pagePath('zh') + '#editions' }, { t: '企業版', href: CONTACT }] },
+        { title: '產品', links: [{ t: 'GitHub 原始碼', href: GITHUB }, { t: '價格', href: pagePath('zh') + '#editions' }, { t: '下載桌面 App', href: DOWNLOADS }, { t: '企業版', href: CONTACT }] },
         { title: '原廠', links: [{ t: 'Dudu Technology Ltd.', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
         { title: '聯絡', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
         { title: '法律', links: [{ t: '服務條款', href: pagePath('zh', 'terms') }, { t: '隱私權政策', href: pagePath('zh', 'privacy') }, { t: '退款政策', href: pagePath('zh', 'refund') }] },
@@ -282,7 +284,8 @@ export const content = {
           href: BUY_TEAM,
         },
       ],
-      note: `Prices in USD, excluding tax, which is calculated at checkout for your location. Your license key and download link are emailed once payment completes. Full refund within ${P.refundDays} days of a first purchase or renewal. Businesses and government agencies in Taiwan can request a TWD quote.`,
+      note: `Prices in USD, excluding tax, which is calculated at checkout for your location. Your license key is emailed once payment completes; install the desktop app from the download page (macOS, Windows, Linux). Full refund within ${P.refundDays} days of a first purchase or renewal. Businesses and government agencies in Taiwan can request a TWD quote.`,
+      download: { label: 'Download the desktop app', href: DOWNLOADS },
     },
     faq: {
       tag: 'FAQ',
@@ -308,7 +311,7 @@ export const content = {
     footer: {
       tagline: 'Multi-model adversarial security auditing. Built by Dudu Technology Ltd.',
       groups: [
-        { title: 'Product', links: [{ t: 'Source on GitHub', href: GITHUB }, { t: 'Pricing', href: pagePath('en') + '#editions' }, { t: 'Enterprise', href: CONTACT }] },
+        { title: 'Product', links: [{ t: 'Source on GitHub', href: GITHUB }, { t: 'Pricing', href: pagePath('en') + '#editions' }, { t: 'Download', href: DOWNLOADS }, { t: 'Enterprise', href: CONTACT }] },
         { title: 'Vendor', links: [{ t: 'Dudu Technology Ltd.', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
         { title: 'Contact', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
         { title: 'Legal', links: [{ t: 'Terms of Service', href: pagePath('en', 'terms') }, { t: 'Privacy Policy', href: pagePath('en', 'privacy') }, { t: 'Refund Policy', href: pagePath('en', 'refund') }] },

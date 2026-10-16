@@ -9,7 +9,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
 const dist = join(root, 'dist');
 
-const { content, LOCALE_META, SITE_URL, GITHUB, pagePath } = await import(join(root, 'src/i18n.js'));
+const { content, LOCALE_META, SITE_URL, GITHUB, BUY_PRO, BUY_TEAM, DOWNLOADS, pagePath } = await import(join(root, 'src/i18n.js'));
 const { legal, LEGAL_PAGES, LEGAL_NAME_EN, LEGAL_NAME_ZH } = await import(join(root, 'src/legal.js'));
 const { PLAN } = await import(join(root, 'src/plan.js'));
 const { render } = await import(join(root, 'dist-server/entry-server.js'));
@@ -35,10 +35,11 @@ function softwareApp(locale) {
     description: c.meta.description,
     url: SITE_URL + LOCALE_META[locale].path,
     softwareHelp: GITHUB,
+    downloadUrl: DOWNLOADS,
     offers: [
       { '@type': 'Offer', price: '0', priceCurrency: 'USD', description: 'Open-source core (Apache 2.0)' },
-      { '@type': 'Offer', price: PLAN.proPrice.replace(/\D/g, ''), priceCurrency: 'USD', description: 'Vettalon Pro, one-time purchase' },
-      { '@type': 'Offer', price: PLAN.teamPrice.replace(/\D/g, ''), priceCurrency: 'USD', description: `Vettalon Team, per year, ${PLAN.teamSeats} seats` },
+      { '@type': 'Offer', price: PLAN.proPrice.replace(/\D/g, ''), priceCurrency: 'USD', description: 'Vettalon Pro, one-time purchase', url: BUY_PRO },
+      { '@type': 'Offer', price: PLAN.teamPrice.replace(/\D/g, ''), priceCurrency: 'USD', description: `Vettalon Team, per year, ${PLAN.teamSeats} seats`, url: BUY_TEAM },
     ],
     publisher: ORG,
     inLanguage: locale === 'en' ? 'en' : 'zh-Hant',

@@ -40,6 +40,11 @@ export default function Editions() {
         })}
       </div>
       <p className="section-note rv">{editions.note}</p>
+      <p className="section-note rv">
+        <a href={editions.download.href} target="_blank" rel="noopener noreferrer">
+          {editions.download.label}
+        </a>
+      </p>
     </section>
   );
 }
