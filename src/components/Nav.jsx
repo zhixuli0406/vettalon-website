@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowUpRight, Menu, X } from 'lucide-react';
 import { useT, useLocale, usePage } from '../locale.js';
 import { pagePath } from '../i18n.js';
@@ -15,29 +15,32 @@ export default function Nav() {
   const t = useT();
   const locale = useLocale();
   const page = usePage();
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const toggleRef = useRef(null);
 
-  // Bottom hairline appears once the page has scrolled (spec §4 nav).
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 4);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+    if (!open) return;
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') { setOpen(false); toggleRef.current?.focus(); }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [open]);
 
   // Section anchors live on the landing page; prefix them so they also work
   // from legal pages. On the landing page this is a same-document jump.
   const home = pagePath(locale);
+  const links = locale === 'en' ? [{ href: '#review', label: 'How review works' }, { href: '#report', label: 'Evidence' }, { href: '#product', label: 'Capabilities' }, { href: '#editions', label: 'Editions' }] : [{ href: '#review', label: '覆核流程' }, { href: '#report', label: '真實輸出' }, { href: '#product', label: '能力與資料' }, { href: '#editions', label: '版本價格' }];
   const close = () => setOpen(false);
   return (
-    <header className={`nav${scrolled ? ' is-scrolled' : ''}${open ? ' is-open' : ''}`}>
+    <header className={`nav${open ? ' is-open' : ''}`}>
       <div className="nav__in">
         <a className="nav__brand" href={home}>
           <VettalonMark size={30} />
           <span className="nav__word">Vettalon</span>
         </a>
         <button
+          ref={toggleRef}
           type="button"
           className="nav__toggle"
           aria-expanded={open}
@@ -48,14 +51,14 @@ export default function Nav() {
           <span className="sr-only">{t.nav.menu}</span>
         </button>
         <nav id="site-menu" className="nav__links" aria-label={locale === 'en' ? 'Main' : '主選單'}>
-          {t.nav.links.map((l) => (
+          {links.map((l) => (
             <a key={l.href} href={home + l.href} onClick={close}>{l.label}</a>
           ))}
           <a className="nav__lang" href={otherLocaleHref(locale, page)} hrefLang={locale === 'en' ? 'zh-Hant' : 'en'}>
             {locale === 'en' ? '中文' : 'EN'}
           </a>
           <a className="btn btn--primary btn--sm nav__cta" href={home + '#editions'} onClick={close}>
-            {t.nav.cta} <ArrowUpRight size={14} aria-hidden="true" />
+            {locale === 'en' ? 'Get started' : '開始使用'} <ArrowUpRight size={14} aria-hidden="true" />
           </a>
         </nav>
       </div>

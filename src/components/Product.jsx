@@ -1,25 +1,11 @@
 import { Check } from 'lucide-react';
-import { useT } from '../locale.js';
-import SectionHead from './SectionHead.jsx';
+import { useT, useLocale } from '../locale.js';
 
 export default function Product() {
   const { product } = useT();
-  return (
-    <section className="sect" id="product">
-      <SectionHead tag={product.tag} lead={product.lead} />
-      <div className="grid grid--3">
-        {product.cards.map((c) => (
-          <article className="card card--bar rv" key={c.name}>
-            <h3 className="card__title">{c.name}</h3>
-            <p className="card__desc">{c.desc}</p>
-            <ul className="checks">
-              {c.points.map((p) => (
-                <li key={p}><Check aria-hidden="true" />{p}</li>
-              ))}
-            </ul>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
+  const en = useLocale() === 'en';
+  return <section className="sect capabilities" id="product" aria-labelledby="product-title">
+    <header className="sect__head"><p className="eyebrow">{en ? '03 / Fit it to your workflow' : '03 / 放進你的工作流程'}</p><h2 className="sect__title" id="product-title">{en ? 'Your code. Your boundaries.' : '程式碼的去向，\n由你決定。'}</h2><p className="sect__lead">{product.lead}</p></header>
+    <div className="capability-list">{product.cards.map((card, index) => <article className="capability-row" key={card.name}><span className="capability-row__index" aria-hidden="true">0{index + 1}</span><div><h3>{card.name}</h3><p>{card.desc}</p></div><ul className="checks">{card.points.map((point) => <li key={point}><Check aria-hidden="true" />{point}</li>)}</ul></article>)}</div>
+  </section>;
 }

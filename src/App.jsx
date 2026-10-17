@@ -1,8 +1,12 @@
+import { useReducer } from 'react';
+import { reviewReducer, initialReviewState } from './review-demo.js';
+import { ReviewCtx } from './prism/review-context.js';
 import { content } from './i18n.js';
 import { LocaleCtx } from './locale.js';
 import { useReveal } from './useReveal.js';
 import Nav from './components/Nav.jsx';
 import Hero from './components/Hero.jsx';
+import Report from './components/Report.jsx';
 import Product from './components/Product.jsx';
 import HowItWorks from './components/HowItWorks.jsx';
 import Benchmarks from './components/Benchmarks.jsx';
@@ -16,6 +20,7 @@ import LegalPage from './components/LegalPage.jsx';
 // legal page inside the same shell (nav + footer).
 export default function App({ locale = 'zh', page = '' }) {
   useReveal();
+  const [reviewState, dispatchReview] = useReducer(reviewReducer, initialReviewState);
   const t = content[locale] ?? content.zh;
   return (
     <LocaleCtx.Provider value={{ locale, t, page }}>
@@ -24,15 +29,16 @@ export default function App({ locale = 'zh', page = '' }) {
           {locale === 'en' ? 'Skip to content' : '跳到主要內容'}
         </a>
         <Nav />
-        <main id="main-content">
+        <main id="main-content" tabIndex={-1}>
           {page ? (
             <LegalPage page={page} />
           ) : (
             <>
-              <Hero />
+              <ReviewCtx.Provider value={{ state: reviewState, dispatch: dispatchReview }}><Hero /></ReviewCtx.Provider>
+              <Report />
+              <Benchmarks />
               <Product />
               <HowItWorks />
-              <Benchmarks />
               <Editions />
               <Faq />
               <Contact />
