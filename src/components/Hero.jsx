@@ -1,53 +1,36 @@
-import { useT } from '../locale.js';
+import { ArrowUpRight, ArrowDown } from 'lucide-react';
+import { useLocale } from '../locale.js';
 import { GITHUB } from '../i18n.js';
+import PrismView from './PrismView.jsx';
+import ReviewDemo from './ReviewDemo.jsx';
 
-// Real sample output, copied verbatim from the public README
-// (github.com/zhixuli0406/vettalon, "Sample output"). Update it from there,
-// never by hand-writing results.
-const SAMPLE_CMD =
-  'vettalon scan fixtures/demo-app --profile deep --poc --finders claude --verifiers codex';
-const SAMPLE_OUT = [
-  { t: '程式碼安全審計（vettalon）' },
-  { t: '  ...', dim: true },
-  { t: 'AI 深度審計／對抗式覆核／PoC（deep profile）：' },
-  { t: '  AI 候選：2　已證偽：0（其中前置檢查證偽 0）　待人工覆核：2　PoC 已執行：2' },
-  { t: '  模組覆蓋：共 4　已審 4（無候選 2、有候選 2）　延後 0　失敗 0' },
-  { t: '  覆核獨立性：全部跨家族覆核（找洞：claude；覆核：codex）' },
-  { t: '結論：未達 --fail-on 門檻（high），視為通過。', hi: true },
-];
+const copy = {
+  zh: { kicker: 'Vettalon / 程式碼安全稽核', title: '多模型交叉覆核', line: '程式碼風險。', lead: '由不同家族的模型提出候選、尋找反證，讓人根據留下的理由決定下一步。', primary: '試用開源版', secondary: '看真實輸出', note: 'Apache 2.0 開源核心 · CLI / CI · 模型由你選擇', step: '01 / 先理解判斷過程', review: '如果模型說有問題，', reviewLine: '誰來挑戰它？', intro: '選一段程式碼，看看同一個候選如何被提出、駁回或交給人工。' },
+  en: { kicker: 'Vettalon / Code security audit', title: 'Cross-review code risks.', line: 'Across model families.', lead: 'One model proposes a candidate. Another looks for counter-evidence. A person decides what the reasons justify.', primary: 'Try the open-source core', secondary: 'Read real output', note: 'Apache 2.0 core · CLI / CI · Your choice of models', step: '01 / Understand the judgment', review: 'A model finds a risk.', reviewLine: 'Who challenges it?', intro: 'Choose a code example. Follow a candidate as it is proposed, refuted or handed to a person.' },
+};
 
 export default function Hero() {
-  const { hero } = useT();
+  const t = copy[useLocale()];
   return (
-    <section className="hero">
-      <div className="hero__in">
-        <div className="hero__text">
-          <p className="eyebrow rv">{hero.kicker}</p>
-          <h1 className="rv">
-            {hero.h1a}
-            <em>{hero.h1em}</em>
-            {hero.h1b}
-          </h1>
-          <p className="hero__lead rv">{hero.lead}</p>
-          <div className="hero__cta rv">
-            <a className="btn btn--primary" href={GITHUB} target="_blank" rel="noopener noreferrer">{hero.ctaPrimary}</a>
-            <a className="btn btn--secondary" href="#how">{hero.ctaSecondary}</a>
-            <a className="btn btn--secondary" href="#editions">{hero.ctaTertiary}</a>
-          </div>
-          <p className="hero__note rv">{hero.note}</p>
+    <>
+      <section className="hero" id="prism-hero" aria-labelledby="hero-title">
+        <div className="hero__in">
+          <p className="eyebrow">{t.kicker}</p>
+          <h1 id="hero-title">{t.title}<span>{t.line}</span></h1>
+          <div className="hero__decision"><p className="hero__lead">{t.lead}</p><div className="hero__cta">
+            <a className="btn btn--primary" href={GITHUB} target="_blank" rel="noopener noreferrer">{t.primary}<ArrowUpRight size={18} aria-hidden="true" /></a>
+            <a className="btn btn--secondary" href="#report">{t.secondary}<ArrowDown size={18} aria-hidden="true" /></a>
+          </div></div>
+          <p className="hero__note">{t.note}</p>
         </div>
-        <figure className="term rv">
-          <pre className="term__body" tabIndex={0}>
-            <code>
-              <span className="term__line"><span className="term__prompt">$ </span>{SAMPLE_CMD}</span>
-              {SAMPLE_OUT.map((l, i) => (
-                <span key={i} className={`term__line${l.dim ? ' is-dim' : ''}${l.hi ? ' is-hi' : ''}`}>{l.t}</span>
-              ))}
-            </code>
-          </pre>
-          <figcaption>{hero.terminalCaption}</figcaption>
-        </figure>
-      </div>
-    </section>
+      </section>
+      <section className="review-section sect" id="review" aria-labelledby="review-heading">
+        <header className="journey-heading"><p className="eyebrow">{t.step}</p><h2 className="sect__title" id="review-heading">{t.review}<br /><span>{t.reviewLine}</span></h2><p className="sect__lead">{t.intro}</p></header>
+        <div className="journey-layout">
+          <div className="prism-stage-wrap"><PrismView /></div>
+          <ReviewDemo />
+        </div>
+      </section>
+    </>
   );
 }

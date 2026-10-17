@@ -96,13 +96,13 @@ function headFor(locale, page) {
     `<meta property="og:url" content="${url}" />`,
     `<meta property="og:title" content="${esc(m.title)}" />`,
     `<meta property="og:description" content="${esc(m.description)}" />`,
-    `<meta property="og:image" content="${SITE_URL}/og.png" />`,
+    `<meta property="og:image" content="${SITE_URL}/og.png?v=c1-color" />`,
     `<meta property="og:site_name" content="Vettalon" />`,
     `<meta property="og:locale" content="${lm.ogLocale}" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${esc(m.title)}" />`,
     `<meta name="twitter:description" content="${esc(m.description)}" />`,
-    `<meta name="twitter:image" content="${SITE_URL}/og.png" />`,
+    `<meta name="twitter:image" content="${SITE_URL}/og.png?v=c1-color" />`,
     `<script type="application/ld+json">${jsonLd(locale, page)}</script>`,
   ].join('\n    ');
 }
