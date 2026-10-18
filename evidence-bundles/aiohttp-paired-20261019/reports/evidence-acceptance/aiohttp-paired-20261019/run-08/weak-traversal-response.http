@@ -1,0 +1,11 @@
+HTTP/1.1 200 OK
+Content-Type: application/octet-stream
+Etag: "18dfaea9788c6970-25"
+Last-Modified: Sun, 18 Oct 2026 17:07:00 GMT
+Content-Length: 37
+Accept-Ranges: bytes
+Date: Sun, 18 Oct 2026 17:06:59 GMT
+Server: Python/3.12 aiohttp/3.9.1
+Connection: close
+
+AIOHTTP_PAIR_PRIVATE_MARKER_20261019

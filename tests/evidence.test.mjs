@@ -30,15 +30,17 @@ test('rejects unsafe links, duplicate IDs and local artifact paths', () => {
   assert.throws(() => validateManifest([cases[0], cases[0]]));
 });
 
-test('paired raw bundle is confined to the Ammonia fixed public path and digest', () => {
-  const index = cases.findIndex(item => item.id === 'ammonia-ghsa-x43w-36pp-96g3');
-  for (const mutate of [
-    value => value.pairedBundle.artifactPath = '/evidence/bundles/other.zip',
-    value => value.pairedBundle.sha256 = 'bad',
-    value => value.pairedBundle.testedAt = '2099-01-01',
-    value => value.pairedBundle.privateSource = 'SECRET_SENTINEL',
-  ]) {
-    const data = clone(); mutate(data[index]); assert.throws(() => validateManifest(data));
+test('paired raw bundles are confined to the fixed case paths and digests', () => {
+  for (const index of [0, cases.findIndex(item => item.id === 'ammonia-ghsa-x43w-36pp-96g3')]) {
+    for (const mutate of [
+      value => value.pairedBundle.artifactPath = '/evidence/bundles/other.zip',
+      value => value.pairedBundle.sha256 = 'bad',
+      value => value.pairedBundle.testedAt = '2099-01-01',
+      value => value.pairedBundle.testedAt = '2026-10-17',
+      value => value.pairedBundle.privateSource = 'SECRET_SENTINEL',
+    ]) {
+      const data = clone(); mutate(data[index]); assert.throws(() => validateManifest(data));
+    }
   }
 });
 
@@ -79,6 +81,7 @@ test('minimal public snapshots exclude unrelated finding fields', () => {
 test('reproduction data must include successful differential controls and a public artifact', () => {
   const data = clone();
   data[0].status = 'reproduced';
+  delete data[0].pairedBundle;
   data[0].reproduction = { mode: 'differential', artifactUrl: 'https://vettalon.dudustudio.monster/evidence/example.json', sha256: 'a'.repeat(64), vulnerable: 'pass', fixed: 'pass', control: 'pass' };
   assert.equal(validateManifest(data)[0].status,'reproduced');
   data[0].reproduction.control = 'not-run'; assert.throws(() => validateManifest(data));
@@ -86,12 +89,12 @@ test('reproduction data must include successful differential controls and a publ
 
 test('calendar dates must exist, including century leap-year rules', () => {
   for (const invalid of ['2026-02-29','2026-02-30','2026-04-31','1900-02-29','2026-13-01','2026-00-10']) {
-    const data = clone(); data[0].reviewedAt = invalid;
+    const data = clone(); delete data[0].pairedBundle; data[0].reviewedAt = invalid;
     data[0].publishedAt = '1800-01-01'; data[0].timeline = [{date:'1800-01-01',event:{zh:'已公開',en:'Public'}}];
     data[0].detection.observedAt = '1800-01-01';
     assert.throws(() => validateManifest(data),invalid);
   }
-  const data=clone(); data[0].reviewedAt = '2000-02-29'; data[0].publishedAt = '2000-02-28';
+  const data=clone(); delete data[0].pairedBundle; data[0].reviewedAt = '2000-02-29'; data[0].publishedAt = '2000-02-28';
   data[0].detection.observedAt = '2000-02-28';data[0].timeline=[{date:'2000-02-28',event:{zh:'已公開',en:'Public'}}];
   assert.equal(validateManifest(data)[0].reviewedAt,'2000-02-29');
 });

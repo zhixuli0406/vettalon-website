@@ -112,11 +112,13 @@ export function validateManifest(input) {
       }
     } else ensure(!item.rustsecId && item.type !== 'reported');
     if (item.pairedBundle) {
-      ensure(item.id === 'ammonia-ghsa-x43w-36pp-96g3' && Boolean(item.regression));
+      ensure(item.id === 'ammonia-ghsa-x43w-36pp-96g3' || item.id === 'aiohttp-cve-2024-23334');
       exactKeys(item.pairedBundle, ['artifactPath','sha256','testedAt']);
-      ensure(item.pairedBundle.artifactPath === '/evidence/bundles/ammonia-paired-20261019.zip');
+      ensure(item.pairedBundle.artifactPath === `/evidence/bundles/${item.id.startsWith('ammonia-') ? 'ammonia' : 'aiohttp'}-paired-20261019.zip`);
       digest(item.pairedBundle.sha256); date(item.pairedBundle.testedAt);
-      ensure(item.pairedBundle.testedAt <= item.reviewedAt && item.pairedBundle.testedAt >= item.regression.testedAt);
+      ensure(item.pairedBundle.testedAt <= item.reviewedAt);
+      if (item.id.startsWith('ammonia-')) ensure(Boolean(item.regression) && item.pairedBundle.testedAt >= item.regression.testedAt);
+      else ensure(item.pairedBundle.testedAt === '2026-10-18' && item.type === 'historical' && item.status === 'detected' && Boolean(item.detection) && Boolean(item.dossier) && !item.regression && !item.reproduction);
     }
     if (item.detection) {
       exactKeys(item.detection,['mode','findingStatus','file','line','observedAt','sha256','claim','reviewerConclusion','finder','reviewer','toolVersion','modelVersions','scope','rerun']);

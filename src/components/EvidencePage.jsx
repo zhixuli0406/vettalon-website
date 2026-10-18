@@ -15,7 +15,7 @@ const chainLabels = {
     heading: '證據鏈', intro: '依來源逐段核對。缺少的材料會明示，不以公告或修補連結代替產品測試。',
     kinds: '可核對的證據類型', observation: '產品觀測', attribution: '人工／上游歸屬', comparison: '修補對照', unknown: '未驗證範圍',
     origin: '候選與擬稿節錄', dossier: '歷史識別節錄', record: '人工整理紀錄（非原始輸出）',
-    upstream: '上游公開歸屬', advisory: '上游公告', regression: '版本回歸摘要', differential: '差分附件',
+    upstream: '上游公開歸屬', advisory: '上游公告', regression: '版本回歸摘要', differential: '差分附件', httpPair: '本地 HTTP 雙版本證據包',
     noComparison: '未提供修補版對照', noOrigin: '未提供可核對的產品輸出',
     noOriginText: '此案沒有公開的原始產品輸出附件。下方人工整理紀錄只彙整公開欄位，不能證明產品曾產生這筆候選。',
     recordNote: '另有人工整理紀錄；它不是產品觀測附件。',
@@ -23,6 +23,7 @@ const chainLabels = {
     historicalText: '僅是已知漏洞的歷史聚焦識別；不代表原創發現或利用成功。',
     regressionText: '公開摘要列出相同政策測試在脆弱版與官方修補版的結果。',
     differentialText: '差分附件列出脆弱效果、修補效果與正常控制。',
+    httpPairText: '另行完成已知 CVE 的本地固定輸入 HTTP 四格對照；歷史產品候選仍是 needs_human。',
     noComparisonText: '此紀錄只有上游修補來源，未執行脆弱版與修補版的差分或回歸測試。',
     limitsLink: '閱讀限制', fixLink: '查看上游修補',
   },
@@ -30,7 +31,7 @@ const chainLabels = {
     heading: 'Evidence chain', intro: 'Follow each source in order. Missing material is explicit; an advisory or fix link does not stand in for a product test.',
     kinds: 'Available evidence types', observation: 'Product observation', attribution: 'Human / upstream attribution', comparison: 'Fixed-version comparison', unknown: 'Unverified scope',
     origin: 'Candidate and draft excerpt', dossier: 'Historical finding excerpt', record: 'Curated record (not original output)',
-    upstream: 'Public upstream credit', advisory: 'Upstream advisory', regression: 'Version regression summary', differential: 'Differential artifact',
+    upstream: 'Public upstream credit', advisory: 'Upstream advisory', regression: 'Version regression summary', differential: 'Differential artifact', httpPair: 'Local paired HTTP evidence ZIP',
     noComparison: 'No fixed-version comparison', noOrigin: 'No verifiable product output provided',
     noOriginText: 'This case has no public original product-output artifact. The curated record below summarizes public fields; it does not prove the product generated this candidate.',
     recordNote: 'A curated record is available separately; it is not a product-observation artifact.',
@@ -38,6 +39,7 @@ const chainLabels = {
     historicalText: 'This is a historical focused detection of a known issue, not an original discovery or successful exploit.',
     regressionText: 'The public summary compares the same policy checks on the vulnerable and official fixed versions.',
     differentialText: 'The differential artifact lists vulnerable, fixed, and normal-control effects.',
+    httpPairText: 'A separate local fixed-input HTTP four-cell pair tests this known CVE; the historical product candidate remains needs_human.',
     noComparisonText: 'An upstream fix source exists, but this record has no vulnerable-versus-fixed differential or regression run.',
     limitsLink: 'Read limits', fixLink: 'View upstream fix',
   },
@@ -56,6 +58,20 @@ const pairedLabels = {
     digest: 'ZIP SHA-256',
   },
 };
+const aiohttpPairedLabels = {
+  zh: {
+    title: 'aiohttp 官方雙版本本地 HTTP 證據包',
+    note: '這是與歷史聚焦識別分開的已知 CVE 固定輸入測試。官方 3.9.1 對自造 GET /../private_file 回 200 與 37-byte marker，官方 3.9.2 回 404 且無 marker；GET /public.txt 在兩版均回 200 與相同 37-byte 正常內容。Fixture 無 symlink。ZIP 含 run-08 兩版 raw HTTP、收據、來源釘選、runner 與離線 verifier。這不升級原 needs_human 判定；不證產品檢出率、任意服務遠端可達性或顯式 symlink 設定安全。離線驗證只核對封存內部一致。',
+    download: '下載 HTTP 原始證據與離線驗證 ZIP',
+    digest: 'ZIP SHA-256',
+  },
+  en: {
+    title: 'Official-version local aiohttp HTTP pair',
+    note: 'This is a separate fixed-input test of a known CVE. Official 3.9.1 returned 200 with a self-authored 37-byte marker for GET /../private_file; official 3.9.2 returned 404 without the marker. GET /public.txt returned 200 with the same 37-byte normal body on both. The fixture had no symlink. The ZIP includes run-08 raw HTTP from both versions, the receipt, source pins, runner and offline verifier. This does not upgrade the historical needs_human verdict or establish a product detection rate, arbitrary-service reachability, or safety for explicit symlink configurations. Offline verification checks archive consistency only.',
+    download: 'Download raw HTTP evidence and offline verifier (ZIP)',
+    digest: 'ZIP SHA-256',
+  },
+};
 
 function EvidenceTypes({ item, locale }) {
   const t = chainLabels[locale];
@@ -63,7 +79,7 @@ function EvidenceTypes({ item, locale }) {
     item.origin ? { label: t.origin } : item.dossier ? { label: t.dossier } : { label: t.noOrigin, missing: true },
     ...(!item.origin && !item.dossier ? [{ label: t.record }] : []),
     { label: item.upstreamCreditUrl ? t.upstream : t.advisory },
-    item.regression ? { label: t.regression } : item.reproduction ? { label: t.differential } : { label: t.noComparison, missing: true },
+    item.regression ? { label: t.regression } : item.reproduction ? { label: t.differential } : item.id === 'aiohttp-cve-2024-23334' && item.pairedBundle ? { label: t.httpPair } : { label: t.noComparison, missing: true },
   ];
   return <ul className="evidence__types" aria-label={t.kinds}>{types.map(({ label, missing }) => <li key={label} data-state={missing ? 'missing' : 'available'}>{label}</li>)}</ul>;
 }
@@ -73,13 +89,13 @@ function EvidenceLadder({ item, locale }) {
   const observation = item.origin?.artifactPath ?? item.dossier?.artifactPath;
   const observationLabel = item.origin ? t.origin : t.dossier;
   const attribution = item.upstreamCreditUrl ?? item.advisoryUrl;
-  const comparison = item.regression?.artifactPath ?? item.reproduction?.artifactUrl;
+  const comparison = item.regression?.artifactPath ?? item.reproduction?.artifactUrl ?? (item.id === 'aiohttp-cve-2024-23334' ? item.pairedBundle?.artifactPath : undefined);
   return <section className="evidence__chain" aria-labelledby="evidence-chain-heading">
     <div className="evidence__chain-head"><h2 id="evidence-chain-heading">{t.heading}</h2><p>{t.intro}</p></div>
     <ol className="evidence__chain-steps">
       <li data-state={observation ? 'available' : 'missing'}><h3>{t.observation}</h3><p>{observation ? (item.origin ? t.originText : t.historicalText) : t.noOriginText}</p>{observation && <a href={observation}>{observationLabel}<ArrowUpRight size={15} aria-hidden="true" /></a>}</li>
       <li><h3>{t.attribution}</h3><p>{item.credit[locale]}</p><ExternalLink href={attribution}>{item.upstreamCreditUrl ? t.upstream : t.advisory}</ExternalLink></li>
-      <li data-state={comparison ? 'available' : 'missing'}><h3>{t.comparison}</h3><p>{item.regression ? t.regressionText : item.reproduction ? t.differentialText : t.noComparisonText}</p>{comparison ? (item.regression ? <a href={comparison}>{t.regression}<ArrowUpRight size={15} aria-hidden="true" /></a> : <ExternalLink href={comparison}>{t.differential}</ExternalLink>) : <ExternalLink href={item.fixUrl}>{t.fixLink}</ExternalLink>}</li>
+      <li data-state={comparison ? 'available' : 'missing'}><h3>{t.comparison}</h3><p>{item.regression ? t.regressionText : item.reproduction ? t.differentialText : item.pairedBundle && item.id === 'aiohttp-cve-2024-23334' ? t.httpPairText : t.noComparisonText}</p>{comparison ? (item.regression ? <a href={comparison}>{t.regression}<ArrowUpRight size={15} aria-hidden="true" /></a> : item.reproduction ? <ExternalLink href={comparison}>{t.differential}</ExternalLink> : <a href={comparison}>{t.httpPair}<ArrowUpRight size={15} aria-hidden="true" /></a>) : <ExternalLink href={item.fixUrl}>{t.fixLink}</ExternalLink>}</li>
       <li><h3>{t.unknown}</h3><p>{item.limitations[locale]}</p><a href="#evidence-limits">{t.limitsLink}<ArrowUpRight size={15} aria-hidden="true" /></a></li>
     </ol>
     {!observation && <p className="evidence__curated-record">{t.recordNote} <a href={`/evidence/records/${item.id}.json`}>{t.record}<ArrowUpRight size={15} aria-hidden="true" /></a></p>}
@@ -90,7 +106,7 @@ function Facet({ label, name, value, values, t, onChange }) {
   return <label className="evidence__field"><span>{label}</span><select name={name} value={value} onChange={e => onChange(name,e.target.value)}><option value="">{t.all}</option>{values.map(v => <option key={v} value={v}>{t[v] || v}</option>)}</select></label>;
 }
 export default function EvidencePage({ page }) {
-  const locale = useLocale(); const t = labels[locale]; const paired = pairedLabels[locale]; const [filters, setFilters] = useState(() => readFilters());
+  const locale = useLocale(); const t = labels[locale]; const [filters, setFilters] = useState(() => readFilters());
   useEffect(() => {
     const sync = () => setFilters(readFilters(window.location.search)); sync();
     window.addEventListener('popstate',sync); return () => window.removeEventListener('popstate',sync);
@@ -101,6 +117,7 @@ export default function EvidencePage({ page }) {
     window.dispatchEvent(new Event('vettalon:filters'));
   };
   const id = page.split('/')[1]; const item = id ? cases.find(c => c.id === id) : null;
+  const paired = item?.id === 'aiohttp-cve-2024-23334' ? aiohttpPairedLabels[locale] : pairedLabels[locale];
   if (id) return <article className="evidence evidence--detail wrap">
     <a className="evidence__back" href={pagePath(locale,'evidence')}><ArrowLeft size={16} />{t.back}</a>
     {!item ? <><h1>{t.missing}</h1><p>{t.missingHelp}</p></> : <>

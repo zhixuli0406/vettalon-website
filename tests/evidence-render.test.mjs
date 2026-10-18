@@ -91,6 +91,26 @@ test('ammonia discovery detail shows product-origin artifact, five policy checks
   } finally { await server.close(); }
 });
 
+test('aiohttp keeps historical needs_human separate from the later local HTTP pair', async () => {
+  const { server, cases, render } = await renderer();
+  try {
+    const item = cases.find(value => value.id === 'aiohttp-cve-2024-23334');
+    assert.equal(item.status, 'detected');
+    assert.equal(item.detection.findingStatus, 'needs_human');
+    assert.equal(item.reproduction, undefined);
+    for (const locale of ['zh', 'en']) {
+      const html = render(locale, item.id);
+      const chain = html.match(/<section class="evidence__chain"[\s\S]*?<\/section>/)?.[0];
+      assert.ok(chain?.includes(`href="${item.pairedBundle.artifactPath}"`));
+      assert.ok(html.includes(item.pairedBundle.sha256));
+      assert.ok(html.includes(item.dossier.artifactPath));
+      assert.ok(html.includes('needs_human'));
+      assert.ok(html.includes(locale === 'zh' ? '顯式 symlink 指向靜態根外' : 'explicit symlinks pointing outside the static root'));
+      assert.ok(!html.includes(locale === 'zh' ? '原創發現</span>' : 'Original discovery</span>'));
+    }
+  } finally { await server.close(); }
+});
+
 test('list shows each real case evidence types without claiming historical comparison', async () => {
   const { server, cases, render } = await renderer();
   try {
@@ -100,8 +120,9 @@ test('list shows each real case evidence types without claiming historical compa
         assert.ok(html.includes(`aria-label="${locale === 'zh' ? '可核對的證據類型' : 'Available evidence types'}"`));
         assert.ok(html.includes(item.title[locale]));
       }
-      assert.equal((html.match(/data-state="missing"/g) || []).length, 2, 'both historical rows must disclose missing comparisons');
+      assert.equal((html.match(/data-state="missing"/g) || []).length, 1, 'PHPUnit still discloses its missing comparison');
       assert.ok(html.includes(locale === 'zh' ? '版本回歸摘要' : 'Version regression summary'));
+      assert.ok(html.includes(locale === 'zh' ? '本地 HTTP 雙版本證據包' : 'Local paired HTTP evidence ZIP'));
       assert.ok(html.includes(locale === 'zh' ? '未提供修補版對照' : 'No fixed-version comparison'));
     }
   } finally { await server.close(); }
@@ -133,9 +154,15 @@ test('four-stage chain links real case evidence and keeps missing work explicit 
       const chain = html.match(/<section class="evidence__chain"[\s\S]*?<\/section>/)?.[0];
       assert.ok(chain.includes(`href="${item.dossier.artifactPath}"`));
       assert.ok(chain.includes(`href="${item.advisoryUrl}"`));
-      assert.ok(chain.includes(`href="${item.fixUrl}"`));
-      assert.ok(chain.includes('data-state="missing"'));
-      assert.ok(chain.includes(locale === 'zh' ? '未執行脆弱版與修補版' : 'no vulnerable-versus-fixed'));
+      if (item.pairedBundle) {
+        assert.ok(chain.includes(`href="${item.pairedBundle.artifactPath}"`));
+        assert.ok(!chain.includes('data-state="missing"'));
+        assert.ok(chain.includes('needs_human'));
+      } else {
+        assert.ok(chain.includes(`href="${item.fixUrl}"`));
+        assert.ok(chain.includes('data-state="missing"'));
+        assert.ok(chain.includes(locale === 'zh' ? '未執行脆弱版與修補版' : 'no vulnerable-versus-fixed'));
+      }
       assert.ok(chain.includes(locale === 'zh' ? '不代表原創發現' : 'not an original discovery'));
     }
   } finally { await server.close(); }
@@ -164,6 +191,7 @@ test('schema-valid reported and reproduced cases without original product artifa
     reproduced.reproduction = { mode: 'differential', artifactUrl: 'https://vettalon.dudustudio.monster/evidence/test-only-artifact.json', sha256: 'b'.repeat(64), vulnerable: 'pass', fixed: 'pass', control: 'pass' };
     delete reproduced.detection;
     delete reproduced.dossier;
+    delete reproduced.pairedBundle;
     for (const item of [reported, reproduced]) validateManifest([item]);
     cases.push(reported, reproduced);
 
