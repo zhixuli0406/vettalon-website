@@ -4,18 +4,12 @@ import SectionHead from './SectionHead.jsx';
 export default function Benchmarks() {
   const { benchmarks } = useT();
   return (
-    <section className="sect" id="benchmarks">
+    <section className="sect benchmarks" id="benchmarks">
       <SectionHead tag={benchmarks.tag} lead={benchmarks.lead} />
-      <div className="grid grid--3">
-        {benchmarks.items.map((it) => (
-          <div className="card card--bar stat rv" key={it.k}>
-            <div className="stat__v">{it.v}</div>
-            <div className="stat__k">{it.k}</div>
-            <p className="stat__d">{it.d}</p>
-          </div>
-        ))}
+      <div className="benchmark-grid">
+        {benchmarks.items.map((item) => <article className="stat rv" key={item.k}><p className="stat__v">{item.v}</p><h3 className="stat__k">{item.k}</h3><p className="stat__d">{item.d}</p></article>)}
       </div>
-      <p className="section-note rv">{benchmarks.note}</p>
+      <p className="section-note benchmark-limit rv">{benchmarks.note}</p>
     </section>
   );
 }
