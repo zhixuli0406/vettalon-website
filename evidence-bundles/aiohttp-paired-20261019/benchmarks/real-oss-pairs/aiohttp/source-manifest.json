@@ -1,0 +1,101 @@
+{
+  "advisory": "https://github.com/aio-libs/aiohttp/security/advisories/GHSA-5h86-8mv2-jq9f",
+  "image": "python@sha256:a6e34c598f2467ed0e9a8d349809fcd8b5c603269512df273a0bb1784edc11b1",
+  "image_arch": "arm64",
+  "image_id_arm64": "sha256:ce9a404c2c0138e747a43e6ea022d2f7e670ed868df35d627a663ba7fb940ea9",
+  "packages": {
+    "aiohttp-3.9.1": {
+      "bytes": 7482118,
+      "filename": "aiohttp-3.9.1.tar.gz",
+      "sha256": "8fc49a87ac269d4529da45871e2ffb6874e87779c3d0e2ccd813c0899221239d",
+      "url": "https://files.pythonhosted.org/packages/54/07/9467d3f8dae29b14f423b414d9e67512a76743c5bb7686fb05fe10c9cc3e/aiohttp-3.9.1.tar.gz",
+      "version": "3.9.1"
+    },
+    "aiohttp-3.9.2": {
+      "bytes": 7499640,
+      "filename": "aiohttp-3.9.2.tar.gz",
+      "sha256": "b0ad0a5e86ce73f5368a164c10ada10504bf91869c05ab75d982c6048217fbf7",
+      "url": "https://files.pythonhosted.org/packages/07/2f/27c9ae85646de72784529a86d2a98c7cfae4ff9eab0004becf47da66c7ec/aiohttp-3.9.2.tar.gz",
+      "version": "3.9.2"
+    },
+    "aiosignal": {
+      "bytes": 7490,
+      "filename": "aiosignal-1.4.0-py3-none-any.whl",
+      "sha256": "053243f8b92b990551949e63930a839ff0cf0b0ebbe0597b0f3fb19e1a0fe82e",
+      "url": "https://files.pythonhosted.org/packages/fb/76/641ae371508676492379f16e2fa48f4e2c11741bd63c48be4b12a6b09cba/aiosignal-1.4.0-py3-none-any.whl",
+      "version": "1.4.0"
+    },
+    "attrs": {
+      "bytes": 67548,
+      "filename": "attrs-26.1.0-py3-none-any.whl",
+      "sha256": "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309",
+      "url": "https://files.pythonhosted.org/packages/64/b4/17d4b0b2a2dc85a6df63d1157e028ed19f90d4cd97c36717afef2bc2f395/attrs-26.1.0-py3-none-any.whl",
+      "version": "26.1.0"
+    },
+    "frozenlist": {
+      "bytes": 243014,
+      "filename": "frozenlist-1.8.0-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl",
+      "sha256": "96f423a119f4777a4a056b66ce11527366a8bb92f54e541ade21f2374433f6d4",
+      "url": "https://files.pythonhosted.org/packages/8f/83/f61505a05109ef3293dfb1ff594d13d64a2324ac3482be2cedc2be818256/frozenlist-1.8.0-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl",
+      "version": "1.8.0"
+    },
+    "idna": {
+      "bytes": 69583,
+      "filename": "idna-3.20-py3-none-any.whl",
+      "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+      "url": "https://files.pythonhosted.org/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl",
+      "version": "3.20"
+    },
+    "multidict": {
+      "bytes": 334196,
+      "filename": "multidict-6.9.1-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl",
+      "sha256": "35fc236507fb1b3138f0af5ecd5f94ed752d4d6d826248eae425f86204013eea",
+      "url": "https://files.pythonhosted.org/packages/90/bf/599ae2e6222822d88a247a8a7ae82fe6fd25d5700757b79603d5edafe6a0/multidict-6.9.1-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl",
+      "version": "6.9.1"
+    },
+    "propcache": {
+      "bytes": 251768,
+      "filename": "propcache-0.5.4-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl",
+      "sha256": "60a64cbccaa11b7760ce705a14ada17ba459e7ca9f23ba587eb013821032d7ef",
+      "url": "https://files.pythonhosted.org/packages/83/4f/48865bd02a16ee5236bc46166b2946f37b93e07b0eae355dac0be0b216ca/propcache-0.5.4-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl",
+      "version": "0.5.4"
+    },
+    "typing_extensions": {
+      "bytes": 44614,
+      "filename": "typing_extensions-4.15.0-py3-none-any.whl",
+      "sha256": "f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548",
+      "url": "https://files.pythonhosted.org/packages/18/67/36e9267722cc04a6b9f15c7f3441c2363321a3ea07da7ae0c0707beb2a9c/typing_extensions-4.15.0-py3-none-any.whl",
+      "version": "4.15.0"
+    },
+    "yarl": {
+      "bytes": 115358,
+      "filename": "yarl-1.25.1-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl",
+      "sha256": "4d781294bb815ecb5ea57ff6bbf8038e0a31a95fdf3e1788f66e0dc100d64b58",
+      "url": "https://files.pythonhosted.org/packages/1e/b3/058dbfb1857b484c9cf9cc135659f50b85ce66e03c99e44dc2f7b6161f55/yarl-1.25.1-cp312-cp312-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl",
+      "version": "1.25.1"
+    }
+  },
+  "python_version": "3.12",
+  "repository": "https://github.com/aio-libs/aiohttp",
+  "schema": "aiohttp-paired-source-v1",
+  "upstream_files": {
+    "3.9.1": {
+      "LICENSE.txt": "9f80d0db7d755a941db4572172c270ecbd8f082ba215ddd095985942ed94a9eb",
+      "aiohttp/web_urldispatcher.py": "b1b94157270084a5453d16ed7db646b2b3e2bcb2f4b2c91e1372d13cad8379e7"
+    },
+    "3.9.2": {
+      "LICENSE.txt": "9f80d0db7d755a941db4572172c270ecbd8f082ba215ddd095985942ed94a9eb",
+      "aiohttp/web_urldispatcher.py": "62278dc165da29d20be963152c46af3e04ad0d833bd5b004e50f5e9a06d7f134"
+    }
+  },
+  "upstream_tags": {
+    "fixed": {
+      "commit": "24a6d64966d99182e95f5d3a29541ef2fec397ad",
+      "tag": "v3.9.2"
+    },
+    "weak": {
+      "commit": "6333c026422c6b0fe57ff63cde4104e2d00f47f4",
+      "tag": "v3.9.1"
+    }
+  }
+}

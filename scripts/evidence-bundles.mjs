@@ -3,7 +3,10 @@ import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { validateManifest } from '../src/evidence/schema.js';
 
-const bundleName = 'ammonia-paired-20261019.zip';
+const bundleNames = new Map([
+  ['ammonia-ghsa-x43w-36pp-96g3', 'ammonia-paired-20261019.zip'],
+  ['aiohttp-cve-2024-23334', 'aiohttp-paired-20261019.zip'],
+]);
 const maxBytes = 512 * 1024;
 function reject() { throw new Error('Public evidence bundle rejected.'); }
 
@@ -11,6 +14,8 @@ function reject() { throw new Error('Public evidence bundle rejected.'); }
 export async function validatePairedBundleFiles(cases, publicRoot) {
   validateManifest(cases);
   for (const item of cases.filter(value => value.pairedBundle)) {
+    const bundleName = bundleNames.get(item.id);
+    if (!bundleName) reject();
     let directory = publicRoot;
     for (const segment of ['evidence', 'bundles']) {
       directory = join(directory, segment);

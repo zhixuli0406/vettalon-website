@@ -20,7 +20,10 @@ async function scan(directory, root = directory) {
     if (info.isDirectory()) { await scan(path, root); continue; }
     if (!info.isFile()) throw new Error('unsafe entry');
     const extension = extname(entry).toLowerCase();
-    if (extension === '.zip' && relative(root, path).split(sep).join('/') === 'evidence/bundles/ammonia-paired-20261019.zip') continue;
+    if (extension === '.zip' && [
+      'evidence/bundles/ammonia-paired-20261019.zip',
+      'evidence/bundles/aiohttp-paired-20261019.zip',
+    ].includes(relative(root, path).split(sep).join('/'))) continue;
     if (binaryExtensions.has(extension)) continue;
     if (!textExtensions.has(extension)) throw new Error('unknown asset type');
     // Invalid UTF-8 is unsafe in a publication text asset. Do not log its bytes.

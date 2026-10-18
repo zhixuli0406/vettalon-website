@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "python3 -B -I -S scripts/package-ammonia-evidence.py --check && python3 -B -I -S scripts/validate-ammonia-bundle.py && node scripts/validate-evidence.mjs && vite build && vite build --ssr src/entry-server.jsx --outDir dist-server && node scripts/prerender.mjs && node scripts/publication-text-gate.mjs",
+    "build": "python3 -B -I -S scripts/package-ammonia-evidence.py --check && python3 -B -I -S scripts/validate-ammonia-bundle.py && python3 -B -I -S scripts/package-aiohttp-evidence.py --check && python3 -B -I -S scripts/validate-aiohttp-bundle.py && node scripts/validate-evidence.mjs && vite build && vite build --ssr src/entry-server.jsx --outDir dist-server && node scripts/prerender.mjs && node scripts/publication-text-gate.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "og": "node scripts/make-og.mjs",

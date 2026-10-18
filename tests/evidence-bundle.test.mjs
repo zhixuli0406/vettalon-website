@@ -59,7 +59,7 @@ test('publication gate rejects missing, changed and symlinked bundle', async () 
 
 test('standalone build command runs package inventory and extracted verifier before Vite', async () => {
   const packageFile = JSON.parse(await readFile('package.json', 'utf8'));
-  assert.match(packageFile.scripts.build, /^python3 -B -I -S scripts\/package-ammonia-evidence\.py --check && python3 -B -I -S scripts\/validate-ammonia-bundle\.py && node scripts\/validate-evidence\.mjs && vite build/);
+  assert.match(packageFile.scripts.build, /^python3 -B -I -S scripts\/package-ammonia-evidence\.py --check && python3 -B -I -S scripts\/validate-ammonia-bundle\.py && python3 -B -I -S scripts\/package-aiohttp-evidence\.py --check && python3 -B -I -S scripts\/validate-aiohttp-bundle\.py && node scripts\/validate-evidence\.mjs && vite build/);
   const gate = spawnSync('python3', ['-B','-I','-S','scripts/validate-ammonia-bundle.py'], { encoding: 'utf8', timeout: 15000 });
   assert.equal(gate.status, 0, gate.stderr);
 });

@@ -54,6 +54,7 @@ test('public homepage and machine-readable index show cases without unsupported 
   const englishDetail = await readFile('dist/en/evidence/ammonia-ghsa-x43w-36pp-96g3/index.html', 'utf8');
   assert.match(englishDetail, /href="\/evidence\/bundles\/ammonia-paired-20261019\.zip"/);
   assert.deepEqual(await readFile('dist/evidence/bundles/ammonia-paired-20261019.zip'), await readFile('public/evidence/bundles/ammonia-paired-20261019.zip'));
+  assert.deepEqual(await readFile('dist/evidence/bundles/aiohttp-paired-20261019.zip'), await readFile('public/evidence/bundles/aiohttp-paired-20261019.zip'));
   assert.doesNotMatch(detail, /ammonia · null|CVE: null|CWE: null/);
 });
 
@@ -75,7 +76,7 @@ test('actual prerender safely encodes HTML-sensitive JSON-LD values', async () =
     await mkdir(join(temp,'dist/evidence/regressions'),{recursive:true});
     await mkdir(join(temp,'dist/evidence/origins'),{recursive:true});
     await mkdir(join(temp,'dist/evidence/bundles'),{recursive:true});
-    await copyFile('public/evidence/bundles/ammonia-paired-20261019.zip',join(temp,'dist/evidence/bundles/ammonia-paired-20261019.zip'));
+    for (const item of cases.filter(value => value.pairedBundle)) await copyFile('public' + item.pairedBundle.artifactPath,join(temp,'dist',item.pairedBundle.artifactPath.slice(1)));
     for (const item of cases) if (item.dossier) await copyFile('public' + item.dossier.artifactPath,join(temp,'dist',item.dossier.artifactPath.slice(1)));
     for (const item of cases) if (item.regression) await copyFile('public' + item.regression.artifactPath,join(temp,'dist',item.regression.artifactPath.slice(1)));
     for (const item of cases) if (item.origin) await copyFile('public' + item.origin.artifactPath,join(temp,'dist',item.origin.artifactPath.slice(1)));

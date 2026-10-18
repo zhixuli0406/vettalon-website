@@ -103,7 +103,7 @@ export const content = {
       collection: { public: '筆公開案例', historical: '筆歷史聚焦識別', discovery: '筆原創發現', reported: '筆上游通報', boundary: '這只是已公開案例的集合，不是召回率或誤報率的分母。' },
       items: [
         { k: 'Ammonia：通報與回歸', d: 'Vettalon 找到 needs_human 候選並產生揭露草稿；公開的是人工逐欄選編的節錄，完整原始 hunt.json／JSONL 未公開。Louis Li 人工重現與送件，上游修補後的固定五項政策測試於 4.2.3 有兩項失敗，官方 4.2.4 全數通過。', id: 'ammonia-ghsa-x43w-36pp-96g3', link: '查看候選、回歸與限制' },
-        { k: 'aiohttp：歷史聚焦識別', d: '已公開漏洞的候選位置與覆核摘要；最終仍為 needs_human，未執行 HTTP 利用。', id: 'aiohttp-cve-2024-23334', link: '查看識別紀錄' },
+        { k: 'aiohttp：歷史識別與版本對照', d: '已公開漏洞的聚焦候選仍是 needs_human；後續另以官方 3.9.1／3.9.2 完成固定輸入的本地 HTTP 四格對照，保留原始讀回與離線驗證器。', id: 'aiohttp-cve-2024-23334', link: '查看候選、版本對照與限制' },
         { k: 'PHPUnit：歷史聚焦識別', d: '已公開漏洞的候選位置；覆核模型呼叫失敗，沒有有效判定，執行狀態為 incomplete。', id: 'phpunit-cve-2017-9841', link: '查看識別紀錄' },
       ],
       note: '逐案材料不能推估整庫召回、誤報率或自動發現能力。',
@@ -249,7 +249,7 @@ export const content = {
       collection: { public: { one: 'public case', other: 'public cases' }, historical: { one: 'historical focused detection', other: 'historical focused detections' }, discovery: { one: 'original discovery', other: 'original discoveries' }, reported: { one: 'upstream report', other: 'upstream reports' }, boundary: 'This is the published case collection, not a denominator for recall or false-positive rates.' },
       items: [
         { k: 'Ammonia: report and regression', d: 'Vettalon surfaced a needs_human candidate and generated a disclosure draft. The public attachment is a human-curated excerpt; the full original hunt.json and JSONL are not public. Louis Li reproduced and submitted the report. In five scoped policy checks after the upstream fix, two failed on 4.2.3 and all passed on official 4.2.4.', id: 'ammonia-ghsa-x43w-36pp-96g3', link: 'Review candidate, regression and limits' },
-        { k: 'aiohttp: historical focused detection', d: 'A candidate location and review summary for a known vulnerability; final status remained needs_human, without an HTTP exploit.', id: 'aiohttp-cve-2024-23334', link: 'Review detection record' },
+        { k: 'aiohttp: historical detection and local pair', d: 'The known-issue focused candidate remains needs_human. A separate fixed-input local HTTP four-cell pair on official 3.9.1/3.9.2 preserves raw readback and an offline verifier.', id: 'aiohttp-cve-2024-23334', link: 'Review candidate, pair and limits' },
         { k: 'PHPUnit: historical focused detection', d: 'A candidate location for a known vulnerability; the reviewer model failed, leaving no valid verdict and an incomplete run.', id: 'phpunit-cve-2017-9841', link: 'Review detection record' },
       ],
       note: 'These case records do not establish whole-repository recall, false-positive rates, or automated discovery.',
