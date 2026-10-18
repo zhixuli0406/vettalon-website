@@ -30,6 +30,18 @@ test('rejects unsafe links, duplicate IDs and local artifact paths', () => {
   assert.throws(() => validateManifest([cases[0], cases[0]]));
 });
 
+test('paired raw bundle is confined to the Ammonia fixed public path and digest', () => {
+  const index = cases.findIndex(item => item.id === 'ammonia-ghsa-x43w-36pp-96g3');
+  for (const mutate of [
+    value => value.pairedBundle.artifactPath = '/evidence/bundles/other.zip',
+    value => value.pairedBundle.sha256 = 'bad',
+    value => value.pairedBundle.testedAt = '2099-01-01',
+    value => value.pairedBundle.privateSource = 'SECRET_SENTINEL',
+  ]) {
+    const data = clone(); mutate(data[index]); assert.throws(() => validateManifest(data));
+  }
+});
+
 test('filters combine type, ecosystem, status and case insensitive search', () => {
   assert.equal(selectCases(cases, { q: 'CVE-2024-23334', type: 'historical', ecosystem: 'PyPI', status: 'detected' }).length, 1);
   assert.equal(selectCases(cases, { q: 'NO_SUCH_CASE' }).length, 0);

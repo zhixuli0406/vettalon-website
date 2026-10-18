@@ -1,5 +1,5 @@
 import { lstat, readdir, readFile } from 'node:fs/promises';
-import { extname, join } from 'node:path';
+import { extname, join, relative, sep } from 'node:path';
 
 const textExtensions = new Set([
   '.css', '.csv', '.html', '.js', '.json', '.map', '.md', '.mjs',
@@ -12,14 +12,15 @@ const privateContent = [
   /github\.com\/zhixuli0406\/vettalon-pro(?:[\/#?]|$)/i,
 ];
 
-async function scan(directory) {
+async function scan(directory, root = directory) {
   for (const entry of await readdir(directory)) {
     const path = join(directory, entry);
     const info = await lstat(path);
     if (info.isSymbolicLink()) throw new Error('unsafe entry');
-    if (info.isDirectory()) { await scan(path); continue; }
+    if (info.isDirectory()) { await scan(path, root); continue; }
     if (!info.isFile()) throw new Error('unsafe entry');
     const extension = extname(entry).toLowerCase();
+    if (extension === '.zip' && relative(root, path).split(sep).join('/') === 'evidence/bundles/ammonia-paired-20261019.zip') continue;
     if (binaryExtensions.has(extension)) continue;
     if (!textExtensions.has(extension)) throw new Error('unknown asset type');
     // Invalid UTF-8 is unsafe in a publication text asset. Do not log its bytes.

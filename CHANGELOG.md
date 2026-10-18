@@ -17,6 +17,7 @@
 
 ### Added
 
+- Ammonia 案例頁增加官方 4.2.3／4.2.4 雙版本固定政策回歸的原始證據 ZIP，含兩版 raw 輸出、收據、來源指紋、harness 與離線 verifier；建置核對 ZIP SHA-256，測試解壓執行 verifier。
 - aiohttp／PHPUnit 的原報告逐案節錄、Ammonia 的產品輸出節錄及五項政策測試摘要；建置前後核對公開附件 schema、固定路徑及 SHA-256，提供雙語逐案頁和可下載 JSON。
 - 正式輸出文字檢查，阻止私有路徑、私有報告倉庫或測試 sentinel 進入部署包。
 

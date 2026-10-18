@@ -30,10 +30,11 @@
  * @property {{artifactPath: string, sha256: string, runStatus: 'complete'|'incomplete', incompleteReason: string|null}} [dossier]
  * @property {string} [rustsecId]
  * @property {{artifactPath: string, sha256: string, testedAt: string, checks: Array<{id: string, role: string, vulnerable: string, fixed: string}>}} [regression]
+ * @property {{artifactPath: string, sha256: string, testedAt: string}} [pairedBundle]
  * @property {{artifactPath: string, sha256: string, observedAt: string, findingStatus: 'needs_human'}} [origin]
  */
 const required = ['id','publication','reviewedAt','type','status','package','ecosystem','title','summary','cve','ghsa','cwe','sourceVersion','fixedVersion','sourceUrl','advisoryUrl','fixUrl','publishedAt','boundary','method','limitations','credit','timeline'];
-const optional = ['detection','reproduction','upstreamCreditUrl','dossier','rustsecId','regression','origin'];
+const optional = ['detection','reproduction','upstreamCreditUrl','dossier','rustsecId','regression','origin','pairedBundle'];
 const ecosystems = ['PyPI','npm','Packagist','Cargo','Go','RubyGems'];
 const regressionChecks = [
   ['http_lower', 'denied-policy', 'ok'], ['http_upper', 'denied-policy', 'failed'],
@@ -110,6 +111,13 @@ export function validateManifest(input) {
         ensure(check.id === id && check.role === role && check.vulnerable === vulnerable && check.fixed === 'ok');
       }
     } else ensure(!item.rustsecId && item.type !== 'reported');
+    if (item.pairedBundle) {
+      ensure(item.id === 'ammonia-ghsa-x43w-36pp-96g3' && Boolean(item.regression));
+      exactKeys(item.pairedBundle, ['artifactPath','sha256','testedAt']);
+      ensure(item.pairedBundle.artifactPath === '/evidence/bundles/ammonia-paired-20261019.zip');
+      digest(item.pairedBundle.sha256); date(item.pairedBundle.testedAt);
+      ensure(item.pairedBundle.testedAt <= item.reviewedAt && item.pairedBundle.testedAt >= item.regression.testedAt);
+    }
     if (item.detection) {
       exactKeys(item.detection,['mode','findingStatus','file','line','observedAt','sha256','claim','reviewerConclusion','finder','reviewer','toolVersion','modelVersions','scope','rerun']);
       ensure(item.detection.mode === 'focused' && ['candidate','needs_human','refuted'].includes(item.detection.findingStatus));

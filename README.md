@@ -6,7 +6,7 @@ Vettalon 的雙語產品官網，介紹多模型對抗式資安稽核、實測�
 
 ## 本機使用
 
-需要 Node.js 22 或更新版本及 npm。
+需要 Node.js 22 或更新版本、npm 與 Python 3.11 或更新版本。正式建置的 Ammonia 證據包閘門會使用 Python。
 
 ```sh
 npm ci
@@ -43,7 +43,7 @@ npm run preview -- --host 127.0.0.1 --port 18873 --strictPort
 
 `/evidence/` 與 `/en/evidence/` 提供搜尋、類型／狀態／生態篩選及逐案頁。目前有兩筆歷史聚焦識別（aiohttp、PHPUnit）及一筆 Vettalon 原創 Ammonia 發現。Vettalon 獵捕先提出 `needs_human` 候選並產生揭露草稿；依當事人陳述，Louis Li 人工重現與送件；Ammonia 維護者在修補 PR #267 公開確認 email 收件，RustSec 列 Louis Li 為通報者。上游修復後再做限定回歸。前兩筆歷史識別的狀態仍是 `needs_human` 與 `candidate`；Ammonia 的 4.2.3 五項政策測試為 3 過 2 失敗，官方 4.2.4 為 5 過 0 失敗。候選輸出不等於產品自動確認漏洞；未公開的 Bollard 案件不在本站。
 
-公開資料只從 `src/evidence/cases.js` 的人工審查清單生成。每筆 JSON 記錄、歷史報告節錄、Ammonia 產品輸出節錄及測試摘要皆可下載；附件在建置前後核對固定路徑、SHA-256 與 schema。完整原始 `hunt.json`、歷史 JSONL 原行、寄件收據和函式庫測試完整 log 未公開，第三方無法只靠節錄雜湊獨立重建原始執行。Ammonia 回歸附件提供兩版各六行測試輸出節錄。維護與驗收規則見 [公開案例維護指南](docs/evidence-wall.md)。
+公開資料只從 `src/evidence/cases.js` 的人工審查清單生成。每筆 JSON 記錄、歷史報告節錄、Ammonia 產品輸出節錄及舊版測試摘要皆可下載；附件核對固定路徑、SHA-256 與 schema。另有新封存的 Ammonia 4.2.3／4.2.4 雙版本實跑 ZIP，含兩版 raw stdout／stderr、收據、harness、manifest 與離線 verifier，下載後可自行解壓核對。完整原始 `hunt.json`、歷史 JSONL 原行、寄件收據及此輪 pinned vendor payload 未公開；離線 verifier 只證封存內部一致。維護與驗收規則見 [公開案例維護指南](docs/evidence-wall.md)。
 
 ## 稜鏡與效能邊界
 

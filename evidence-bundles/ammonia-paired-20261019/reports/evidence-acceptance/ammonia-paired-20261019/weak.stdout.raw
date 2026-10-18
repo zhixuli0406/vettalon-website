@@ -1,0 +1,32 @@
+
+running 5 tests
+test test::policy_css_url_http_lower_denied ... ok
+test test::policy_css_url_http_upper_denied ... FAILED
+test test::policy_css_url_https_control ... ok
+test test::policy_css_url_relative_lower_denied ... ok
+test test::policy_css_url_relative_mixed_denied ... FAILED
+
+failures:
+
+---- test::policy_css_url_http_upper_denied stdout ----
+
+thread 'test::policy_css_url_http_upper_denied' (1328) panicked at src/vettalon_policy_tests.rs:32:5:
+assertion `left == right` failed
+  left: "<div style=\"background-image:URL(&quot;http://example.invalid/fixture.png&quot;)\">http-upper</div>"
+ right: "<div style=\"\">http-upper</div>"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- test::policy_css_url_relative_mixed_denied stdout ----
+
+thread 'test::policy_css_url_relative_mixed_denied' (1331) panicked at src/vettalon_policy_tests.rs:43:5:
+assertion `left == right` failed
+  left: "<div style=\"background-image:Url(&quot;/fixture.png&quot;)\">relative-mixed</div>"
+ right: "<div style=\"\">relative-mixed</div>"
+
+
+failures:
+    test::policy_css_url_http_upper_denied
+    test::policy_css_url_relative_mixed_denied
+
+test result: FAILED. 3 passed; 2 failed; 0 ignored; 0 measured; 108 filtered out; finished in 0.00s
+

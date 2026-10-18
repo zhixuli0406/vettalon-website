@@ -1,0 +1,242 @@
+{
+  "case": "quoted-css-url-caller-policy",
+  "error": null,
+  "finished_utc": "2026-10-18T16:21:33.155979+00:00",
+  "harness_sha256": "27e7cd2a0b85cbae848eaa3bf2fa579271dde53a186d4a937f9b780f55740188",
+  "image": "rust@sha256:6ae102bdbf528294bc79ad6e1fae682f6f7c2a6e6621506ba959f9685b308a55",
+  "image_local": {
+    "architecture": "arm64",
+    "id": "sha256:a2955218ca3a4f3aee5c71026cd1ea3c315a1ed005d64e22792c2ce3c868f33e"
+  },
+  "manifest_sha256": "b48315f606ed8daef4cf171fd1f0f94db043e4f313313c2abd6c6f82e0a902e6",
+  "registry_lock_records": 124,
+  "registry_lock_records_equal": true,
+  "runner_sha256": "0273dd3d17a9e95d1e4368db7b058238fd714ab897b5e6d1bc07377d4fa3354a",
+  "runs": {
+    "fixed": {
+      "capture_problem": null,
+      "cleanup_absent": true,
+      "cleanup_remove_exit_code": 0,
+      "container_name": "vettalon-ammonia-pair-a9dd4048dfcf40c5",
+      "container_policy": {
+        "cap_drop": [
+          "ALL"
+        ],
+        "exit_code": 0,
+        "image_id": "sha256:a2955218ca3a4f3aee5c71026cd1ea3c315a1ed005d64e22792c2ce3c868f33e",
+        "memory_bytes": 1610612736,
+        "memory_swap_bytes": 1610612736,
+        "mounts": [
+          {
+            "destination": "/source",
+            "rw": false,
+            "type": "bind"
+          },
+          {
+            "destination": "/vendor",
+            "rw": false,
+            "type": "bind"
+          }
+        ],
+        "name": "/vettalon-ammonia-pair-a9dd4048dfcf40c5",
+        "nano_cpus": 1000000000,
+        "network": "none",
+        "oom_killed": false,
+        "pids_limit": 128,
+        "privileged": false,
+        "root_readonly": true,
+        "security_opt": [
+          "no-new-privileges=true"
+        ],
+        "tmpfs": {
+          "/work": "rw,exec,nosuid,nodev,size=1536m,uid=65532,gid=65532,mode=0700"
+        },
+        "user": "65532:65532"
+      },
+      "exit_code": 0,
+      "inspect_verified": true,
+      "observation": {
+        "fail": 0,
+        "methods": {
+          "http_lower_denied": "ok",
+          "http_upper_denied": "ok",
+          "https_control": "ok",
+          "relative_lower_denied": "ok",
+          "relative_mixed_denied": "ok"
+        },
+        "normal_control": "ok",
+        "pass": 5
+      },
+      "source_after": {
+        "Cargo.lock": "1645ad6d3850e94178d4e438a907eff8b16f38d5884093cf5e7c16a3cc4ae894",
+        "Cargo.toml": "13c0f965722d9c7bfbaf3f17cd9113b607bde0270e8f333d08f36521da655cce",
+        "src/lib.rs": "40da64d3af6c2e0f904a461a01b2f8c1f287fa533aad9b98b4393a8728c9d76f",
+        "src/style.rs": "cd81a1517ff3cb8be2b97ea4947d249ab267bd93153f7b04d1cfa3fef0ccfa17",
+        "src/vettalon_policy_tests.rs": "27e7cd2a0b85cbae848eaa3bf2fa579271dde53a186d4a937f9b780f55740188"
+      },
+      "source_before": {
+        "Cargo.lock": "1645ad6d3850e94178d4e438a907eff8b16f38d5884093cf5e7c16a3cc4ae894",
+        "Cargo.toml": "13c0f965722d9c7bfbaf3f17cd9113b607bde0270e8f333d08f36521da655cce",
+        "src/lib.rs": "40da64d3af6c2e0f904a461a01b2f8c1f287fa533aad9b98b4393a8728c9d76f",
+        "src/style.rs": "cd81a1517ff3cb8be2b97ea4947d249ab267bd93153f7b04d1cfa3fef0ccfa17",
+        "src/vettalon_policy_tests.rs": "27e7cd2a0b85cbae848eaa3bf2fa579271dde53a186d4a937f9b780f55740188"
+      },
+      "source_unchanged": true,
+      "stderr_bytes": 3066,
+      "stderr_sha256": "0e00194de496937ddfd7e92ffa2dfff0e6f710d3c801054bd34a7a642de69d5d",
+      "stdout_bytes": 374,
+      "stdout_sha256": "e52ce3efa311ba297b60ac994dd2b4a75fbfb9cc687fa52eeaced215691057b6",
+      "timeout_seconds": 500
+    },
+    "weak": {
+      "capture_problem": null,
+      "cleanup_absent": true,
+      "cleanup_remove_exit_code": 0,
+      "container_name": "vettalon-ammonia-pair-67bd7e7ed2ef4617",
+      "container_policy": {
+        "cap_drop": [
+          "ALL"
+        ],
+        "exit_code": 101,
+        "image_id": "sha256:a2955218ca3a4f3aee5c71026cd1ea3c315a1ed005d64e22792c2ce3c868f33e",
+        "memory_bytes": 1610612736,
+        "memory_swap_bytes": 1610612736,
+        "mounts": [
+          {
+            "destination": "/source",
+            "rw": false,
+            "type": "bind"
+          },
+          {
+            "destination": "/vendor",
+            "rw": false,
+            "type": "bind"
+          }
+        ],
+        "name": "/vettalon-ammonia-pair-67bd7e7ed2ef4617",
+        "nano_cpus": 1000000000,
+        "network": "none",
+        "oom_killed": false,
+        "pids_limit": 128,
+        "privileged": false,
+        "root_readonly": true,
+        "security_opt": [
+          "no-new-privileges=true"
+        ],
+        "tmpfs": {
+          "/work": "rw,exec,nosuid,nodev,size=1536m,uid=65532,gid=65532,mode=0700"
+        },
+        "user": "65532:65532"
+      },
+      "exit_code": 101,
+      "inspect_verified": true,
+      "observation": {
+        "fail": 2,
+        "methods": {
+          "http_lower_denied": "ok",
+          "http_upper_denied": "FAILED",
+          "https_control": "ok",
+          "relative_lower_denied": "ok",
+          "relative_mixed_denied": "FAILED"
+        },
+        "normal_control": "ok",
+        "pass": 3
+      },
+      "source_after": {
+        "Cargo.lock": "b87e19eff4ace589459ea665f1ccdf42daef6e37dc1871eb7ce70a224519e329",
+        "Cargo.toml": "887477b06ad16b29500572e4eb27aefba61d5bae5638b295f75f134381999eda",
+        "src/lib.rs": "2913b40b75f3ed2273c9458aee8063d3fc0483fdad4ba375ab1e01c11b76cc2b",
+        "src/style.rs": "24b880f34e34c11d07aa47ca12cd7ad8af50479dc39d5bfb9a8878053e706ea5",
+        "src/vettalon_policy_tests.rs": "27e7cd2a0b85cbae848eaa3bf2fa579271dde53a186d4a937f9b780f55740188"
+      },
+      "source_before": {
+        "Cargo.lock": "b87e19eff4ace589459ea665f1ccdf42daef6e37dc1871eb7ce70a224519e329",
+        "Cargo.toml": "887477b06ad16b29500572e4eb27aefba61d5bae5638b295f75f134381999eda",
+        "src/lib.rs": "2913b40b75f3ed2273c9458aee8063d3fc0483fdad4ba375ab1e01c11b76cc2b",
+        "src/style.rs": "24b880f34e34c11d07aa47ca12cd7ad8af50479dc39d5bfb9a8878053e706ea5",
+        "src/vettalon_policy_tests.rs": "27e7cd2a0b85cbae848eaa3bf2fa579271dde53a186d4a937f9b780f55740188"
+      },
+      "source_unchanged": true,
+      "stderr_bytes": 3108,
+      "stderr_sha256": "f4e209cb758b78fb6b69326cdf8c5c42ffefa3635784f3ec5b80a49e3b0b1f38",
+      "stdout_bytes": 1265,
+      "stdout_sha256": "cbb7f178de427563bfea22263801254c5a28c3f36ef15015197bc9b8433dfab2",
+      "timeout_seconds": 500
+    }
+  },
+  "schema": "ammonia-paired-receipt-v1",
+  "scope": "library policy only; no browser, app, or Vettalon detection",
+  "sources": {
+    "fixed": {
+      "archive_sha256": "1f45dfa685e1ec33b1bf1a3b93b8047cbdbef41b6040deebbe6bea7720a45574",
+      "git_commit": "72d56debf499cc88adc253c326d05a3563b8ee06",
+      "inserted_tests_sha256": "27e7cd2a0b85cbae848eaa3bf2fa579271dde53a186d4a937f9b780f55740188",
+      "members": {
+        ".cargo_vcs_info.json": "c966ee6ebb4a03ed32b87dab33e492f763b95970ec157106bb615dd9b8d5f2a0",
+        ".github/ISSUE_TEMPLATE/bug-report.md": "2cfe90b01bf6a2e98d7ed4c839fa20c465181953a834c214021f09a8d35cebd5",
+        ".github/ISSUE_TEMPLATE/feature_request.md": "d6fa344450d42e0874deba108300799d7492e153219bc7e7a803a1ec815c18cf",
+        ".github/dependabot.yml": "5d3d37981f119993bd8778c33979d4dd3697cbb75e17dbc25c4c6bc547bda944",
+        ".github/workflows/main.yml": "085dc845b33775fcd72dab1d2c4e9fe7018029ae184a8232c673c755417d6a1d",
+        ".gitignore": "f9b1ca6ae27d1c18215265024629a8960c31379f206d9ed20f64e0b2dcf79805",
+        "CHANGELOG.md": "036ab6c1459296413dcd875c7d32f8908af7e781baf2261cdff0d9a9858b5fbf",
+        "CODE_OF_CONDUCT.md": "58043b883e086791ab688b87fd7f692ae0176727fb02957781ba2f25a5a199a1",
+        "Cargo.lock": "1645ad6d3850e94178d4e438a907eff8b16f38d5884093cf5e7c16a3cc4ae894",
+        "Cargo.lock.msrv": "0bf64cb071d047721ca4fe93643c979b45043fb13e16180f8323c828bb097d18",
+        "Cargo.toml": "13c0f965722d9c7bfbaf3f17cd9113b607bde0270e8f333d08f36521da655cce",
+        "Cargo.toml.orig": "55243efa0e26e205d41ba448fb97ca6cb3911792e54725de9d98bad9b70f0225",
+        "LICENSE-APACHE": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+        "LICENSE-MIT": "6ced8d1b9d96dae227bb1b31876359bbd089d8c18378e4e42eb45b84f29e9ae9",
+        "README.md": "913c13337c7cbb6b801521c662a1cf91a3a29421e133a03a3977c95a0db72b14",
+        "RELEASE_PROCESS.md": "e0545dceae5e058797a1bf66ded5543944d66da02cd0f1b109a9d0caaafcb7ff",
+        "SECURITY.md": "3c2eb9c06e6ead06d858c727219a67da7b0458b2ffa872b32c9c6c363de42f8d",
+        "bors.toml": "542f9ce988ed5553cae00ab93d36cba550de73762e54b7865263cb24ba42af2e",
+        "examples/ammonia-cat.rs": "236d8071b580b7861aab87a4a9d90fe46e605c54499d14ccae30423cf145c44a",
+        "src/lib.rs": "9b8276beb8f58aa791b6b7a6d8f04d41bdd2067bc981b4d3c2c1b0c203be4d23",
+        "src/rcdom.rs": "8e0d2f52583df030f5c9f3745bb0aa8aa89c2cf1c5b122dd2c3f2d1a3d24231f",
+        "src/style.rs": "cd81a1517ff3cb8be2b97ea4947d249ab267bd93153f7b04d1cfa3fef0ccfa17",
+        "tests/version-numbers.rs": "7711bb7de089a67efd19134f7af6a86c3422ed314da6ddbcab71c987eac2ad8b"
+      },
+      "original_lib_sha256": "9b8276beb8f58aa791b6b7a6d8f04d41bdd2067bc981b4d3c2c1b0c203be4d23",
+      "test_lib_sha256": "40da64d3af6c2e0f904a461a01b2f8c1f287fa533aad9b98b4393a8728c9d76f"
+    },
+    "weak": {
+      "archive_sha256": "061e83b03c2681c18a6787d956e355c74e0b98ba7ba3d69b0822ade1e6f1d716",
+      "git_commit": "61fd35d351a91762eb622503bc6b2964319907b3",
+      "inserted_tests_sha256": "27e7cd2a0b85cbae848eaa3bf2fa579271dde53a186d4a937f9b780f55740188",
+      "members": {
+        ".cargo_vcs_info.json": "36cb5380fbe86f059b23d12f6e057c74f9750f26c32ef7f3f66a900e0e57192a",
+        ".github/ISSUE_TEMPLATE/bug-report.md": "2cfe90b01bf6a2e98d7ed4c839fa20c465181953a834c214021f09a8d35cebd5",
+        ".github/ISSUE_TEMPLATE/feature_request.md": "d6fa344450d42e0874deba108300799d7492e153219bc7e7a803a1ec815c18cf",
+        ".github/dependabot.yml": "5d3d37981f119993bd8778c33979d4dd3697cbb75e17dbc25c4c6bc547bda944",
+        ".github/workflows/main.yml": "085dc845b33775fcd72dab1d2c4e9fe7018029ae184a8232c673c755417d6a1d",
+        ".gitignore": "f9b1ca6ae27d1c18215265024629a8960c31379f206d9ed20f64e0b2dcf79805",
+        "CHANGELOG.md": "d49c9699deed4dd75e41766000290fd6f0813f4be90feff33110d6add34fed9d",
+        "CODE_OF_CONDUCT.md": "58043b883e086791ab688b87fd7f692ae0176727fb02957781ba2f25a5a199a1",
+        "Cargo.lock": "b87e19eff4ace589459ea665f1ccdf42daef6e37dc1871eb7ce70a224519e329",
+        "Cargo.lock.msrv": "0bf64cb071d047721ca4fe93643c979b45043fb13e16180f8323c828bb097d18",
+        "Cargo.toml": "887477b06ad16b29500572e4eb27aefba61d5bae5638b295f75f134381999eda",
+        "Cargo.toml.orig": "7ac65831526fcfb564df52c9cf3a38968bfc4444702d4a5e19d6474815fd1213",
+        "LICENSE-APACHE": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08",
+        "LICENSE-MIT": "6ced8d1b9d96dae227bb1b31876359bbd089d8c18378e4e42eb45b84f29e9ae9",
+        "README.md": "913c13337c7cbb6b801521c662a1cf91a3a29421e133a03a3977c95a0db72b14",
+        "RELEASE_PROCESS.md": "e0545dceae5e058797a1bf66ded5543944d66da02cd0f1b109a9d0caaafcb7ff",
+        "SECURITY.md": "3c2eb9c06e6ead06d858c727219a67da7b0458b2ffa872b32c9c6c363de42f8d",
+        "bors.toml": "542f9ce988ed5553cae00ab93d36cba550de73762e54b7865263cb24ba42af2e",
+        "examples/ammonia-cat.rs": "236d8071b580b7861aab87a4a9d90fe46e605c54499d14ccae30423cf145c44a",
+        "src/lib.rs": "228b874da4cc12edf506822bfa253fb22ad774636f932d70f4fcff6365cfa9b6",
+        "src/rcdom.rs": "8e0d2f52583df030f5c9f3745bb0aa8aa89c2cf1c5b122dd2c3f2d1a3d24231f",
+        "src/style.rs": "24b880f34e34c11d07aa47ca12cd7ad8af50479dc39d5bfb9a8878053e706ea5",
+        "tests/version-numbers.rs": "7711bb7de089a67efd19134f7af6a86c3422ed314da6ddbcab71c987eac2ad8b"
+      },
+      "original_lib_sha256": "228b874da4cc12edf506822bfa253fb22ad774636f932d70f4fcff6365cfa9b6",
+      "test_lib_sha256": "2913b40b75f3ed2273c9458aee8063d3fc0483fdad4ba375ab1e01c11b76cc2b"
+    }
+  },
+  "started_utc": "2026-10-18T16:20:47.634398+00:00",
+  "status": "pass_paired_property",
+  "vendor": {
+    "files": 3984,
+    "mode": "pinned_prior_payload",
+    "sha256": "fa783a14a20c9c07823186a98a1dfd9e2d445f31cf409a6aa1c35c76c72b3434"
+  }
+}

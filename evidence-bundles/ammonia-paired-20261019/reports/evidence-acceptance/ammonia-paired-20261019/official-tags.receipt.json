@@ -1,0 +1,21 @@
+{
+  "annotated_tags": false,
+  "checked_utc": "2026-10-18T16:21:01.406522+00:00",
+  "command": [
+    "git",
+    "ls-remote",
+    "https://github.com/rust-ammonia/ammonia.git",
+    "refs/tags/v4.2.3",
+    "refs/tags/v4.2.3^{}",
+    "refs/tags/v4.2.4",
+    "refs/tags/v4.2.4^{}"
+  ],
+  "exit_code": 0,
+  "schema": "ammonia-official-tags-readback-v1",
+  "stdout_bytes": 116,
+  "stdout_sha256": "3c72cf6acaf6c316e95fff1ee6cd0baf3a3359bfc2ec1b6f801a2e1e9afaae33",
+  "tag_refs": {
+    "refs/tags/v4.2.3": "61fd35d351a91762eb622503bc6b2964319907b3",
+    "refs/tags/v4.2.4": "72d56debf499cc88adc253c326d05a3563b8ee06"
+  }
+}

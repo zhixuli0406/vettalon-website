@@ -1,0 +1,24 @@
+{
+  "schema": "ammonia-paired-source-v1",
+  "repository": "https://github.com/rust-ammonia/ammonia.git",
+  "advisory": "https://github.com/rust-ammonia/ammonia/security/advisories/GHSA-x43w-36pp-96g3",
+  "rustsec": "https://rustsec.org/advisories/RUSTSEC-2026-0373.html",
+  "patch": "https://github.com/rust-ammonia/ammonia/pull/267",
+  "license": "MIT OR Apache-2.0",
+  "image": "rust@sha256:6ae102bdbf528294bc79ad6e1fae682f6f7c2a6e6621506ba959f9685b308a55",
+  "verified_local_vendor_payload_sha256": "fa783a14a20c9c07823186a98a1dfd9e2d445f31cf409a6aa1c35c76c72b3434",
+  "versions": {
+    "weak": {
+      "version": "4.2.3",
+      "tag": "v4.2.3",
+      "tag_commit": "61fd35d351a91762eb622503bc6b2964319907b3",
+      "crate_sha256": "061e83b03c2681c18a6787d956e355c74e0b98ba7ba3d69b0822ade1e6f1d716"
+    },
+    "fixed": {
+      "version": "4.2.4",
+      "tag": "v4.2.4",
+      "tag_commit": "72d56debf499cc88adc253c326d05a3563b8ee06",
+      "crate_sha256": "1f45dfa685e1ec33b1bf1a3b93b8047cbdbef41b6040deebbe6bea7720a45574"
+    }
+  }
+}
