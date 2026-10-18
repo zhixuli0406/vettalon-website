@@ -34,7 +34,7 @@ export const content = {
     meta: {
       title: 'Vettalon｜多模型對抗式資安稽核器',
       description:
-        'Vettalon 用多個 AI 模型互相對抗覆核，找出程式碼漏洞並壓低誤報。預設掃描只在本機跑開源掃描器；深掃時，程式碼片段只送到你自己設定的模型。開源核心加上企業版報告、供應鏈獵捕與桌面 App。',
+        'Vettalon 用多個 AI 模型交叉覆核程式碼風險，保留候選與反證供人工判斷。掃描由本機編排；深掃會將選取的程式碼與上下文送到你設定的模型。免費核心提供供應鏈獵捕，Pro 提供企業報告與桌面 App。',
       keywords:
         'Vettalon, 程式碼安全稽核, SAST, 多模型, AI 資安, 供應鏈安全, 漏洞掃描, Dudu Technology Ltd., 嘟嘟數位科技有限公司',
     },
@@ -42,7 +42,7 @@ export const content = {
       links: [
         { href: '#product', label: '功能' },
         { href: '#how', label: '怎麼運作' },
-        { href: '#benchmarks', label: '基準數字' },
+        { href: '#benchmarks', label: '案例證據' },
         { href: '#editions', label: '價格' },
         { href: '#faq', label: '常見問題' },
       ],
@@ -55,7 +55,7 @@ export const content = {
       h1a: '讓多個 AI 模型',
       h1em: '互相拆台',
       h1b: '，把真漏洞挑出來',
-      lead: 'Vettalon 不靠單一模型的自我判斷。它讓不同家族的模型分頭找洞、再交叉覆核彼此的發現，壓下誤報，留下值得人看的候選。預設掃描只在你的機器上跑；深掃時程式碼片段送到你自己設定的模型，不經我們手。',
+      lead: 'Vettalon 不靠單一模型的自我判斷。不同家族的模型分頭找洞、交叉覆核，留下值得人工確認的候選與理由。掃描由你的機器編排；深掃時，選取的程式碼與上下文會送到你設定的模型。',
       terminalCaption: '範例輸出，取自 GitHub README（fixtures/demo-app，deep 模式）。',
       ctaPrimary: '看 GitHub 原始碼',
       ctaSecondary: '快速開始',
@@ -68,17 +68,17 @@ export const content = {
       cards: [
         {
           name: '多模型對抗覆核',
-          desc: '一個模型找洞，另一個不同家族的模型試著駁倒它。跨家族的覆核才有降誤報效果，單一模型的自我確認不算數。',
+          desc: '一個模型找洞，另一個不同家族的模型試著駁倒它。覆核理由會留下來，最後仍需人工判定。',
           points: ['跨家族 finder／verifier 分工', '每個候選都記錄覆核投票', '誤報在報告裡看得到被誰、用什麼理由駁回'],
         },
         {
           name: '程式碼去向由你決定',
-          desc: '檢測在你的電腦上跑。AI 審查時，程式碼片段只送到你自己設定的模型（你的 CLI 帳號或 API 金鑰，本機 Ollama 則完全不出機器）。Vettalon 不經手、不轉售。',
-          points: ['預設零網路', '模型後端你自己挑', '報告與 SARIF 寫出前自動遮蔽秘密'],
+          desc: '掃描在本機編排。AI 審查會把選取的程式碼與上下文交給你設定的模型；雲端 API／CLI 會接收這些內容。只有工具、模型與規則資料都已備妥，才可安排離線流程。',
+          points: ['依模式確認資料去向', '模型後端你自己挑', '報告與 SARIF 寫出前自動遮蔽秘密'],
         },
         {
           name: '供應鏈獵捕',
-          desc: '給企業稽核相依的 OSS 套件原始碼，找尚未登錄成 CVE 的新漏洞，驗證後替企業向上游負責任揭露。私有碼不出境，只送相依的 name@version。',
+          desc: '稽核 OSS 相依套件原始碼，留下需要驗證的候選。獵捕會下載公開套件並向 OSV 查詢 name@version；AI 審查另依模型設定送出套件程式碼。揭露由人決定。',
           points: ['Cargo／npm／pip／Go lockfile', 'OSV 分「已知／可能新」', '只產揭露草稿，永不自動送出'],
         },
       ],
@@ -95,14 +95,14 @@ export const content = {
       ],
     },
     benchmarks: {
-      tag: '基準數字',
-      lead: '以下數字來自可重現的基準測試，照實寫，連限制也一併列出。',
+      tag: '案例證據',
+      lead: '從公開公告、測試結果與限制，逐案核對我們做了什麼。',
       items: [
-        { v: '9/9', k: '聚焦召回', d: '脆弱檔在掃描範圍內時，9 個真實 CVE 全部識別出正確檔案、行號與漏洞類別。' },
-        { v: '0', k: 'OWASP 誤報', d: 'OWASP Benchmark 160 案：91% 召回、0 誤報（上界 ≤ 3.8%）。跨家族覆核把 7B 本機模型的誤報率 57%→0%。' },
-        { v: '8/9', k: 'Jev 排序 hit@40', d: '選配的 metadata-only 排序把深掃命中從啟發式的 6/9 提到 8/9，只送 metadata，不送程式碼。' },
+        { v: 'GHSA-x43w-36pp-96g3', k: 'Ammonia：通報與回歸', d: 'Louis Li 通報。固定五項政策測試於 4.2.3 有兩項失敗，官方 4.2.4 全數通過；尚未綁定原始 Vettalon finding。', id: 'ammonia-ghsa-x43w-36pp-96g3', link: '查看回歸結果與限制' },
+        { v: 'CVE-2024-23334', k: 'aiohttp：歷史聚焦識別', d: '已公開漏洞的候選位置與覆核摘要；最終仍為 needs_human，未執行 HTTP 利用。', id: 'aiohttp-cve-2024-23334', link: '查看識別紀錄' },
+        { v: 'CVE-2017-9841', k: 'PHPUnit：歷史聚焦識別', d: '已公開漏洞的候選位置；覆核模型呼叫失敗，沒有有效判定，執行狀態為 incomplete。', id: 'phpunit-cve-2017-9841', link: '查看識別紀錄' },
       ],
-      note: '整庫召回 5/9（脆弱檔是超大檔、落在頁數上限外時會漏）；我們把限制也寫清楚。',
+      note: '一筆人工通報的政策回歸與兩筆歷史聚焦識別，不能推估整庫召回、誤報率或自動發現能力。',
     },
     editions: {
       tag: '版本與價格',
@@ -123,8 +123,8 @@ export const content = {
           type: '個人',
           price: P.proPrice,
           priceNote: `一次買斷，含 ${P.updateMonths} 個月更新。之後續訂更新 ${P.proRenewal}／年，不續也能永久使用。`,
-          desc: '桌面 App 與本機 dashboard、對齊台灣資安檢測報告慣例的企業報告（PDF／Word／HTML）、供應鏈獵捕與上游揭露草稿。讀同一份掃描 JSON，核心不依賴 Pro。',
-          points: ['桌面 App＋本機 dashboard', '企業報告 PDF／Word／HTML', '供應鏈獵捕＋揭露草稿', `單人授權，最多 ${P.proDevices} 台裝置`],
+          desc: '桌面 App 與本機 dashboard、對齊台灣資安檢測報告慣例的企業報告（PDF／Word／HTML）。讀同一份掃描 JSON；供應鏈獵捕與揭露草稿已含在免費 CLI。',
+          points: ['桌面 App＋本機 dashboard', '企業報告 PDF／Word／HTML', '整合核心掃描工作流程', `單人授權，最多 ${P.proDevices} 台裝置`],
           cta: '購買 Pro',
           href: BUY_PRO,
         },
@@ -145,11 +145,11 @@ export const content = {
     faq: {
       tag: '常見問題',
       items: [
-        { q: '程式碼會被送到哪裡？', a: '檢測在你的機器上執行。AI 審查時程式碼片段只送到你自己設定的模型（你的 CLI 帳號或 API 金鑰）；用本機 Ollama 則完全不出機器。Vettalon 不經手、不留存、不轉售。' },
-        { q: '為什麼要多個模型？', a: '單一模型對自己的判斷沒有抵抗力。讓不同家族的模型互相覆核，才壓得下誤報。OWASP Benchmark 上，跨家族覆核把 7B 本機模型的誤報率從 57% 降到 0%。' },
+        { q: '程式碼會被送到哪裡？', a: '掃描由你的機器編排。深掃會把選取的程式碼與上下文送到你設定的模型；使用雲端 API／CLI 時，請先確認供應商的資料政策。本機模型只在你備妥所有工具與規則資料時，才可安排離線流程。' },
+        { q: '為什麼要多個模型？', a: '不同家族模型可用不同角度挑戰候選，留下可供人工判斷的理由。實際偵測成效仍須用有公開輸入、對照與逐案結果的測試衡量。' },
         { q: '選配的 Jev 排序會外洩程式碼嗎？', a: '不會。Jev 只排序模組審查順序，送出的只有 metadata（路徑、大小、git 熱點數），送出前逐檔比對原始碼 fail-closed。預設關閉，要明確開啟才連網。' },
-        { q: '供應鏈獵捕會送出我的私有碼嗎？', a: '不會。獵捕只連套件登錄處與 OSV，送出的只有相依的 name@version。審查的是相依套件的公開原始碼，你的私有碼不出境。揭露一律只產草稿，由人決定送不送。' },
-        { q: '開源版和企業版差在哪？', a: '開源核心是完整的命令列稽核器，CI 需要的都有。企業版加上桌面 App、本機 dashboard、企業報告排版與供應鏈獵捕，讀的是同一份掃描 JSON。' },
+        { q: '供應鏈獵捕會送出我的私有碼嗎？', a: '獵捕處理公開相依套件，會連套件登錄處並向 OSV 查詢 name@version；AI 審查可能把選取的套件原始碼送到你設定的模型。它不會自動送出漏洞通報，揭露草稿由人決定。' },
+        { q: '開源版和企業版差在哪？', a: '開源核心提供命令列掃描、供應鏈獵捕、揭露草稿與 SARIF。企業版加上桌面 App、本機 dashboard 與企業報告排版，讀的是同一份掃描 JSON。' },
         { q: 'Pro 的授權驗證會連網嗎？', a: '只有啟用時，以及之後每 30 天一次。送出的是授權金鑰、一組裝置 ID（本機識別碼的雜湊值，無法還原）和版本號，不含程式碼或報告；其餘時間可以完全離線使用。開源核心 vettalon 不做授權檢查。' },
         { q: '買了不合用可以退款嗎？', a: `可以。Pro 與 Team 首次購買和每次續訂，付款後 ${P.refundDays} 天內來信就能全額退款，不用說明原因。` },
       ],
@@ -159,14 +159,14 @@ export const content = {
       lead: '',
       options: [
         { t: '自助試用', d: '從 GitHub 取得開源核心，在你的 repo 上跑一次深掃。', cta: '看 GitHub', href: GITHUB },
-        { t: '企業版', d: '企業版（桌面 App、企業報告、供應鏈獵捕）與商業授權由 Dudu Technology Ltd. 直接提供。', cta: '聯絡 Dudu Technology Ltd.', href: CONTACT },
+        { t: '企業版', d: '企業版（桌面 App、企業報告）與商業授權由 Dudu Technology Ltd. 直接提供；供應鏈獵捕已含在免費 CLI。', cta: '聯絡 Dudu Technology Ltd.', href: CONTACT },
         { t: '原廠回饋', d: '找到 bug 或有功能需求，直接到 GitHub 開 issue。', cta: '回報問題', href: GITHUB + '/issues' },
       ],
     },
     footer: {
       tagline: '多模型對抗式資安稽核。由 Dudu Technology Ltd. 開發。',
       groups: [
-        { title: '產品', links: [{ t: 'GitHub 原始碼', href: GITHUB }, { t: '價格', href: pagePath('zh') + '#editions' }, { t: '下載桌面 App', href: DOWNLOADS }, { t: '企業版', href: CONTACT }] },
+        { title: '產品', links: [{ t: 'GitHub 原始碼', href: GITHUB }, { t: '證據牆', href: pagePath('zh', 'evidence') }, { t: '價格', href: pagePath('zh') + '#editions' }, { t: '下載桌面 App', href: DOWNLOADS }, { t: '企業版', href: CONTACT }] },
         { title: '原廠', links: [{ t: 'Dudu Technology Ltd.', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
         { title: '聯絡', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
         { title: '法律', links: [{ t: '服務條款', href: pagePath('zh', 'terms') }, { t: '隱私權政策', href: pagePath('zh', 'privacy') }, { t: '退款政策', href: pagePath('zh', 'refund') }] },
@@ -179,7 +179,7 @@ export const content = {
     meta: {
       title: 'Vettalon | Multi-model adversarial security auditor',
       description:
-        'Vettalon has multiple AI models cross-check each other to surface real code vulnerabilities and cut false positives. The default scan runs open-source scanners locally; deep mode sends code snippets only to the models you configure. Open-source core plus an enterprise edition with reports, supply-chain hunting and a desktop app.',
+        'Vettalon uses different AI model families to challenge code-risk candidates and preserve reasons for human review. Scans are orchestrated locally; deep review sends selected code and context to the models you configure. The free core includes supply-chain hunting; Pro adds reports and a desktop app.',
       keywords:
         'Vettalon, code security audit, SAST, multi-model, AI security, supply chain security, vulnerability scanning, Dudu Technology Ltd.',
     },
@@ -187,7 +187,7 @@ export const content = {
       links: [
         { href: '#product', label: 'Features' },
         { href: '#how', label: 'How it works' },
-        { href: '#benchmarks', label: 'Benchmarks' },
+        { href: '#benchmarks', label: 'Case evidence' },
         { href: '#editions', label: 'Pricing' },
         { href: '#faq', label: 'FAQ' },
       ],
@@ -200,7 +200,7 @@ export const content = {
       h1a: 'Let several AI models ',
       h1em: 'argue each other down',
       h1b: ' and keep the real bugs',
-      lead: "Vettalon doesn't trust one model's own judgment. Different model families hunt for issues, then cross-check each other's findings, cutting false positives and leaving candidates worth a human's time. The default scan runs on your machine; deep mode sends code snippets only to the models you configure, never through us.",
+      lead: "Vettalon doesn't trust one model's judgment alone. Different model families hunt for issues and challenge each other's candidates, preserving reasons for human review. Scans are orchestrated on your machine; deep review sends selected code and context to the models you configure.",
       terminalCaption: 'Sample output from the GitHub README (fixtures/demo-app, deep mode). The terminal summary prints in Traditional Chinese.',
       ctaPrimary: 'View source on GitHub',
       ctaSecondary: 'Quick start',
@@ -213,17 +213,17 @@ export const content = {
       cards: [
         {
           name: 'Multi-model adversarial review',
-          desc: 'One model finds an issue; a model from a different family tries to refute it. Only cross-family review lowers false positives — a single model confirming itself does not count.',
+          desc: 'One model raises an issue; a model from a different family tries to refute it. The reasons remain visible, and a human makes the final determination.',
           points: ['Cross-family finder / verifier split', 'Every candidate records its review votes', 'The report shows which model refuted a false positive and why'],
         },
         {
           name: 'You decide where code goes',
-          desc: 'Analysis runs on your computer. During AI review, code snippets go only to the models you configure (your own CLI account or API key; a local Ollama keeps everything on-device). Vettalon never handles or resells them.',
-          points: ['Zero-network by default', 'You choose the model backend', 'Secrets are redacted before any report or SARIF is written'],
+          desc: 'Scans are orchestrated locally. AI review sends selected code and context to the models you configure; cloud APIs and CLIs receive that material. An offline flow requires tools, models, and rule data to be available locally.',
+          points: ['Check data flow for each mode', 'You choose the model backend', 'Secrets are redacted before any report or SARIF is written'],
         },
         {
           name: 'Supply-chain hunting',
-          desc: "Audit the source of your dependencies for not-yet-CVE'd vulnerabilities, then responsibly disclose upstream. Your private code stays put; only each dependency's public name@version is sent.",
+          desc: "Audit public dependency source and preserve candidates for review. Hunting downloads public packages and queries OSV with name@version; AI review may send selected package code to your configured model. Humans decide on disclosure.",
           points: ['Cargo / npm / pip / Go lockfiles', 'OSV splits known vs possibly-new', 'Drafts only — nothing is ever auto-sent'],
         },
       ],
@@ -240,14 +240,14 @@ export const content = {
       ],
     },
     benchmarks: {
-      tag: 'Benchmarks',
-      lead: 'The numbers below come from reproducible benchmarks; we report them as measured, limits included.',
+      tag: 'Case evidence',
+      lead: 'Review public advisories, test results, and limits case by case.',
       items: [
-        { v: '9/9', k: 'Focused recall', d: 'With the vulnerable file in scope, all 9 real CVEs were identified with the right file, line and vulnerability class.' },
-        { v: '0', k: 'OWASP false positives', d: 'OWASP Benchmark, 160 cases: 91% recall, 0 false positives (upper bound ≤ 3.8%). Cross-family review took a 7B local model from 57% FP to 0%.' },
-        { v: '8/9', k: 'Jev ranking hit@40', d: 'The optional metadata-only ranker lifts deep-audit recall from 6/9 to 8/9, sending metadata only, never code.' },
+        { v: 'GHSA-x43w-36pp-96g3', k: 'Ammonia: report and regression', d: 'Reported by Louis Li. Two of five fixed policy tests failed on 4.2.3; all passed on upstream 4.2.4. No original Vettalon finding is bound.', id: 'ammonia-ghsa-x43w-36pp-96g3', link: 'Review results and limits' },
+        { v: 'CVE-2024-23334', k: 'aiohttp: historical focused detection', d: 'A candidate location and review summary for a known vulnerability; final status remained needs_human, without an HTTP exploit.', id: 'aiohttp-cve-2024-23334', link: 'Review detection record' },
+        { v: 'CVE-2017-9841', k: 'PHPUnit: historical focused detection', d: 'A candidate location for a known vulnerability; the reviewer model failed, leaving no valid verdict and an incomplete run.', id: 'phpunit-cve-2017-9841', link: 'Review detection record' },
       ],
-      note: 'Whole-repo recall is 5/9 (a vulnerable file that is huge and falls past the page cap can be missed); we state the limits too.',
+      note: 'One human-reported policy regression and two historical focused detections do not establish whole-repository recall, false-positive rates, or automated discovery.',
     },
     editions: {
       tag: 'Pricing',
@@ -268,8 +268,8 @@ export const content = {
           type: 'Individual',
           price: P.proPrice,
           priceNote: `One-time purchase with ${P.updateMonths} months of updates. Renew updates for ${P.proRenewal}/year after that, or keep using your version forever.`,
-          desc: 'Desktop app and local dashboard, enterprise reports aligned with Taiwan security-assessment conventions (PDF / Word / HTML), supply-chain hunting and upstream disclosure drafts. Reads the same scan JSON; the core never depends on Pro.',
-          points: ['Desktop app + local dashboard', 'Enterprise reports: PDF / Word / HTML', 'Supply-chain hunting + disclosure drafts', `One user, up to ${P.proDevices} devices`],
+          desc: 'Desktop app and local dashboard, plus enterprise reports aligned with Taiwan security-assessment conventions (PDF / Word / HTML). Reads the same scan JSON; supply-chain hunting and disclosure drafts are already in the free CLI.',
+          points: ['Desktop app + local dashboard', 'Enterprise reports: PDF / Word / HTML', 'Integrated core scan workflow', `One user, up to ${P.proDevices} devices`],
           cta: 'Get Pro',
           href: BUY_PRO,
         },
@@ -290,11 +290,11 @@ export const content = {
     faq: {
       tag: 'FAQ',
       items: [
-        { q: 'Where does my code go?', a: 'Analysis runs on your machine. During AI review, code snippets go only to the models you configure (your CLI account or API key); with a local Ollama, nothing leaves the device at all. Vettalon never handles, stores or resells them.' },
-        { q: 'Why multiple models?', a: 'A single model has no resistance to its own judgment. Having different families cross-check is what lowers false positives. On the OWASP Benchmark, cross-family review took a 7B local model from 57% FP to 0%.' },
+        { q: 'Where does my code go?', a: 'Scans are orchestrated on your machine. Deep review sends selected code and context to the models you configure. Check the provider data policy when using a cloud API or CLI. Offline use requires all tools, models, and rule data to be available locally.' },
+        { q: 'Why multiple models?', a: 'Different model families can challenge a candidate from different angles and preserve their reasons for human review. Detection performance still needs public inputs, controls, and per-case results to measure it.' },
         { q: 'Does the optional Jev ranker leak code?', a: 'No. Jev only reorders which modules are audited first, and sends metadata only (paths, sizes, git hotspot counts), checked against the source file-by-file and failing closed before each request. It is off by default and only reaches the network when you explicitly enable it.' },
-        { q: 'Does supply-chain hunting send my private code?', a: "No. Hunting only reaches package registries and OSV, sending each dependency's name@version. It audits the dependency's public source; your private code stays put. Disclosures are always drafts a human decides to send." },
-        { q: 'Open-source vs enterprise?', a: 'The open-source core is a complete command-line auditor with everything CI needs. The enterprise edition adds a desktop app, local dashboard, enterprise report layouts and supply-chain hunting, all reading the same scan JSON.' },
+        { q: 'Does supply-chain hunting send my private code?', a: "Hunting works on public dependency packages, reaches package registries, and queries OSV with name@version. AI review may send selected package code to your configured model. It does not submit vulnerability reports automatically; a human decides what to do with each draft." },
+        { q: 'Open-source vs enterprise?', a: 'The free core provides command-line scanning, supply-chain hunting, disclosure drafts, and SARIF. Pro adds a desktop app, local dashboard, and enterprise report layouts; both read the same scan JSON.' },
         { q: 'Does the Pro license check go online?', a: 'Only when you activate, and then once every 30 days. It sends the license key, a device ID (a one-way hash of the system identifier of this computer) and the app version, never code or reports; the rest of the time Pro works fully offline. The open-source vettalon core never checks a license.' },
         { q: "Can I get a refund if it doesn't fit?", a: `Yes. Email us within ${P.refundDays} days of a first purchase or any renewal of Pro or Team for a full refund, no reason needed.` },
       ],
@@ -304,14 +304,14 @@ export const content = {
       lead: '',
       options: [
         { t: 'Self-serve', d: 'Get the open-source core from GitHub and run a deep audit on your repo.', cta: 'View on GitHub', href: GITHUB },
-        { t: 'Enterprise', d: 'The enterprise edition (desktop app, reports, supply-chain hunting) and commercial licensing come directly from Dudu Technology Ltd.', cta: 'Contact Dudu Technology Ltd.', href: CONTACT },
+        { t: 'Enterprise', d: 'The enterprise edition (desktop app and reports) and commercial licensing come directly from Dudu Technology Ltd.; supply-chain hunting is included in the free CLI.', cta: 'Contact Dudu Technology Ltd.', href: CONTACT },
         { t: 'Feedback', d: 'Found a bug or want a feature? Open an issue on GitHub.', cta: 'Report an issue', href: GITHUB + '/issues' },
       ],
     },
     footer: {
       tagline: 'Multi-model adversarial security auditing. Built by Dudu Technology Ltd.',
       groups: [
-        { title: 'Product', links: [{ t: 'Source on GitHub', href: GITHUB }, { t: 'Pricing', href: pagePath('en') + '#editions' }, { t: 'Download', href: DOWNLOADS }, { t: 'Enterprise', href: CONTACT }] },
+        { title: 'Product', links: [{ t: 'Source on GitHub', href: GITHUB }, { t: 'Evidence wall', href: pagePath('en', 'evidence') }, { t: 'Pricing', href: pagePath('en') + '#editions' }, { t: 'Download', href: DOWNLOADS }, { t: 'Enterprise', href: CONTACT }] },
         { title: 'Vendor', links: [{ t: 'Dudu Technology Ltd.', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
         { title: 'Contact', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
         { title: 'Legal', links: [{ t: 'Terms of Service', href: pagePath('en', 'terms') }, { t: 'Privacy Policy', href: pagePath('en', 'privacy') }, { t: 'Refund Policy', href: pagePath('en', 'refund') }] },

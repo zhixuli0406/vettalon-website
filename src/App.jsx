@@ -15,6 +15,7 @@ import Faq from './components/Faq.jsx';
 import Contact from './components/Contact.jsx';
 import SiteFooter from './components/SiteFooter.jsx';
 import LegalPage from './components/LegalPage.jsx';
+import EvidencePage from './components/EvidencePage.jsx';
 
 // page: '' renders the landing page; 'terms' | 'privacy' | 'refund' render a
 // legal page inside the same shell (nav + footer).
@@ -30,7 +31,9 @@ export default function App({ locale = 'zh', page = '' }) {
         </a>
         <Nav />
         <main id="main-content" tabIndex={-1}>
-          {page ? (
+          {page.startsWith('evidence') ? (
+            <EvidencePage page={page} />
+          ) : page ? (
             <LegalPage page={page} />
           ) : (
             <>
