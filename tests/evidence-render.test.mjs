@@ -78,7 +78,10 @@ test('ammonia discovery detail shows product-origin artifact, five policy checks
       assert.ok(html.includes(item.regression.sha256));
       assert.ok(html.includes(item.origin.artifactPath));
       assert.ok(html.includes(item.origin.sha256));
+      assert.ok(html.includes(item.pairedBundle.artifactPath));
+      assert.ok(html.includes(item.pairedBundle.sha256));
       assert.ok(html.includes(item.upstreamCreditUrl));
+      assert.ok(html.includes(locale === 'en' ? 'not the original Vettalon hunt' : '不是原始 Vettalon 獵捕紀錄'));
       assert.equal((html.match(/<tbody>/g) || []).length, 1);
       assert.equal((html.match(/<tr>/g) || []).length, 6);
       assert.ok(html.includes(locale === 'en' ? 'Fixed-version regression verified' : '修補版回歸驗證'));
@@ -148,6 +151,7 @@ test('schema-valid reported and reproduced cases without original product artifa
     reported.title = { zh: '只有回歸摘要的測試案例', en: 'Reported fixture with regression only' };
     reported.credit = { zh: '上游公開記錄列出通報者。', en: 'The upstream public record names the reporter.' };
     delete reported.origin;
+    delete reported.pairedBundle;
     reported.regression.artifactPath = `/evidence/regressions/${reported.id}.json`;
 
     const reproduced = structuredClone(cases.find(item => item.type === 'historical'));

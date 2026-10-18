@@ -42,6 +42,20 @@ const chainLabels = {
     limitsLink: 'Read limits', fixLink: 'View upstream fix',
   },
 };
+const pairedLabels = {
+  zh: {
+    title: '官方雙版本原始證據包',
+    note: '這是通報修補後另行執行的固定 caller-policy 屬性回歸：Ammonia 4.2.3 五項中 3 過、2 項預期失敗；官方 4.2.4 五項全過，兩版 HTTPS 正常控制均通過。ZIP 含兩版 raw stdout／stderr、收據、來源指紋、測試 harness、runner 與離線 verifier。這不是原始 Vettalon 獵捕紀錄，也不證瀏覽器 XSS 或產品自動檢出率。pinned vendor payload 未公開；離線驗證只證封存內部一致。',
+    download: '下載原始證據與離線驗證 ZIP',
+    digest: 'ZIP SHA-256',
+  },
+  en: {
+    title: 'Official-version paired raw evidence',
+    note: 'This is a separate post-fix, fixed caller-policy property regression: Ammonia 4.2.3 passed 3/5 with two expected policy failures; official 4.2.4 passed 5/5. The allowed HTTPS control passed on both. The ZIP includes both arms’ raw stdout/stderr, receipt, source pins, test harness, runner and offline verifier. It is not the original Vettalon hunt, and does not establish browser XSS or a product detection rate. The pinned vendor payload is withheld; offline verification checks archive consistency only.',
+    download: 'Download raw evidence and offline verifier (ZIP)',
+    digest: 'ZIP SHA-256',
+  },
+};
 
 function EvidenceTypes({ item, locale }) {
   const t = chainLabels[locale];
@@ -76,7 +90,7 @@ function Facet({ label, name, value, values, t, onChange }) {
   return <label className="evidence__field"><span>{label}</span><select name={name} value={value} onChange={e => onChange(name,e.target.value)}><option value="">{t.all}</option>{values.map(v => <option key={v} value={v}>{t[v] || v}</option>)}</select></label>;
 }
 export default function EvidencePage({ page }) {
-  const locale = useLocale(); const t = labels[locale]; const [filters, setFilters] = useState(() => readFilters());
+  const locale = useLocale(); const t = labels[locale]; const paired = pairedLabels[locale]; const [filters, setFilters] = useState(() => readFilters());
   useEffect(() => {
     const sync = () => setFilters(readFilters(window.location.search)); sync();
     window.addEventListener('popstate',sync); return () => window.removeEventListener('popstate',sync);
@@ -102,6 +116,7 @@ export default function EvidencePage({ page }) {
         {item.dossier && <section className="evidence__section"><h2>{t.dossier}</h2><p>{t.dossierNote}</p><a className="evidence__download" href={item.dossier.artifactPath} download><Download size={17} />{t.dossierDownload}</a><dl className="evidence__facts"><div><dt>{t.runStatus}</dt><dd>{item.dossier.runStatus}{item.dossier.incompleteReason ? ` / ${item.dossier.incompleteReason}` : ''}</dd></div></dl><details className="evidence__digest" open><summary>{t.dossierDigest}</summary><code>{item.dossier.sha256}</code></details><DossierPreview key={item.id} item={item} /></section>}
         {item.origin && <section className="evidence__section"><h2>{t.origin}</h2><p>{t.originNote}</p><dl className="evidence__facts"><div><dt>{t.originDate}</dt><dd>{item.origin.observedAt} UTC</dd></div><div><dt>{t.verdict}</dt><dd>{item.origin.findingStatus}</dd></div></dl><a className="evidence__download" href={item.origin.artifactPath} download><Download size={17} />{t.originDownload}</a><details className="evidence__digest" open><summary>{t.originDigest}</summary><code>{item.origin.sha256}</code></details></section>}
         {item.regression && <section className="evidence__section"><h2>{t.regression}</h2><p>{t.regressionNote}</p><div className="evidence__regression-scroll"><table className="evidence__regression-table"><thead><tr><th scope="col">{t.testCase}</th><th scope="col">{item.sourceVersion}</th><th scope="col">{item.fixedVersion}</th></tr></thead><tbody>{item.regression.checks.map(check => <tr key={check.id}><th scope="row">{t.checkNames[check.id]}</th><td>{check.vulnerable === 'ok' ? t.testPassed : t.testFailed}</td><td>{check.fixed === 'ok' ? t.testPassed : t.testFailed}</td></tr>)}</tbody></table></div><a className="evidence__download" href={item.regression.artifactPath} download><Download size={17} />{t.regressionDownload}</a><details className="evidence__digest" open><summary>{t.regressionDigest}</summary><code>{item.regression.sha256}</code></details></section>}
+        {item.pairedBundle && <section className="evidence__section"><h2>{paired.title}</h2><p>{paired.note}</p><a className="evidence__download" href={item.pairedBundle.artifactPath} download><Download size={17} />{paired.download}</a><details className="evidence__digest" open><summary>{paired.digest}</summary><code>{item.pairedBundle.sha256}</code></details></section>}
         {item.reproduction && <section className="evidence__section"><h2>{t.reproduction}</h2><p>{t.reproductionNote}</p><ExternalLink href={item.reproduction.artifactUrl}>{t.artifact}</ExternalLink><dl className="evidence__facts">{[[t.vulnerable,item.reproduction.vulnerable],[t.fixedControl,item.reproduction.fixed],[t.normalControl,item.reproduction.control]].map(([key,value]) => <div key={key}><dt>{key}</dt><dd>{value}</dd></div>)}</dl><details className="evidence__digest" open><summary>{t.artifactDigest}</summary><code>{item.reproduction.sha256}</code></details></section>}
         {item.upstreamCreditUrl && <section className="evidence__section"><h2>{t.upstreamCredit}</h2><ExternalLink href={item.upstreamCreditUrl}>{t.upstreamCredit}</ExternalLink></section>}
         <section className="evidence__section" id="evidence-limits"><h2>{t.limitation}</h2><p>{item.limitations[locale]}</p></section>

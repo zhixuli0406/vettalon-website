@@ -35,7 +35,7 @@ const reviewed = [
     timeline: [{ date: '2017-06-27', event: { zh: 'NVD 發布紀錄', en: 'NVD publication date' } },{ date: '2026-10-12', event: { zh: '聚焦識別測試，候選未確認', en: 'Focused detection; unconfirmed candidate' } },{ date: '2026-10-16', event: { zh: '公開來源與紀錄邊界核對', en: 'Public sources and evidence boundary reviewed' } }],
   },
   {
-    id: 'ammonia-ghsa-x43w-36pp-96g3', publication: 'public', reviewedAt: '2026-10-18', type: 'discovery', status: 'regression-verified', package: 'ammonia', ecosystem: 'Cargo',
+    id: 'ammonia-ghsa-x43w-36pp-96g3', publication: 'public', reviewedAt: '2026-10-19', type: 'discovery', status: 'regression-verified', package: 'ammonia', ecosystem: 'Cargo',
     title: { zh: 'CSS URL 大小寫處理缺口', en: 'Case-sensitive CSS URL filtering gap' },
     summary: { zh: '上游公告指出，特定 CSS 清理設定未對大寫 URL() 套用預期的網址政策，可能讓追蹤圖片通過；公告明確說明不構成 XSS。', en: 'The upstream advisory says uppercase URL() can bypass configured CSS URL filtering and permit tracking pixels in some settings; it explicitly says this is not XSS.' },
     cve: null, ghsa: 'GHSA-x43w-36pp-96g3', cwe: null, rustsecId: 'RUSTSEC-2026-0373',
@@ -46,8 +46,8 @@ const reviewed = [
     upstreamCreditUrl: 'https://rustsec.org/advisories/RUSTSEC-2026-0373.html',
     publishedAt: '2026-10-17',
     boundary: { zh: 'Vettalon 供應鏈獵捕在 2026-10-14 UTC 找出 ammonia 4.1.7 的 needs_human 候選並產生揭露草稿；人工重現及送件後，上游修復。Ammonia 維護者在修補 PR 公開確認收到 zhixuli0406 的 email，RustSec 列 Louis Li 為通報者。指定政策測試在 4.2.3 為 3／5、官方 4.2.4 為 5／5。', en: 'Vettalon supply-chain hunt surfaced a needs_human candidate in ammonia 4.1.7 and generated a disclosure draft on 2026-10-14 UTC. A human reproduced and submitted it; upstream fixed it. The maintainer publicly confirms receiving an email from zhixuli0406, and RustSec credits Louis Li as reporter. Scoped policy tests passed 3/5 on 4.2.3 and 5/5 on official 4.2.4.' },
-    method: { zh: '公開的來源節錄保留產品候選、待人工判定狀態與草稿產生紀錄。人工重現後送交上游；修補公開後，在隔離、離線環境對 4.2.3 與官方 4.2.4 執行相同五種 caller-policy 測試、七組輸入。', en: 'A curated source excerpt preserves the product candidate, its needs_human state and draft-generation record. After manual reproduction and submission, the same five caller-policy methods and seven inputs were tested on 4.2.3 and official 4.2.4 in isolated offline runs.' },
-    limitations: { zh: '原始完整 hunt.json、當時原始碼位元組、原始 email 與寄件系統收據未找回；產品節錄不能單獨證明人工送件，上游維護者的公開留言則確認 email 收件。第二輪 4.2.3 比較的外層控制器因額外指紋檢查回報失敗，後以修正的唯讀驗證器核對已保存輸出，未重跑目標。未測瀏覽器載入、應用整合、4.1.8 或全部受影響版本；GHSA 未指派 CVE／CWE。', en: 'The full original hunt.json, historical source bytes, original email and send-system receipt are unavailable. The product excerpt alone does not prove submission; the maintainer publicly confirms receiving the email. The second 4.2.3 controller failed an extra fingerprint check; a corrected read-only validator checked saved output without rerunning the target. Browser loading, application integration, 4.1.8 and the full affected range were not tested. No CVE or CWE is assigned.' },
+    method: { zh: '公開的來源節錄保留產品 needs_human 候選與揭露草稿產生紀錄。通報修補後，另以官方 4.2.3／4.2.4 crate、同一份五方法七輸入的固定 caller-policy 案例重跑；可下載兩版原始輸出、收據、來源指紋、harness 與離線 verifier。測試容器使用無網路政策。', en: 'A curated source excerpt preserves the product needs_human candidate and draft-generation record. After the upstream fix, a separate paired run used official 4.2.3/4.2.4 crates and the same five-method, seven-input caller-policy fixture. Raw output, receipt, source pins, harness and offline verifier are downloadable. The test containers used a no-network policy.' },
+    limitations: { zh: '原始完整 hunt.json、當時原始碼位元組、原始 email 與寄件系統收據未找回；產品節錄不能單獨證明人工送件，上游維護者公開確認 email 收件。舊版摘要所述的控制器錯誤屬於先前比較；新封存配對輪另行完整執行。離線 verifier 只證公開封存內部一致，無法獨立見證當時 Docker、crates.io 或未公開的 pinned vendor payload。未測瀏覽器 XSS、產品自動檢出率、應用整合、4.1.8 或全部受影響版本；GHSA 未指派 CVE／CWE。', en: 'The full hunt.json, historical source bytes, original email and send-system receipt are unavailable. The product excerpt alone does not prove submission; the maintainer publicly confirms email receipt. The earlier summary describes a controller error from a prior comparison; the new archived pair was run separately to completion. The offline verifier establishes internal archive consistency, not independent witnessing of Docker, crates.io or the withheld pinned vendor payload. Browser XSS, Vettalon detection rate, application integration, 4.1.8 and the full affected range were not tested. No CVE or CWE is assigned.' },
     credit: { zh: 'Vettalon 提出原始候選與揭露草稿。Louis Li 人工重現並送件；Ammonia 維護者在修補 PR 確認收到 email，RustSec 公開列 Louis Li 為通報者。維護者負責修補與公告。', en: 'Vettalon produced the original candidate and disclosure draft. Louis Li manually reproduced and submitted the report; the maintainer confirms receiving it by email. RustSec publicly credits Louis Li as reporter. Ammonia maintainers produced the fix and advisory.' },
     origin: { artifactPath: '/evidence/origins/ammonia-ghsa-x43w-36pp-96g3.json', sha256: '7bb0de375942bfd31ff6a2296db7fbbf4127997a6ca612b1d39d585a22c25413', observedAt: '2026-10-14', findingStatus: 'needs_human' },
     regression: {
@@ -60,11 +60,13 @@ const reviewed = [
         { id: 'relative_mixed', role: 'denied-policy', vulnerable: 'failed', fixed: 'ok' },
       ],
     },
+    pairedBundle: { artifactPath: '/evidence/bundles/ammonia-paired-20261019.zip', sha256: 'f0d08e7328cb5e66771522ac76ea5210af1324e4efae4f94ebe0d16f80954204', testedAt: '2026-10-18' },
     timeline: [
       { date: '2026-10-14', event: { zh: 'Vettalon 獵捕提出 needs_human 候選及揭露草稿（UTC；臺灣時間 10 月 15 日）', en: 'Vettalon hunt surfaced a needs_human candidate and generated a disclosure draft (UTC; October 15 in Taiwan)' } },
       { date: '2026-10-16', event: { zh: 'RustSec 記錄通報日期', en: 'Reported date in RustSec' } },
       { date: '2026-10-17', event: { zh: 'GHSA／RustSec 公告與修補版本公開', en: 'GHSA/RustSec advisories and patched releases published' } },
       { date: '2026-10-18', event: { zh: '4.2.3 與 4.2.4 固定政策案例重新測試，整理公開摘要', en: 'Fixed policy cases rerun on 4.2.3 and 4.2.4; public summary curated' } },
+      { date: '2026-10-19', event: { zh: '獨立封存官方雙版本原始輸出、收據與離線驗證器，發布可下載證據包', en: 'Archived paired official-version raw output, receipt and offline verifier as a downloadable evidence bundle' } },
     ],
   },
 ];

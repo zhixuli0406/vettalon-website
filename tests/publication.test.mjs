@@ -50,6 +50,10 @@ test('public homepage and machine-readable index show cases without unsupported 
   assert.match(english, /href="\/en\/evidence\/phpunit-cve-2017-9841\/"/);
   const detail = await readFile('dist/evidence/ammonia-ghsa-x43w-36pp-96g3/index.html', 'utf8');
   assert.match(detail, /RUSTSEC-2026-0373/);
+  assert.match(detail, /href="\/evidence\/bundles\/ammonia-paired-20261019\.zip"/);
+  const englishDetail = await readFile('dist/en/evidence/ammonia-ghsa-x43w-36pp-96g3/index.html', 'utf8');
+  assert.match(englishDetail, /href="\/evidence\/bundles\/ammonia-paired-20261019\.zip"/);
+  assert.deepEqual(await readFile('dist/evidence/bundles/ammonia-paired-20261019.zip'), await readFile('public/evidence/bundles/ammonia-paired-20261019.zip'));
   assert.doesNotMatch(detail, /ammonia · null|CVE: null|CWE: null/);
 });
 
@@ -57,7 +61,7 @@ test('actual prerender safely encodes HTML-sensitive JSON-LD values', async () =
   const temp = await mkdtemp(join(tmpdir(),'vettalon-jsonld-'));
   try {
     for (const dir of ['src','scripts','dist','dist-server']) await mkdir(join(temp,dir));
-    for (const file of ['src/i18n.js','src/legal.js','src/plan.js','scripts/prerender.mjs','scripts/evidence-artifacts.mjs']) await copyFile(file,join(temp,file));
+    for (const file of ['src/i18n.js','src/legal.js','src/plan.js','scripts/prerender.mjs','scripts/evidence-artifacts.mjs','scripts/evidence-bundles.mjs']) await copyFile(file,join(temp,file));
     try { await copyFile('scripts/json-ld.mjs',join(temp,'scripts/json-ld.mjs')); } catch (error) { if(error.code !== 'ENOENT') throw error; }
     const data=structuredClone(cases);
     const payload='</script><img src=x onerror=alert(1)> & \u2028 \u2029';
@@ -70,6 +74,8 @@ test('actual prerender safely encodes HTML-sensitive JSON-LD values', async () =
     await mkdir(join(temp,'dist/evidence/dossiers'),{recursive:true});
     await mkdir(join(temp,'dist/evidence/regressions'),{recursive:true});
     await mkdir(join(temp,'dist/evidence/origins'),{recursive:true});
+    await mkdir(join(temp,'dist/evidence/bundles'),{recursive:true});
+    await copyFile('public/evidence/bundles/ammonia-paired-20261019.zip',join(temp,'dist/evidence/bundles/ammonia-paired-20261019.zip'));
     for (const item of cases) if (item.dossier) await copyFile('public' + item.dossier.artifactPath,join(temp,'dist',item.dossier.artifactPath.slice(1)));
     for (const item of cases) if (item.regression) await copyFile('public' + item.regression.artifactPath,join(temp,'dist',item.regression.artifactPath.slice(1)));
     for (const item of cases) if (item.origin) await copyFile('public' + item.origin.artifactPath,join(temp,'dist',item.origin.artifactPath.slice(1)));

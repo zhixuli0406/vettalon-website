@@ -1,0 +1,10 @@
+
+running 5 tests
+test test::policy_css_url_http_lower_denied ... ok
+test test::policy_css_url_http_upper_denied ... ok
+test test::policy_css_url_https_control ... ok
+test test::policy_css_url_relative_lower_denied ... ok
+test test::policy_css_url_relative_mixed_denied ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 109 filtered out; finished in 0.00s
+

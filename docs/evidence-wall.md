@@ -18,6 +18,8 @@ Ammonia 的 `public/evidence/origins/` 是從 2026-10-14 UTC（臺灣 10 月 15 
 
 `public/evidence/regressions/` 放五項固定函式庫政策測試摘要：4.2.3 為 3 過 2 失敗，官方 4.2.4 為 5 過 0 失敗。HTTPS 正常控制有三種大小寫輸入，因此合計七組輸入。第二輪 4.2.3 比較的外層控制器因額外指紋檢查回報失敗；保存的原始測試輸出及來源綁定，後經修正的唯讀驗證器核對，並未重跑目標。完整原始 log 不公開；JSON 含兩版各六行測試輸出節錄。這不代表瀏覽器實際載入、完整產品掃描流程、應用整合或所有受影響版本已驗證。
 
+另有 2026-10-18 UTC 的**新封存雙版本輪**，不是前述控制器失敗輪或原始 Vettalon 獵捕。可公開的自寫材料按白名單放在 `evidence-bundles/ammonia-paired-20261019/`，由 `scripts/package-ammonia-evidence.py` 產生固定 ZIP 至 `public/evidence/bundles/ammonia-paired-20261019.zip`。ZIP 含兩版原始 stdout／stderr、收據、官方 tag 讀回、來源 manifest、相同 harness、runner、離線 verifier、測試及授權；不含上游 crate 原始碼或本機 pinned vendor payload。網站的 `pairedBundle` 欄固定路徑與 SHA-256；單跑 `npm run build` 會先對照白名單與來源、檢查 ZIP 成員路徑／類型／大小及敏感字串，再限時執行解壓後的離線 verifier，接著在建置前後檢查固定路徑與 ZIP SHA-256。重新打包後必須更新案例 manifest 中的 ZIP SHA-256。離線 verifier 僅證封存內部一致，不獨立見證當時 Docker 執行或下載回應，也不證原始獵捕、瀏覽器 XSS 或產品檢出率。
+
 ## 建置與人工驗收
 
 ```sh

@@ -33,6 +33,7 @@ test('public ammonia discovery binds archived product output, upstream credit an
   assert.equal(origin.limits.fullHuntReportRecovered, false);
   assert.equal(artifact.scope.originalLogsPublic, false);
   assert.equal(artifact.scope.productScannerUsed, false);
+  assert.equal(item.pairedBundle.testedAt, '2026-10-18');
   assert.deepEqual(artifact.checks.map(check => check.vulnerable), ['ok','failed','ok','ok','failed']);
   assert.ok(artifact.checks.every(check => check.fixed === 'ok'));
   assert.equal(artifact.arms.vulnerable.exitCode, 101);

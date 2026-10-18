@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { serializeJsonLd } from './json-ld.mjs';
 import { validateDossierFiles } from './evidence-artifacts.mjs';
+import { validatePairedBundleFiles } from './evidence-bundles.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
@@ -140,6 +141,7 @@ for (const locale of Object.keys(LOCALE_META)) {
 
 // Validate copied public artifacts and generate records only from the reviewed manifest.
 await validateDossierFiles(cases, dist);
+await validatePairedBundleFiles(cases, dist);
 await mkdir(join(dist,'evidence/records'), { recursive: true });
 for (const item of cases) await writeFile(join(dist,'evidence/records',item.id + '.json'), JSON.stringify(item,null,2) + '\n');
 await writeFile(join(dist,'evidence/records/index.json'), JSON.stringify(cases,null,2) + '\n');
