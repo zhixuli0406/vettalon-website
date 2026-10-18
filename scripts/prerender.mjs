@@ -4,6 +4,8 @@ import { readFile, writeFile, mkdir, cp } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { serializeJsonLd } from './json-ld.mjs';
+import { validateDossierFiles } from './evidence-artifacts.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
@@ -12,6 +14,7 @@ const dist = join(root, 'dist');
 const { content, LOCALE_META, SITE_URL, GITHUB, BUY_PRO, BUY_TEAM, DOWNLOADS, pagePath } = await import(join(root, 'src/i18n.js'));
 const { legal, LEGAL_PAGES, LEGAL_NAME_EN, LEGAL_NAME_ZH } = await import(join(root, 'src/legal.js'));
 const { PLAN } = await import(join(root, 'src/plan.js'));
+const { cases } = await import(join(root, 'src/evidence/cases.js'));
 const { render } = await import(join(root, 'dist-server/entry-server.js'));
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -60,17 +63,22 @@ function faqPage(locale) {
 }
 
 function jsonLd(locale, page) {
+  if (page.startsWith('evidence')) return serializeJsonLd({ '@context': 'https://schema.org', '@type': 'CollectionPage', name: metaFor(locale,page).title, url: SITE_URL + pagePath(locale,page), inLanguage: locale === 'en' ? 'en' : 'zh-Hant' });
   const lang = locale === 'en' ? 'en' : 'zh-Hant';
   const graph = page
     ? [ORG, { '@type': 'WebPage', name: legal[locale][page].title, url: SITE_URL + pagePath(locale, page), inLanguage: lang, publisher: ORG }]
     : [ORG, softwareApp(locale), faqPage(locale)];
-  return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+  return serializeJsonLd({ '@context': 'https://schema.org', '@graph': graph });
 }
 
 // Title/description per page: legal pages use their own, the landing page the site meta.
 function metaFor(locale, page) {
   const c = content[locale];
   if (!page) return { title: c.meta.title, description: c.meta.description };
+  if (page.startsWith('evidence')) {
+    const item = cases.find(c => page === 'evidence/' + c.id);
+    return { title: (item ? item.package + ' · ' + (item.cve ?? item.ghsa) + ' | ' : '') + (locale === 'en' ? 'Evidence wall | Vettalon' : '證據牆｜Vettalon'), description: item ? item.summary[locale] : (locale === 'en' ? 'Public case evidence with sources, methods, and verification limits.' : '公開逐案證據，附來源、測試方法與驗證限制。') };
+  }
   const doc = legal[locale][page];
   return { title: doc.title + (locale === 'en' ? ' | ' : '｜') + 'Vettalon', description: doc.metaDescription };
 }
@@ -109,7 +117,7 @@ function headFor(locale, page) {
 
 const template = await readFile(join(dist, 'index.html'), 'utf8');
 
-const PAGES = ['', ...LEGAL_PAGES];
+const PAGES = ['', ...LEGAL_PAGES, 'evidence', ...cases.map(c => 'evidence/' + c.id)];
 
 async function writePage(locale, page) {
   const lm = LOCALE_META[locale];
@@ -128,6 +136,12 @@ async function writePage(locale, page) {
 for (const locale of Object.keys(LOCALE_META)) {
   for (const page of PAGES) await writePage(locale, page);
 }
+
+// Validate copied public artifacts and generate records only from the reviewed manifest.
+await validateDossierFiles(cases, dist);
+await mkdir(join(dist,'evidence/records'), { recursive: true });
+for (const item of cases) await writeFile(join(dist,'evidence/records',item.id + '.json'), JSON.stringify(item,null,2) + '\n');
+await writeFile(join(dist,'evidence/records/index.json'), JSON.stringify(cases,null,2) + '\n');
 
 // ── SEO/GEO files ──────────────────────────────────────────────────────────
 const urls = PAGES.flatMap((page) =>
@@ -177,7 +191,7 @@ function llms(locale) {
     `${L('服務條款', 'Terms')}: ${SITE_URL}${pagePath(locale, 'terms')} · ` +
     `${L('隱私權政策', 'Privacy')}: ${SITE_URL}${pagePath(locale, 'privacy')} · ` +
     `${L('退款政策', 'Refunds')}: ${SITE_URL}${pagePath(locale, 'refund')}` +
-    `\n\n## ${L('基準', 'Benchmarks')}\n` +
+    `\n\n## ${L('案例證據', 'Case evidence')}\n` +
     c.benchmarks.items.map((x) => `- ${x.v} ${x.k}: ${x.d}`).join('\n') +
     `\n\n## FAQ\n` +
     c.faq.items.map((x) => `### ${x.q}\n${x.a}`).join('\n\n') +

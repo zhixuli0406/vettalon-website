@@ -223,6 +223,12 @@ main { flex: 1; }
 .stat__k { margin-top: 22px; font-size: 17px; letter-spacing: -.02em; }
 .stat__d { margin-top: 12px; max-width: 40ch; color: var(--text-muted); font-size: 13px; }
 .benchmark-limit { padding: 18px 22px; background: var(--surface-soft); border-radius: var(--radius-sm); max-width: none; font-size: 13px; }
+.benchmarks .benchmark-grid { gap: 0; }
+.benchmarks .stat { display: flex; flex-direction: column; min-width: 0; }
+.benchmarks .stat__v { color: var(--accent-text); font: 600 12px/1.5 var(--font-mono); letter-spacing: 0; overflow-wrap: anywhere; }
+.benchmarks .stat__k { margin-top: 20px; }
+.benchmarks .stat__link { margin-top: auto; padding-top: 24px; font-size: 13px; }
+.benchmarks .benchmark-limit a { color: var(--accent-text); text-underline-offset: .25em; }
 /* Pricing is a comparison where aligned columns carry meaning. */
 #editions { border-top: 1px solid var(--rule); }
 .grid { display: grid; gap: 20px; }
@@ -466,3 +472,76 @@ main { flex: 1; }
   .hero__visual { padding-top: 20px; }
   .workflow__intro { position: static; }
 }
+
+/* Public case records follow the Prism editorial grid and shared design tokens. */
+.evidence { padding-block: 64px 100px; max-width: var(--container); margin-inline: auto; padding-inline: var(--gutter); }
+.evidence h1 { font-size: clamp(36px,5vw,64px); margin-block: 16px 24px; max-width: 900px; }
+.evidence h1 > span { color: var(--accent-text); }
+.evidence__lead { max-width: 750px; color: var(--text-muted); font-size: clamp(18px,2vw,21px); margin-bottom: 32px; }
+.evidence__policy { border-block: 1px solid var(--rule); padding-block: 22px; margin-bottom: 36px; max-width: 900px; }
+.evidence__search { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--accent); padding: 12px 0; }
+.evidence__search input { min-width: 0; width: 100%; padding: 8px 0; border: 0; background: transparent; color: var(--text); font: inherit; }
+.evidence__search input::placeholder { color: var(--text-muted); opacity: 1; }
+.evidence__facets { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 20px; padding-block: 24px; }
+.evidence__field { display: grid; gap: 8px; font-size: 14px; color: var(--text-muted); }
+.evidence__field select { width: 100%; min-width: 0; border: 1px solid var(--rule); border-radius: 0; background: var(--surface); color: var(--text); font: inherit; padding: 12px 28px 12px 10px; }
+.evidence__results-bar { display: flex; justify-content: space-between; align-items: center; padding-block: 12px 20px; font-size: 14px; color: var(--text-muted); }
+.evidence button { background: transparent; color: var(--accent-text); border: 0; font: inherit; padding: 10px 0; cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.evidence__row { display: grid; grid-template-columns: 150px minmax(0,1fr) 100px; gap: 28px; border-top: 1px solid var(--rule); padding-block: 32px 36px; }
+.evidence__package { display: flex; flex-direction: column; gap: 4px; font-size: 14px; color: var(--text-muted); }
+.evidence__package strong { font-size: 20px; color: var(--text); }
+.evidence__badges { display: flex; flex-wrap: wrap; gap: 8px 16px; color: var(--accent-text); font-size: 13px; margin-bottom: 14px; }
+.evidence__badges span + span { border-left: 1px solid var(--rule); padding-left: 16px; }
+.evidence__case h2 { font-size: 25px; line-height: 1.35; margin-bottom: 12px; }
+.evidence__case h2 a { text-decoration: none; }
+.evidence__case h2 a:hover { color: var(--accent-text); text-decoration: underline; text-underline-offset: 5px; }
+.evidence__case > p { color: var(--text-muted); }
+.evidence__case .evidence__case-boundary { font-size: 14px; margin-top: 12px; }
+.evidence__case-meta { display: flex; flex-wrap: wrap; gap: 12px 24px; font-size: 13px; margin-top: 20px; }
+.evidence__view { display: flex; align-items: center; gap: 8px; align-self: start; font-size: 14px; color: var(--accent-text); white-space: nowrap; }
+.evidence__empty { border-block: 1px solid var(--rule); padding-block: 56px; }
+.evidence__empty p { margin-block: 16px; max-width: 650px; color: var(--text-muted); }
+.evidence__back { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 40px; color: var(--text-muted); font-size: 14px; }
+.evidence--detail h1 { font-size: clamp(32px,4vw,52px); }
+.evidence__detail-grid { display: grid; grid-template-columns: minmax(0,1fr) 280px; gap: 64px; }
+.evidence__section { border-top: 1px solid var(--rule); padding-top: 24px; margin-bottom: 36px; }
+.evidence__section h2 { font-size: 21px; line-height: 1.3; margin-bottom: 16px; }
+.evidence__section p { overflow-wrap: anywhere; }
+.evidence__boundary { border-top: 3px solid var(--accent); }
+.evidence__facts { margin-top: 24px; font-size: 14px; }
+.evidence__facts > div { margin-bottom: 18px; }
+.evidence__facts dt { color: var(--text-muted); margin-bottom: 4px; }
+.evidence__facts dd { margin: 0; overflow-wrap: anywhere; }
+.evidence__sources { display: grid; gap: 18px; margin-top: 24px; font-size: 14px; }
+.evidence__sources a { display: flex; align-items: center; gap: 8px; overflow-wrap: anywhere; }
+.evidence__sources svg { flex-shrink: 0; }
+.evidence__download { display: inline-flex; align-items: center; gap: 10px; color: var(--accent-text); font-size: 14px; margin-top: 20px; }
+.evidence__timeline { list-style: none; padding-left: 16px; border-left: 1px solid var(--rule); }
+.evidence__timeline li { padding-bottom: 24px; font-size: 14px; }
+.evidence__timeline time { color: var(--accent-text); font-size: 13px; }
+.evidence__timeline p { margin-top: 6px; }
+.evidence__digest { font-size: 13px; color: var(--text-muted); margin-bottom: 36px; }
+.evidence__digest summary { cursor: pointer; padding-block: 8px; }
+.evidence__digest p { margin-block: 12px; }
+.evidence__digest code { overflow-wrap: anywhere; }
+.evidence__regression-scroll { max-width: 100%; overflow-x: auto; margin-top: 20px; }
+.evidence__regression-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 430px; }
+.evidence__regression-table th, .evidence__regression-table td { border-bottom: 1px solid var(--rule); padding: 12px 16px 12px 0; text-align: left; }
+.evidence__regression-table thead th { color: var(--text-muted); font-weight: 500; }
+@media (max-width: 850px) { .evidence__row { grid-template-columns: 110px minmax(0,1fr); gap: 20px; } .evidence__view { grid-column: 2; } .evidence__detail-grid { grid-template-columns: minmax(0,1fr) 230px; gap: 32px; } .evidence__facets { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 560px) { .evidence { padding-top: 40px; } .evidence__row { grid-template-columns: minmax(0,1fr); gap: 18px; } .evidence__package { flex-direction: row; align-items: baseline; flex-wrap: wrap; gap: 12px; } .evidence__view { grid-column: 1; } .evidence__case h2 { font-size: 23px; } .evidence__detail-grid { grid-template-columns: minmax(0,1fr); gap: 12px; } .evidence__facets { gap: 16px 12px; } }
+
+.evidence h1 { text-wrap: balance; }
+.evidence__commands { overflow-x: auto; padding: 20px; background: var(--code-bg); color: var(--code-fg); border: 1px solid var(--rule); font-size: 13px; margin-top: 20px; max-width: 100%; }
+.evidence__review { margin-top: 16px; color: var(--text-muted); }
+
+/* User-triggered evidence preview; unverified bytes are never rendered. */
+.evidence__preview { margin-top: 24px; }
+.evidence__preview-button { padding: 10px 14px; border: 1px solid currentColor; border-radius: 4px; background: transparent; color: var(--accent-text); cursor: pointer; font: inherit; }
+.evidence__preview-button:disabled { opacity: .6; cursor: wait; }
+.evidence__preview-button:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; }
+.evidence__preview-original { display: inline-block; margin: 12px 0 12px 16px; }
+.evidence__preview-content { margin-top: 24px; min-width: 0; overflow-wrap: anywhere; }
+.evidence__preview-content h3 { margin-top: 24px; }
+.evidence__preview-content pre { max-width: 100%; overflow-x: auto; padding: 16px; border: 1px solid var(--rule); font-size: 13px; }
+.evidence__preview-review { white-space: pre-wrap; }
