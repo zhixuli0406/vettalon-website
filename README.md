@@ -41,9 +41,9 @@ npm run preview -- --host 127.0.0.1 --port 18873 --strictPort
 
 ## 公開證據牆
 
-`/evidence/` 與 `/en/evidence/` 提供搜尋、類型／狀態／生態篩選及逐案頁。目前有兩筆歷史聚焦識別（aiohttp、PHPUnit）及一筆由 Louis Li 向上游通報、經離線函式庫政策回歸測試的 ammonia 案例。前兩筆的識別狀態仍是 `needs_human` 與 `candidate`；ammonia 的 4.2.3 五項測試為 3 過 2 失敗，官方 4.2.4 為 5 過 0 失敗。這些不同類型的證據不互相升格；本站不宣稱產品自動發現 ammonia，也不公開未公開的 Bollard 案件。
+`/evidence/` 與 `/en/evidence/` 提供搜尋、類型／狀態／生態篩選及逐案頁。目前有兩筆歷史聚焦識別（aiohttp、PHPUnit）及一筆 Vettalon 原創 Ammonia 發現。Vettalon 獵捕先提出 `needs_human` 候選並產生揭露草稿；依當事人陳述，Louis Li 人工重現與送件；RustSec 公開列其為通報者，Ammonia 維護者修復後再做限定回歸。前兩筆歷史識別的狀態仍是 `needs_human` 與 `candidate`；Ammonia 的 4.2.3 五項政策測試為 3 過 2 失敗，官方 4.2.4 為 5 過 0 失敗。候選輸出不等於產品自動確認漏洞；未公開的 Bollard 案件不在本站。
 
-公開資料只從 `src/evidence/cases.js` 的人工審查清單生成。每筆 JSON 記錄、歷史報告節錄及 ammonia 測試摘要皆可下載，後兩類附件在建置前後核對 SHA-256 與 schema。原始掃描報告和 ammonia 完整原始 log 未公開；ammonia 附件提供六行測試輸出節錄，原報告雜湊只供持有者比對。維護與驗收規則見 [公開案例維護指南](docs/evidence-wall.md)。
+公開資料只從 `src/evidence/cases.js` 的人工審查清單生成。每筆 JSON 記錄、歷史報告節錄、Ammonia 產品輸出節錄及測試摘要皆可下載；附件在建置前後核對固定路徑、SHA-256 與 schema。完整原始 `hunt.json`、歷史 JSONL 原行、寄件收據和函式庫測試完整 log 未公開，第三方無法只靠節錄雜湊獨立重建原始執行。Ammonia 回歸附件提供兩版各六行測試輸出節錄。維護與驗收規則見 [公開案例維護指南](docs/evidence-wall.md)。
 
 ## 稜鏡與效能邊界
 
