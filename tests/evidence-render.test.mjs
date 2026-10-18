@@ -4,6 +4,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createServer } from 'vite';
 import react from '@vitejs/plugin-react';
+import { validateManifest } from '../src/evidence/schema.js';
 
 // Test-only module instances; this fixture is never written to the public manifest.
 async function renderer() {
@@ -85,6 +86,103 @@ test('ammonia discovery detail shows product-origin artifact, five policy checks
       assert.ok(!html.includes('null'));
     }
   } finally { await server.close(); }
+});
+
+test('list shows each real case evidence types without claiming historical comparison', async () => {
+  const { server, cases, render } = await renderer();
+  try {
+    for (const locale of ['zh', 'en']) {
+      const html = render(locale, '');
+      for (const item of cases) {
+        assert.ok(html.includes(`aria-label="${locale === 'zh' ? '可核對的證據類型' : 'Available evidence types'}"`));
+        assert.ok(html.includes(item.title[locale]));
+      }
+      assert.equal((html.match(/data-state="missing"/g) || []).length, 2, 'both historical rows must disclose missing comparisons');
+      assert.ok(html.includes(locale === 'zh' ? '版本回歸摘要' : 'Version regression summary'));
+      assert.ok(html.includes(locale === 'zh' ? '未提供修補版對照' : 'No fixed-version comparison'));
+    }
+  } finally { await server.close(); }
+});
+
+test('four-stage chain links real case evidence and keeps missing work explicit in both locales', async () => {
+  const { server, cases, render } = await renderer();
+  try {
+    const ammonia = cases.find(item => item.origin && item.regression);
+    for (const locale of ['zh', 'en']) {
+      const html = render(locale, ammonia.id);
+      const chain = html.match(/<section class="evidence__chain"[\s\S]*?<\/section>/)?.[0];
+      assert.ok(chain, 'chain appears before long case detail');
+      const headings = locale === 'zh' ? ['產品觀測', '人工／上游歸屬', '修補對照', '未驗證範圍'] : ['Product observation', 'Human / upstream attribution', 'Fixed-version comparison', 'Unverified scope'];
+      let previous = -1;
+      for (const heading of headings) {
+        const position = chain.indexOf(heading);
+        assert.ok(position > previous, `${heading} appears in sequence`);
+        previous = position;
+      }
+      for (const href of [ammonia.origin.artifactPath, ammonia.upstreamCreditUrl, ammonia.regression.artifactPath, '#evidence-limits']) assert.ok(chain.includes(`href="${href}"`), href);
+      assert.ok(html.includes('id="evidence-limits"'));
+      assert.ok(chain.includes('needs_human'));
+      assert.ok(chain.includes(ammonia.limitations[locale].slice(0, 24)), 'the unverified stage states the case-specific limit');
+      assert.ok(!chain.includes('data-state="missing"'));
+    }
+    for (const item of cases.filter(value => value.type === 'historical')) for (const locale of ['zh', 'en']) {
+      const html = render(locale, item.id);
+      const chain = html.match(/<section class="evidence__chain"[\s\S]*?<\/section>/)?.[0];
+      assert.ok(chain.includes(`href="${item.dossier.artifactPath}"`));
+      assert.ok(chain.includes(`href="${item.advisoryUrl}"`));
+      assert.ok(chain.includes(`href="${item.fixUrl}"`));
+      assert.ok(chain.includes('data-state="missing"'));
+      assert.ok(chain.includes(locale === 'zh' ? '未執行脆弱版與修補版' : 'no vulnerable-versus-fixed'));
+      assert.ok(chain.includes(locale === 'zh' ? '不代表原創發現' : 'not an original discovery'));
+    }
+  } finally { await server.close(); }
+});
+
+test('schema-valid reported and reproduced cases without original product artifacts fail closed in both locales', async () => {
+  const { server, cases, render } = await renderer();
+  const originalLength = cases.length;
+  try {
+    const reported = structuredClone(cases.find(item => item.origin && item.regression));
+    reported.id = 'reported-without-product-output';
+    reported.type = 'reported';
+    reported.title = { zh: '只有回歸摘要的測試案例', en: 'Reported fixture with regression only' };
+    reported.credit = { zh: '上游公開記錄列出通報者。', en: 'The upstream public record names the reporter.' };
+    delete reported.origin;
+    reported.regression.artifactPath = `/evidence/regressions/${reported.id}.json`;
+
+    const reproduced = structuredClone(cases.find(item => item.type === 'historical'));
+    reproduced.id = 'discovery-without-product-output';
+    reproduced.type = 'discovery';
+    reproduced.status = 'reproduced';
+    reproduced.title = { zh: '只有差分附件的測試案例', en: 'Discovery fixture with differential only' };
+    reproduced.credit = { zh: '歸屬以公開上游資料為準。', en: 'Attribution follows the public upstream record.' };
+    reproduced.upstreamCreditUrl = reproduced.advisoryUrl;
+    reproduced.reproduction = { mode: 'differential', artifactUrl: 'https://vettalon.dudustudio.monster/evidence/test-only-artifact.json', sha256: 'b'.repeat(64), vulnerable: 'pass', fixed: 'pass', control: 'pass' };
+    delete reproduced.detection;
+    delete reproduced.dossier;
+    for (const item of [reported, reproduced]) validateManifest([item]);
+    cases.push(reported, reproduced);
+
+    for (const locale of ['zh', 'en']) {
+      const list = render(locale, '');
+      for (const item of [reported, reproduced]) {
+        const row = [...list.matchAll(/<article class="evidence__row"[\s\S]*?<\/article>/g)].map(match => match[0]).find(value => value.includes(item.title[locale]));
+        assert.ok(row, 'fixture appears in list');
+        assert.ok(row.includes(`<li data-state="missing">${locale === 'zh' ? '未提供可核對的產品輸出' : 'No verifiable product output provided'}</li>`));
+        assert.ok(row.includes(`<li data-state="available">${locale === 'zh' ? '人工整理紀錄（非原始輸出）' : 'Curated record (not original output)'}</li>`));
+
+        const detail = render(locale, item.id);
+        const chain = detail.match(/<section class="evidence__chain"[\s\S]*?<\/section>/)?.[0];
+        assert.ok(chain);
+        const observation = chain.match(/<ol class="evidence__chain-steps"><li data-state="missing">[\s\S]*?<\/li>/)?.[0];
+        assert.ok(observation?.includes(locale === 'zh' ? '沒有公開的原始產品輸出附件' : 'no public original product-output artifact'));
+        assert.ok(!observation.includes('<a '), 'curated record is not linked as product observation');
+        assert.ok(chain.includes('class="evidence__curated-record"'));
+        assert.ok(chain.includes(`href="/evidence/records/${item.id}.json"`));
+        assert.ok(chain.includes(item.type === 'reported' ? item.regression.artifactPath : item.reproduction.artifactUrl));
+      }
+    }
+  } finally { cases.length = originalLength; await server.close(); }
 });
 
 test('SSR keeps original excerpts unverified behind a user-triggered preview button', async () => {
