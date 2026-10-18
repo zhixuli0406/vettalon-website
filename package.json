@@ -5,11 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && vite build --ssr src/entry-server.jsx --outDir dist-server && node scripts/prerender.mjs",
+    "build": "node scripts/validate-evidence.mjs && vite build && vite build --ssr src/entry-server.jsx --outDir dist-server && node scripts/prerender.mjs && node scripts/publication-text-gate.mjs",
     "lint": "eslint .",
     "preview": "vite preview",
     "og": "node scripts/make-og.mjs",
     "test": "node --test tests/*.test.mjs",
+    "test:publication": "node --test tests/publication.test.mjs",
     "check": "npm run lint && npm run build && npm test"
   },
   "dependencies": {

@@ -16,7 +16,21 @@ export default function Nav() {
   const locale = useLocale();
   const page = usePage();
   const [open, setOpen] = useState(false);
+  const [locationSuffix, setLocationSuffix] = useState('');
   const toggleRef = useRef(null);
+
+  useEffect(() => {
+    const sync = () => setLocationSuffix(window.location.search + window.location.hash);
+    sync();
+    window.addEventListener('popstate', sync);
+    window.addEventListener('hashchange', sync);
+    window.addEventListener('vettalon:filters', sync);
+    return () => {
+      window.removeEventListener('popstate', sync);
+      window.removeEventListener('hashchange', sync);
+      window.removeEventListener('vettalon:filters', sync);
+    };
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -51,10 +65,11 @@ export default function Nav() {
           <span className="sr-only">{t.nav.menu}</span>
         </button>
         <nav id="site-menu" className="nav__links" aria-label={locale === 'en' ? 'Main' : '主選單'}>
+          <a href={pagePath(locale, 'evidence')} onClick={close} aria-current={page.startsWith('evidence') ? 'page' : undefined}>{locale === 'en' ? 'Evidence wall' : '證據牆'}</a>
           {links.map((l) => (
             <a key={l.href} href={home + l.href} onClick={close}>{l.label}</a>
           ))}
-          <a className="nav__lang" href={otherLocaleHref(locale, page)} hrefLang={locale === 'en' ? 'zh-Hant' : 'en'}>
+          <a className="nav__lang" href={page.startsWith('evidence') ? pagePath(locale === 'en' ? 'zh' : 'en', page) + locationSuffix : otherLocaleHref(locale, page)} hrefLang={locale === 'en' ? 'zh-Hant' : 'en'}>
             {locale === 'en' ? '中文' : 'EN'}
           </a>
           <a className="btn btn--primary btn--sm nav__cta" href={home + '#editions'} onClick={close}>

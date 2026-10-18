@@ -15,19 +15,19 @@ npm run check
 npm run preview -- --host 127.0.0.1 --port 18873 --strictPort
 ```
 
-`check` 依序執行 ESLint、正式建置與互動狀態／SSR 檢查。`preview` 提供建置後的靜態網站；先執行 `check` 或 `build`。
+`check` 依序執行 ESLint、正式建置與互動狀態／SSR 檢查。建置會先驗證公開案例及附件，再檢查輸出的文字資產是否含私有路徑。`preview` 提供建置後的靜態網站；先執行 `check` 或 `build`。
 
-正式建置會輸出繁體中文及英文首頁，並在兩種語言下各產生服務條款、隱私權政策與退款政策，共八頁。頁面保留原本的 URL、導覽錨點、SEO metadata、結構化資料及 Polar 購買連結。
+正式建置會輸出繁體中文及英文首頁、證據牆與三筆案例頁，並在兩種語言下各產生服務條款、隱私權政策與退款政策，共十六頁。頁面保留原本的 URL、導覽錨點、SEO metadata、結構化資料及 Polar 購買連結。
 
 ## 資訊架構與使用流程
 
 1. 入口說清楚用途，讓讀者選擇試用開源核心或核對真實輸出。
 2. 三個示意案例串起候選、反證與人工判斷；旁邊稜鏡同步顯示階段，不遮住正文。DOM 順序固定為入口、視覺與控制、覆核案例，手機不以 CSS order 改變閱讀順序。
-3. 真實 README 輸出預設展開，基準數字以證據表呈現，保留原測試限制。
+3. 真實 README 輸出預設展開；案例證據導向獨立分頁，逐筆標示測試方法、來源與限制，不展示缺少公開依據的成效數字。
 4. 能力與程式碼去向改為橫向資訊列；五階段技術流程可按需展開。
 5. 依 CLI／CI、個人稽核、團隊情境比較版本與價格，購買入口放在各版本旁，最後提供 FAQ 與聯絡。
 
-導航對應覆核、證據、能力與版本四個決策入口。覆核結果使用常駐的 `role="status"`，不重建 live region。若 context 中斷時焦點位於即將移除的視角控制，先回到可聚焦的圖說區，再公布靜態備援提示。畫布以外的控制與圖說使用正常文流，文字放大不會被固定場景高度裁切。
+導航新增「證據牆」一級入口，與覆核、真實輸出、能力及版本並列。覆核結果使用常駐的 `role="status"`，不重建 live region。若 context 中斷時焦點位於即將移除的視角控制，先回到可聚焦的圖說區，再公布靜態備援提示。畫布以外的控制與圖說使用正常文流，文字放大不會被固定場景高度裁切。
 
 ## 預覽與互動
 
@@ -37,7 +37,13 @@ npm run preview -- --host 127.0.0.1 --port 18873 --strictPort
 - 每個案例可直接選階段、前進到下一階段或回到 Finder。按鈕支援鍵盤 Tab、Enter、Space，理由按鈕會公布展開狀態。
 - 停用 JavaScript 時，頁面直接呈現完整內容；互動區改以原生 `details` 提供全部案例與各階段說明。手機導覽也保持可見。
 - 色彩跟隨系統淺色／深色設定，Logo 保留同一份原色透明圖片。系統減少動態效果時，進場、切換及捲動動畫會停用。
-- 「怎麼運作」保留取自公開 README 的真實 CLI 範例輸出；範例與基準數字的來源與限制維持原敘述。
+- 「怎麼運作」保留取自公開 README 的真實 CLI 範例輸出；案例數據只在證據牆按驗證範圍呈現。
+
+## 公開證據牆
+
+`/evidence/` 與 `/en/evidence/` 提供搜尋、類型／狀態／生態篩選及逐案頁。目前有兩筆歷史聚焦識別（aiohttp、PHPUnit）及一筆由 Louis Li 向上游通報、經離線函式庫政策回歸測試的 ammonia 案例。前兩筆的識別狀態仍是 `needs_human` 與 `candidate`；ammonia 的 4.2.3 五項測試為 3 過 2 失敗，官方 4.2.4 為 5 過 0 失敗。這些不同類型的證據不互相升格；本站不宣稱產品自動發現 ammonia，也不公開未公開的 Bollard 案件。
+
+公開資料只從 `src/evidence/cases.js` 的人工審查清單生成。每筆 JSON 記錄、歷史報告節錄及 ammonia 測試摘要皆可下載，後兩類附件在建置前後核對 SHA-256 與 schema。原始掃描報告和 ammonia 完整原始 log 未公開；ammonia 附件提供六行測試輸出節錄，原報告雜湊只供持有者比對。維護與驗收規則見 [公開案例維護指南](docs/evidence-wall.md)。
 
 ## 稜鏡與效能邊界
 
@@ -63,13 +69,15 @@ Uncut Sans 由作者儲存庫自架，字檔 78,072 bytes；OFL 1.1 授權及來
 - `src/components/PrismView.jsx`、`src/prism/scene.js`：延後載入、GPU 稜鏡及生命週期清理。
 - `src/prism/review-context.js`：稜鏡與覆核示意共享階段。
 - `src/i18n.js`、`src/plan.js`、`src/legal.js`：既有產品敘述、版本價格與法律內容。
-- `scripts/prerender.mjs`：八頁預先渲染、SEO 與 llms 檔案。
+- `src/evidence/`、`src/components/EvidencePage.jsx`：公開案例清單、驗證、篩選與逐案頁。
+- `public/evidence/`、`scripts/validate-evidence.mjs`：人工挑選的公開附件與建置檢查。
+- `scripts/prerender.mjs`：十六頁預先渲染、公開 JSON、SEO 與 llms 檔案。
 - `tests/prism.test.mjs`：封閉幾何、有限座標、三階段光路、SSR 海報／字體與雙語區塊順序。
 - `tests/review-demo.test.mjs`：候選切換、覆核分支、理由隔離、雙語、SSR 與靜態資產檢查。
 
 ## 驗收範圍
 
-自動檢查驗證狀態與建置輸出，瀏覽器仍需檢查 1440 px 桌機、390 px 手機、雙語、淺深色、鍵盤操作及停用 JavaScript。真實商店付款與正式部署各是獨立流程，本次視覺調整不執行付款或部署。
+自動檢查驗證狀態與建置輸出，瀏覽器仍需檢查 1440 px 桌機、390 px 手機、雙語、淺深色、鍵盤操作及停用 JavaScript。真實商店付款與正式部署各是獨立流程。
 
 ## License
 

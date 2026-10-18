@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { initialReviewState, reviewReducer, reviewCopy } from '../src/review-demo.js';
 import { render } from '../dist-server/entry-server.js';
 import { content, BUY_PRO, BUY_TEAM } from '../src/i18n.js';
+import { cases } from '../src/evidence/cases.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const transition = (state, ...actions) => actions.reduce(reviewReducer, state);
@@ -79,7 +80,7 @@ test('SSR provides real disclosure content without requiring JavaScript', () => 
   }
 });
 
-test('the redesign retains every homepage anchor, benchmark statement and paid checkout destination', () => {
+test('the redesign retains every homepage anchor, public case link and paid checkout destination', () => {
   for (const locale of ['zh', 'en']) {
     const html = render(locale, '');
     for (const id of ['product', 'how', 'benchmarks', 'editions', 'faq', 'contact']) assert.ok(html.includes(`id="${id}"`));
@@ -87,6 +88,7 @@ test('the redesign retains every homepage anchor, benchmark statement and paid c
       assert.ok(html.includes(item.v));
       assert.ok(html.includes(item.k));
       assert.ok(html.includes(item.d));
+      assert.ok(html.includes(`${locale === 'en' ? '/en' : ''}/evidence/${item.id}/`));
     }
     assert.ok(html.includes(content[locale].benchmarks.note));
     assert.ok(html.includes(`href="${BUY_PRO}"`));
@@ -94,13 +96,13 @@ test('the redesign retains every homepage anchor, benchmark statement and paid c
   }
 });
 
-test('all eight generated pages resolve original-color PNG logo and favicon files', async () => {
+test('all generated pages resolve original-color PNG logo and favicon files', async () => {
   async function htmlFiles(folder) {
     const entries = await readdir(folder, { withFileTypes: true });
     return (await Promise.all(entries.map((entry) => entry.isDirectory() ? htmlFiles(`${folder}/${entry.name}`) : entry.name.endsWith('.html') ? [`${folder}/${entry.name}`] : []))).flat();
   }
   const files = await htmlFiles(`${root}/dist`);
-  assert.equal(files.length, 8);
+  assert.equal(files.length, 8 + 2 * (1 + cases.length));
   for (const file of files) {
     const html = await readFile(file, 'utf8');
     for (const asset of ['/brand/vettalon-mark.png', '/brand/company-mark.png', '/favicon.ico', '/favicon-32.png', '/favicon-48.png', '/apple-touch-icon.png']) {
