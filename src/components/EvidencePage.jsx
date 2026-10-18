@@ -14,9 +14,11 @@ const chainLabels = {
   zh: {
     heading: '證據鏈', intro: '依來源逐段核對。缺少的材料會明示，不以公告或修補連結代替產品測試。',
     kinds: '可核對的證據類型', observation: '產品觀測', attribution: '人工／上游歸屬', comparison: '修補對照', unknown: '未驗證範圍',
-    origin: '候選與擬稿節錄', dossier: '歷史識別節錄', finding: '識別紀錄', record: '公開整理紀錄',
+    origin: '候選與擬稿節錄', dossier: '歷史識別節錄', record: '人工整理紀錄（非原始輸出）',
     upstream: '上游公開歸屬', advisory: '上游公告', regression: '版本回歸摘要', differential: '差分附件',
-    noComparison: '未提供修補版對照', noOrigin: '未提供產品原始輸出',
+    noComparison: '未提供修補版對照', noOrigin: '未提供可核對的產品輸出',
+    noOriginText: '此案沒有公開的原始產品輸出附件。下方人工整理紀錄只彙整公開欄位，不能證明產品曾產生這筆候選。',
+    recordNote: '另有人工整理紀錄；它不是產品觀測附件。',
     originText: '產品輸出為 needs_human 候選與揭露草稿；完整原始執行材料未公開。',
     historicalText: '僅是已知漏洞的歷史聚焦識別；不代表原創發現或利用成功。',
     regressionText: '公開摘要列出相同政策測試在脆弱版與官方修補版的結果。',
@@ -27,9 +29,11 @@ const chainLabels = {
   en: {
     heading: 'Evidence chain', intro: 'Follow each source in order. Missing material is explicit; an advisory or fix link does not stand in for a product test.',
     kinds: 'Available evidence types', observation: 'Product observation', attribution: 'Human / upstream attribution', comparison: 'Fixed-version comparison', unknown: 'Unverified scope',
-    origin: 'Candidate and draft excerpt', dossier: 'Historical finding excerpt', finding: 'Detection record', record: 'Curated public record',
+    origin: 'Candidate and draft excerpt', dossier: 'Historical finding excerpt', record: 'Curated record (not original output)',
     upstream: 'Public upstream credit', advisory: 'Upstream advisory', regression: 'Version regression summary', differential: 'Differential artifact',
-    noComparison: 'No fixed-version comparison', noOrigin: 'No original product output',
+    noComparison: 'No fixed-version comparison', noOrigin: 'No verifiable product output provided',
+    noOriginText: 'This case has no public original product-output artifact. The curated record below summarizes public fields; it does not prove the product generated this candidate.',
+    recordNote: 'A curated record is available separately; it is not a product-observation artifact.',
     originText: 'The product output is a needs_human candidate and disclosure draft; the full original run material is not public.',
     historicalText: 'This is a historical focused detection of a known issue, not an original discovery or successful exploit.',
     regressionText: 'The public summary compares the same policy checks on the vulnerable and official fixed versions.',
@@ -41,26 +45,30 @@ const chainLabels = {
 
 function EvidenceTypes({ item, locale }) {
   const t = chainLabels[locale];
-  const types = [item.origin ? t.origin : item.dossier ? t.dossier : item.detection ? t.finding : t.noOrigin,
-    item.upstreamCreditUrl ? t.upstream : t.advisory,
-    item.regression ? t.regression : item.reproduction ? t.differential : t.noComparison];
-  return <ul className="evidence__types" aria-label={t.kinds}>{types.map((type, index) => <li key={index} data-state={index === 2 && !item.regression && !item.reproduction ? 'missing' : 'available'}>{type}</li>)}</ul>;
+  const types = [
+    item.origin ? { label: t.origin } : item.dossier ? { label: t.dossier } : { label: t.noOrigin, missing: true },
+    ...(!item.origin && !item.dossier ? [{ label: t.record }] : []),
+    { label: item.upstreamCreditUrl ? t.upstream : t.advisory },
+    item.regression ? { label: t.regression } : item.reproduction ? { label: t.differential } : { label: t.noComparison, missing: true },
+  ];
+  return <ul className="evidence__types" aria-label={t.kinds}>{types.map(({ label, missing }) => <li key={label} data-state={missing ? 'missing' : 'available'}>{label}</li>)}</ul>;
 }
 
 function EvidenceLadder({ item, locale }) {
   const t = chainLabels[locale];
-  const observation = item.origin?.artifactPath ?? item.dossier?.artifactPath ?? `/evidence/records/${item.id}.json`;
-  const observationLabel = item.origin ? t.origin : item.dossier ? t.dossier : item.detection ? t.finding : t.record;
+  const observation = item.origin?.artifactPath ?? item.dossier?.artifactPath;
+  const observationLabel = item.origin ? t.origin : t.dossier;
   const attribution = item.upstreamCreditUrl ?? item.advisoryUrl;
   const comparison = item.regression?.artifactPath ?? item.reproduction?.artifactUrl;
   return <section className="evidence__chain" aria-labelledby="evidence-chain-heading">
     <div className="evidence__chain-head"><h2 id="evidence-chain-heading">{t.heading}</h2><p>{t.intro}</p></div>
     <ol className="evidence__chain-steps">
-      <li><h3>{t.observation}</h3><p>{item.origin ? t.originText : item.type === 'historical' ? t.historicalText : item.boundary[locale]}</p><a href={observation}>{observationLabel}<ArrowUpRight size={15} aria-hidden="true" /></a></li>
+      <li data-state={observation ? 'available' : 'missing'}><h3>{t.observation}</h3><p>{observation ? (item.origin ? t.originText : t.historicalText) : t.noOriginText}</p>{observation && <a href={observation}>{observationLabel}<ArrowUpRight size={15} aria-hidden="true" /></a>}</li>
       <li><h3>{t.attribution}</h3><p>{item.credit[locale]}</p><ExternalLink href={attribution}>{item.upstreamCreditUrl ? t.upstream : t.advisory}</ExternalLink></li>
       <li data-state={comparison ? 'available' : 'missing'}><h3>{t.comparison}</h3><p>{item.regression ? t.regressionText : item.reproduction ? t.differentialText : t.noComparisonText}</p>{comparison ? (item.regression ? <a href={comparison}>{t.regression}<ArrowUpRight size={15} aria-hidden="true" /></a> : <ExternalLink href={comparison}>{t.differential}</ExternalLink>) : <ExternalLink href={item.fixUrl}>{t.fixLink}</ExternalLink>}</li>
       <li><h3>{t.unknown}</h3><p>{item.limitations[locale]}</p><a href="#evidence-limits">{t.limitsLink}<ArrowUpRight size={15} aria-hidden="true" /></a></li>
     </ol>
+    {!observation && <p className="evidence__curated-record">{t.recordNote} <a href={`/evidence/records/${item.id}.json`}>{t.record}<ArrowUpRight size={15} aria-hidden="true" /></a></p>}
   </section>;
 }
 function ExternalLink({ href, children }) { return <a href={href} target="_blank" rel="noopener noreferrer">{children}<ArrowUpRight size={15} aria-hidden="true" /></a>; }

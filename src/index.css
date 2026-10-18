@@ -519,6 +519,8 @@ main { flex: 1; }
 .evidence__chain-steps a svg { flex: none; }
 .evidence__chain-steps li[data-state="missing"] { background: var(--surface-soft); padding-right: 14px; }
 .evidence__chain-steps li[data-state="missing"] h3::after { content: " · —"; color: var(--text-muted); }
+.evidence__curated-record { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding-top: 16px; color: var(--text-muted); font-size: 13px; }
+.evidence__curated-record a { display: inline-flex; align-items: center; gap: 4px; color: var(--accent-text); }
 .evidence__detail-grid { display: grid; grid-template-columns: minmax(0,1fr) 280px; gap: 64px; }
 .evidence__section { border-top: 1px solid var(--rule); padding-top: 24px; margin-bottom: 36px; }
 .evidence__section h2 { font-size: 21px; line-height: 1.3; margin-bottom: 16px; }
