@@ -1,7 +1,7 @@
 import { lstat, open } from 'node:fs/promises';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
-import { validateManifest, validateDossier, validateRegression } from '../src/evidence/schema.js';
+import { validateManifest, validateDossier, validateRegression, validateOrigin } from '../src/evidence/schema.js';
 
 const maxBytes = 64 * 1024;
 function reject() { throw new Error('Public evidence dossier rejected.'); }
@@ -30,7 +30,7 @@ async function readBoundArtifact(publicRoot, category, item) {
       if (length > maxBytes) reject();
       bytes = buffer.subarray(0, length);
     } finally { await handle.close(); }
-    const expected = category === 'dossiers' ? item.dossier.sha256 : item.regression.sha256;
+    const expected = item[category === 'dossiers' ? 'dossier' : category === 'regressions' ? 'regression' : 'origin'].sha256;
     if (createHash('sha256').update(bytes).digest('hex') !== expected) reject();
     return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
 }
@@ -41,5 +41,6 @@ export async function validateDossierFiles(cases, publicRoot) {
   for (const item of cases) {
     if (item.dossier) validateDossier(item, await readBoundArtifact(publicRoot, 'dossiers', item));
     if (item.regression) validateRegression(item, await readBoundArtifact(publicRoot, 'regressions', item));
+    if (item.origin) validateOrigin(item, await readBoundArtifact(publicRoot, 'origins', item));
   }
 }

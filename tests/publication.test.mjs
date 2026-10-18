@@ -68,8 +68,10 @@ test('actual prerender safely encodes HTML-sensitive JSON-LD values', async () =
     await copyFile('src/evidence/schema.js',join(temp,'src/evidence/schema.js'));
     await mkdir(join(temp,'dist/evidence/dossiers'),{recursive:true});
     await mkdir(join(temp,'dist/evidence/regressions'),{recursive:true});
+    await mkdir(join(temp,'dist/evidence/origins'),{recursive:true});
     for (const item of cases) if (item.dossier) await copyFile('public' + item.dossier.artifactPath,join(temp,'dist',item.dossier.artifactPath.slice(1)));
     for (const item of cases) if (item.regression) await copyFile('public' + item.regression.artifactPath,join(temp,'dist',item.regression.artifactPath.slice(1)));
+    for (const item of cases) if (item.origin) await copyFile('public' + item.origin.artifactPath,join(temp,'dist',item.origin.artifactPath.slice(1)));
 
     await writeFile(join(temp,'src/evidence/cases.js'),'export const cases = '+JSON.stringify(data)+';');
     await writeFile(join(temp,'dist-server/entry-server.js'),'export function render() {return "<main>isolated prerender fixture</main>";}');
