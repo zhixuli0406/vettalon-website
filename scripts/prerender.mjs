@@ -15,6 +15,7 @@ const { content, LOCALE_META, SITE_URL, GITHUB, BUY_PRO, BUY_TEAM, DOWNLOADS, pa
 const { legal, LEGAL_PAGES, LEGAL_NAME_EN, LEGAL_NAME_ZH } = await import(join(root, 'src/legal.js'));
 const { PLAN } = await import(join(root, 'src/plan.js'));
 const { cases } = await import(join(root, 'src/evidence/cases.js'));
+const { homepageEvidence } = await import(join(root, 'src/evidence/homepage.js'));
 const { render } = await import(join(root, 'dist-server/entry-server.js'));
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -192,7 +193,7 @@ function llms(locale) {
     `${L('隱私權政策', 'Privacy')}: ${SITE_URL}${pagePath(locale, 'privacy')} · ` +
     `${L('退款政策', 'Refunds')}: ${SITE_URL}${pagePath(locale, 'refund')}` +
     `\n\n## ${L('案例證據', 'Case evidence')}\n` +
-    c.benchmarks.items.map((x) => `- ${x.v} ${x.k}: ${x.d}`).join('\n') +
+    homepageEvidence(cases, c.benchmarks.items).items.map((x) => `- ${x.v} ${x.k}: ${x.d}`).join('\n') +
     `\n\n## FAQ\n` +
     c.faq.items.map((x) => `### ${x.q}\n${x.a}`).join('\n\n') +
     `\n`

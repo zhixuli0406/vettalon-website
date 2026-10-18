@@ -66,6 +66,7 @@ test('actual prerender safely encodes HTML-sensitive JSON-LD values', async () =
     await writeFile(join(temp,'package.json'),JSON.stringify({type:'module'}));
     await mkdir(join(temp,'src/evidence'));
     await copyFile('src/evidence/schema.js',join(temp,'src/evidence/schema.js'));
+    await copyFile('src/evidence/homepage.js',join(temp,'src/evidence/homepage.js'));
     await mkdir(join(temp,'dist/evidence/dossiers'),{recursive:true});
     await mkdir(join(temp,'dist/evidence/regressions'),{recursive:true});
     await mkdir(join(temp,'dist/evidence/origins'),{recursive:true});
