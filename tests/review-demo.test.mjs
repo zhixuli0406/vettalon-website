@@ -6,6 +6,7 @@ import { initialReviewState, reviewReducer, reviewCopy } from '../src/review-dem
 import { render } from '../dist-server/entry-server.js';
 import { content, BUY_PRO, BUY_TEAM } from '../src/i18n.js';
 import { cases } from '../src/evidence/cases.js';
+import { homepageEvidence } from '../src/evidence/homepage.js';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const transition = (state, ...actions) => actions.reduce(reviewReducer, state);
@@ -84,7 +85,7 @@ test('the redesign retains every homepage anchor, public case link and paid chec
   for (const locale of ['zh', 'en']) {
     const html = render(locale, '');
     for (const id of ['product', 'how', 'benchmarks', 'editions', 'faq', 'contact']) assert.ok(html.includes(`id="${id}"`));
-    for (const item of content[locale].benchmarks.items) {
+    for (const item of homepageEvidence(cases, content[locale].benchmarks.items).items) {
       assert.ok(html.includes(item.v));
       assert.ok(html.includes(item.k));
       assert.ok(html.includes(item.d));

@@ -18,6 +18,9 @@ export const DOWNLOADS = 'https://github.com/zhixuli0406/vettalon-releases/relea
 export const pagePath = (locale, page = '') =>
   (locale === 'en' ? '/en/' : '/') + (page ? page + '/' : '');
 
+export const countLabel = (label, count) =>
+  typeof label === 'string' ? label : (count === 1 ? label.one : label.other);
+
 const P = PLAN;
 
 export const LOCALES = ['zh', 'en'];
@@ -97,12 +100,13 @@ export const content = {
     benchmarks: {
       tag: '案例證據',
       lead: '從公開公告、測試結果與限制，逐案核對我們做了什麼。',
+      collection: { public: '筆公開案例', historical: '筆歷史聚焦識別', discovery: '筆原創發現', reported: '筆上游通報', boundary: '這只是已公開案例的集合，不是召回率或誤報率的分母。' },
       items: [
-        { v: 'GHSA-x43w-36pp-96g3', k: 'Ammonia：通報與回歸', d: 'Louis Li 通報。固定五項政策測試於 4.2.3 有兩項失敗，官方 4.2.4 全數通過；尚未綁定原始 Vettalon finding。', id: 'ammonia-ghsa-x43w-36pp-96g3', link: '查看回歸結果與限制' },
-        { v: 'CVE-2024-23334', k: 'aiohttp：歷史聚焦識別', d: '已公開漏洞的候選位置與覆核摘要；最終仍為 needs_human，未執行 HTTP 利用。', id: 'aiohttp-cve-2024-23334', link: '查看識別紀錄' },
-        { v: 'CVE-2017-9841', k: 'PHPUnit：歷史聚焦識別', d: '已公開漏洞的候選位置；覆核模型呼叫失敗，沒有有效判定，執行狀態為 incomplete。', id: 'phpunit-cve-2017-9841', link: '查看識別紀錄' },
+        { k: 'Ammonia：通報與回歸', d: 'Vettalon 找到 needs_human 候選並產生揭露草稿；公開的是人工逐欄選編的節錄，完整原始 hunt.json／JSONL 未公開。Louis Li 人工重現與送件，上游修補後的固定五項政策測試於 4.2.3 有兩項失敗，官方 4.2.4 全數通過。', id: 'ammonia-ghsa-x43w-36pp-96g3', link: '查看候選、回歸與限制' },
+        { k: 'aiohttp：歷史聚焦識別', d: '已公開漏洞的候選位置與覆核摘要；最終仍為 needs_human，未執行 HTTP 利用。', id: 'aiohttp-cve-2024-23334', link: '查看識別紀錄' },
+        { k: 'PHPUnit：歷史聚焦識別', d: '已公開漏洞的候選位置；覆核模型呼叫失敗，沒有有效判定，執行狀態為 incomplete。', id: 'phpunit-cve-2017-9841', link: '查看識別紀錄' },
       ],
-      note: '一筆人工通報的政策回歸與兩筆歷史聚焦識別，不能推估整庫召回、誤報率或自動發現能力。',
+      note: '逐案材料不能推估整庫召回、誤報率或自動發現能力。',
     },
     editions: {
       tag: '版本與價格',
@@ -242,12 +246,13 @@ export const content = {
     benchmarks: {
       tag: 'Case evidence',
       lead: 'Review public advisories, test results, and limits case by case.',
+      collection: { public: { one: 'public case', other: 'public cases' }, historical: { one: 'historical focused detection', other: 'historical focused detections' }, discovery: { one: 'original discovery', other: 'original discoveries' }, reported: { one: 'upstream report', other: 'upstream reports' }, boundary: 'This is the published case collection, not a denominator for recall or false-positive rates.' },
       items: [
-        { v: 'GHSA-x43w-36pp-96g3', k: 'Ammonia: report and regression', d: 'Reported by Louis Li. Two of five fixed policy tests failed on 4.2.3; all passed on upstream 4.2.4. No original Vettalon finding is bound.', id: 'ammonia-ghsa-x43w-36pp-96g3', link: 'Review results and limits' },
-        { v: 'CVE-2024-23334', k: 'aiohttp: historical focused detection', d: 'A candidate location and review summary for a known vulnerability; final status remained needs_human, without an HTTP exploit.', id: 'aiohttp-cve-2024-23334', link: 'Review detection record' },
-        { v: 'CVE-2017-9841', k: 'PHPUnit: historical focused detection', d: 'A candidate location for a known vulnerability; the reviewer model failed, leaving no valid verdict and an incomplete run.', id: 'phpunit-cve-2017-9841', link: 'Review detection record' },
+        { k: 'Ammonia: report and regression', d: 'Vettalon surfaced a needs_human candidate and generated a disclosure draft. The public attachment is a human-curated excerpt; the full original hunt.json and JSONL are not public. Louis Li reproduced and submitted the report. In five scoped policy checks after the upstream fix, two failed on 4.2.3 and all passed on official 4.2.4.', id: 'ammonia-ghsa-x43w-36pp-96g3', link: 'Review candidate, regression and limits' },
+        { k: 'aiohttp: historical focused detection', d: 'A candidate location and review summary for a known vulnerability; final status remained needs_human, without an HTTP exploit.', id: 'aiohttp-cve-2024-23334', link: 'Review detection record' },
+        { k: 'PHPUnit: historical focused detection', d: 'A candidate location for a known vulnerability; the reviewer model failed, leaving no valid verdict and an incomplete run.', id: 'phpunit-cve-2017-9841', link: 'Review detection record' },
       ],
-      note: 'One human-reported policy regression and two historical focused detections do not establish whole-repository recall, false-positive rates, or automated discovery.',
+      note: 'These case records do not establish whole-repository recall, false-positive rates, or automated discovery.',
     },
     editions: {
       tag: 'Pricing',
