@@ -80,7 +80,7 @@
     }
   ],
   "limitations": {
-    "zh": "這是人工整理的離線函式庫政策測試摘要。僅公開兩版各六行測試輸出節錄，完整原始 log 未公開；未測瀏覽器載入、產品掃描、應用整合、4.1.8 或所有受影響版本，也不證明 Vettalon 自動發現此漏洞。",
-    "en": "This is a curated summary of isolated offline library policy tests. Only six-line test-output excerpts for each version are public; complete original logs are not published. Browser loading, product scans, app integration, 4.1.8, and all affected versions were not tested. This does not show automated discovery by Vettalon."
+    "zh": "這是人工整理的離線函式庫政策測試摘要。第二輪 4.2.3 比較的外層控制器因額外指紋檢查回報失敗；保存的原始測試輸出及來源綁定，後經修正的唯讀驗證器核對，並未重跑目標。僅公開兩版各六行測試輸出節錄，完整原始 log 未公開；未測瀏覽器載入、產品掃描、應用整合、4.1.8 或所有受影響版本，也不證明 Vettalon 自動發現此漏洞。",
+    "en": "This is a curated summary of isolated offline library policy tests. The outer controller for the second 4.2.3 comparison failed an additional fingerprint check; a corrected read-only validator checked the saved raw test output and source bindings without rerunning the target. Only six-line test-output excerpts for each version are public; complete original logs are not published. Browser loading, product scans, app integration, 4.1.8, and all affected versions were not tested. This does not show automated discovery by Vettalon."
   }
 }
