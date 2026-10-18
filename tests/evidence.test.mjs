@@ -33,7 +33,7 @@ test('rejects unsafe links, duplicate IDs and local artifact paths', () => {
 test('filters combine type, ecosystem, status and case insensitive search', () => {
   assert.equal(selectCases(cases, { q: 'CVE-2024-23334', type: 'historical', ecosystem: 'PyPI', status: 'detected' }).length, 1);
   assert.equal(selectCases(cases, { q: 'NO_SUCH_CASE' }).length, 0);
-  assert.equal(selectCases(cases, { type: 'discovery' }).length, 0);
+  assert.equal(selectCases(cases, { type: 'discovery' }).length, 1);
   assert.equal(selectCases(cases, { q: '<script>' }).length, 0);
   assert.equal(selectCases(cases, { q: 'AIOHTTP' })[0].package, 'aiohttp');
 });

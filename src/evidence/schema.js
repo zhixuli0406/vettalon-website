@@ -30,9 +30,10 @@
  * @property {{artifactPath: string, sha256: string, runStatus: 'complete'|'incomplete', incompleteReason: string|null}} [dossier]
  * @property {string} [rustsecId]
  * @property {{artifactPath: string, sha256: string, testedAt: string, checks: Array<{id: string, role: string, vulnerable: string, fixed: string}>}} [regression]
+ * @property {{artifactPath: string, sha256: string, observedAt: string, findingStatus: 'needs_human'}} [origin]
  */
 const required = ['id','publication','reviewedAt','type','status','package','ecosystem','title','summary','cve','ghsa','cwe','sourceVersion','fixedVersion','sourceUrl','advisoryUrl','fixUrl','publishedAt','boundary','method','limitations','credit','timeline'];
-const optional = ['detection','reproduction','upstreamCreditUrl','dossier','rustsecId','regression'];
+const optional = ['detection','reproduction','upstreamCreditUrl','dossier','rustsecId','regression','origin'];
 const ecosystems = ['PyPI','npm','Packagist','Cargo','Go','RubyGems'];
 const regressionChecks = [
   ['http_lower', 'denied-policy', 'ok'], ['http_upper', 'denied-policy', 'failed'],
@@ -67,9 +68,9 @@ export function validateManifest(input) {
     for (const key of ['title','summary','boundary','method','limitations','credit']) localized(item[key]);
     for (const key of ['package','sourceVersion','fixedVersion']) text(item[key]);
     ensure(ecosystems.includes(item.ecosystem));
-    ensure(item.cve === null ? item.type === 'reported' : typeof item.cve === 'string' && /^CVE-\d{4}-\d{4,}$/.test(item.cve));
+    ensure(item.cve === null ? ['reported','discovery'].includes(item.type) && Boolean(item.rustsecId) : typeof item.cve === 'string' && /^CVE-\d{4}-\d{4,}$/.test(item.cve));
     ensure(typeof item.ghsa === 'string' && /^GHSA-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}$/.test(item.ghsa));
-    ensure(item.cwe === null ? item.type === 'reported' : typeof item.cwe === 'string' && /^CWE-\d+$/.test(item.cwe));
+    ensure(item.cwe === null ? ['reported','discovery'].includes(item.type) && Boolean(item.rustsecId) : typeof item.cwe === 'string' && /^CWE-\d+$/.test(item.cwe));
     for (const key of ['sourceUrl','advisoryUrl','fixUrl']) publicUrl(item[key]);
     date(item.reviewedAt); date(item.publishedAt); ensure(item.reviewedAt >= item.publishedAt);
     ensure(Array.isArray(item.timeline) && item.timeline.length > 0);
@@ -81,12 +82,23 @@ export function validateManifest(input) {
       ensure(!events.has(eventKey)); events.add(eventKey); previousDate = entry.date;
     }
     if (item.upstreamCreditUrl) publicUrl(item.upstreamCreditUrl);
-    if (item.type === 'discovery') { publicUrl(item.upstreamCreditUrl); ensure(item.status === 'reproduced'); }
-    if (item.type === 'reported') {
-      ensure(item.status === 'regression-verified' && !item.detection && !item.reproduction && !item.dossier);
+    if (item.status === 'regression-verified') ensure(Boolean(item.regression));
+    if (item.type === 'discovery') {
+      publicUrl(item.upstreamCreditUrl);
+      ensure(item.status === 'reproduced' || (item.status === 'regression-verified' && Boolean(item.origin)));
+    }
+    if (item.origin) {
+      ensure(item.type === 'discovery' && item.status === 'regression-verified');
+      exactKeys(item.origin, ['artifactPath','sha256','observedAt','findingStatus']);
+      ensure(item.origin.artifactPath === `/evidence/origins/${item.id}.json`);
+      digest(item.origin.sha256); date(item.origin.observedAt);
+      ensure(item.origin.observedAt <= item.publishedAt && item.origin.findingStatus === 'needs_human');
+    }
+    if (item.regression) {
+      ensure(['reported','discovery'].includes(item.type) && item.status === 'regression-verified' && !item.detection && !item.reproduction && !item.dossier);
       ensure(typeof item.rustsecId === 'string' && /^RUSTSEC-\d{4}-\d{4}$/.test(item.rustsecId));
       ensure(item.upstreamCreditUrl === `https://rustsec.org/advisories/${item.rustsecId}.html`);
-      ensure(item.regression && typeof item.regression === 'object');
+      ensure(typeof item.regression === 'object');
       exactKeys(item.regression, ['artifactPath','sha256','testedAt','checks']);
       ensure(item.regression.artifactPath === `/evidence/regressions/${item.id}.json`);
       digest(item.regression.sha256); date(item.regression.testedAt);
@@ -97,7 +109,7 @@ export function validateManifest(input) {
         exactKeys(check, ['id','role','vulnerable','fixed']);
         ensure(check.id === id && check.role === role && check.vulnerable === vulnerable && check.fixed === 'ok');
       }
-    } else ensure(!item.rustsecId && !item.regression);
+    } else ensure(!item.rustsecId && item.type !== 'reported');
     if (item.detection) {
       exactKeys(item.detection,['mode','findingStatus','file','line','observedAt','sha256','claim','reviewerConclusion','finder','reviewer','toolVersion','modelVersions','scope','rerun']);
       ensure(item.detection.mode === 'focused' && ['candidate','needs_human','refuted'].includes(item.detection.findingStatus));
@@ -157,9 +169,29 @@ export function validateDossier(item, dossier) {
   localized(dossier.limitations);
   return dossier;
 }
+/** Validate a redacted archived product-output excerpt, not the full historical hunt report. */
+export function validateOrigin(item, artifact) {
+  ensure(item.type === 'discovery' && Boolean(item.origin));
+  exactKeys(artifact, ['schemaVersion','caseId','observedAt','recordKind','archivedToolOutputLineSha256','finding','draft','limits']);
+  ensure(artifact.schemaVersion === 1 && artifact.caseId === item.id && artifact.observedAt === item.origin.observedAt);
+  ensure(artifact.recordKind === 'curated-archived-vettalon-hunt-output');
+  ensure(artifact.archivedToolOutputLineSha256 === '2ffcb9b4dc279bcd1303990de185022dbdcce85661cca3229c1934b10e4fbb5e');
+  exactKeys(artifact.finding, ['dependency','version','status','severityCandidate','location','title']);
+  ensure(artifact.finding.dependency === item.package && artifact.finding.version === '4.1.7');
+  ensure(artifact.finding.status === item.origin.findingStatus && artifact.finding.severityCandidate === 'medium');
+  ensure(artifact.finding.location === 'ammonia-4.1.7/src/style.rs:170');
+  ensure(artifact.finding.title === 'Case-sensitive url() match lets quoted URL()/Url() bypass style URL scheme and relative-URL filtering');
+  exactKeys(artifact.draft, ['generatedByHunt','automaticallySubmitted','filename']);
+  ensure(artifact.draft.generatedByHunt === true && artifact.draft.automaticallySubmitted === false);
+  ensure(artifact.draft.filename === 'ammonia_4_1_7-ai_audit_8c00985855923e82.md');
+  exactKeys(artifact.limits, ['fullHuntReportRecovered','originalSourceBytesRecovered','sentMessageReceiptPublic','otherCandidatesExcluded']);
+  ensure(artifact.limits.fullHuntReportRecovered === false && artifact.limits.originalSourceBytesRecovered === false);
+  ensure(artifact.limits.sentMessageReceiptPublic === false && artifact.limits.otherCandidatesExcluded === true);
+  return artifact;
+}
 /** Validate a curated local regression summary; original execution logs remain private. */
 export function validateRegression(item, artifact) {
-  ensure(item.type === 'reported' && item.status === 'regression-verified' && Boolean(item.regression));
+  ensure(['reported','discovery'].includes(item.type) && item.status === 'regression-verified' && Boolean(item.regression));
   exactKeys(artifact, ['schemaVersion','caseId','testedAt','scope','arms','checks','limitations']);
   ensure(artifact.schemaVersion === 1 && artifact.caseId === item.id && artifact.testedAt === item.regression.testedAt);
   exactKeys(artifact.scope, ['kind','testCount','inputCount','officialFixedCrate','originalLogsPublic','productScannerUsed']);

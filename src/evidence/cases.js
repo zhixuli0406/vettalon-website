@@ -35,7 +35,7 @@ const reviewed = [
     timeline: [{ date: '2017-06-27', event: { zh: 'NVD 發布紀錄', en: 'NVD publication date' } },{ date: '2026-10-12', event: { zh: '聚焦識別測試，候選未確認', en: 'Focused detection; unconfirmed candidate' } },{ date: '2026-10-16', event: { zh: '公開來源與紀錄邊界核對', en: 'Public sources and evidence boundary reviewed' } }],
   },
   {
-    id: 'ammonia-ghsa-x43w-36pp-96g3', publication: 'public', reviewedAt: '2026-10-18', type: 'reported', status: 'regression-verified', package: 'ammonia', ecosystem: 'Cargo',
+    id: 'ammonia-ghsa-x43w-36pp-96g3', publication: 'public', reviewedAt: '2026-10-18', type: 'discovery', status: 'regression-verified', package: 'ammonia', ecosystem: 'Cargo',
     title: { zh: 'CSS URL 大小寫處理缺口', en: 'Case-sensitive CSS URL filtering gap' },
     summary: { zh: '上游公告指出，特定 CSS 清理設定未對大寫 URL() 套用預期的網址政策，可能讓追蹤圖片通過；公告明確說明不構成 XSS。', en: 'The upstream advisory says uppercase URL() can bypass configured CSS URL filtering and permit tracking pixels in some settings; it explicitly says this is not XSS.' },
     cve: null, ghsa: 'GHSA-x43w-36pp-96g3', cwe: null, rustsecId: 'RUSTSEC-2026-0373',
@@ -45,10 +45,11 @@ const reviewed = [
     fixUrl: 'https://github.com/rust-ammonia/ammonia/pull/267',
     upstreamCreditUrl: 'https://rustsec.org/advisories/RUSTSEC-2026-0373.html',
     publishedAt: '2026-10-17',
-    boundary: { zh: 'Louis Li 獲 RustSec 列為通報者。獨立的函式庫政策回歸測試在 4.2.3 為 3／5 通過、4.2.4 為 5／5 通過；這是通報與修補版驗證，並非產品掃描自動發現。', en: 'RustSec credits Louis Li as reporter. Isolated library policy regression tests passed 3/5 on 4.2.3 and 5/5 on 4.2.4. This is a reported issue with fixed-version validation, not automated discovery by the product scanner.' },
-    method: { zh: '在隔離、離線環境中，對 4.2.3 與官方 4.2.4 套用相同的五種 caller-policy 測試、七組輸入。逐項結果與六行測試輸出節錄見公開 JSON；完整原始 log 未公開。', en: 'The same five caller-policy methods and seven inputs were tested against 4.2.3 and the official 4.2.4 crate in isolated offline runs. Per-check results and six-line test-output excerpts are in the public JSON; complete original logs are not published.' },
-    limitations: { zh: '第二輪 4.2.3 比較的外層控制器因額外指紋檢查回報失敗；保存的原始測試輸出及來源綁定，後經修正的唯讀驗證器核對，並未重跑目標。未測瀏覽器實際載入、應用整合、Vettalon 掃描流程、4.1.8 或全部受影響版本。GHSA 未指派 CVE 或 CWE；六行節錄不能取代完整原始 log。', en: 'The outer controller for the second 4.2.3 comparison failed an additional fingerprint check; a corrected read-only validator checked the saved raw test output and source bindings without rerunning the target. No browser loading, application integration, Vettalon scan flow, 4.1.8, or all affected versions were tested. The GHSA has no assigned CVE or CWE. Six-line excerpts do not replace complete original logs.' },
-    credit: { zh: 'RustSec 公開紀錄列 Louis Li 為通報者；修補與公告由 ammonia 上游維護者處理。Vettalon 僅公開此通報與範圍有限的回歸驗證，不宣稱自動找到原始漏洞。', en: 'RustSec publicly names Louis Li as the reporter; ammonia maintainers handled the fix and advisory. Vettalon publishes the report and scoped regression validation, without claiming automated discovery of the original issue.' },
+    boundary: { zh: 'Vettalon 供應鏈獵捕在 2026-10-14 找出 ammonia 4.1.7 的 needs_human 候選並產生揭露草稿；人工重現及送件後，上游修復。RustSec 列 Louis Li 為通報者。指定政策測試在 4.2.3 為 3／5、官方 4.2.4 為 5／5。', en: 'Vettalon supply-chain hunt surfaced a needs_human candidate in ammonia 4.1.7 and generated a disclosure draft on 2026-10-14. A human reproduced and submitted it; upstream fixed it. RustSec credits Louis Li as reporter. Scoped policy tests passed 3/5 on 4.2.3 and 5/5 on official 4.2.4.' },
+    method: { zh: '公開的來源節錄保留產品候選、待人工判定狀態與草稿產生紀錄。人工重現後送交上游；修補公開後，在隔離、離線環境對 4.2.3 與官方 4.2.4 執行相同五種 caller-policy 測試、七組輸入。', en: 'A curated source excerpt preserves the product candidate, its needs_human state and draft-generation record. After manual reproduction and submission, the same five caller-policy methods and seven inputs were tested on 4.2.3 and official 4.2.4 in isolated offline runs.' },
+    limitations: { zh: '原始完整 hunt.json、當時原始碼位元組及公開寄件收據未找回；節錄不能單獨證明人工送件。第二輪 4.2.3 比較的外層控制器因額外指紋檢查回報失敗，後以修正的唯讀驗證器核對已保存輸出，未重跑目標。未測瀏覽器載入、應用整合、4.1.8 或全部受影響版本；GHSA 未指派 CVE／CWE。', en: 'The full original hunt.json, historical source bytes and a public sent-message receipt are unavailable; the excerpt alone does not prove human submission. The second 4.2.3 controller failed an extra fingerprint check; a corrected read-only validator checked saved output without rerunning the target. Browser loading, application integration, 4.1.8 and the full affected range were not tested. No CVE or CWE is assigned.' },
+    credit: { zh: 'Vettalon 提出原始候選與揭露草稿；Louis Li 人工重現並送件，RustSec 公開列其為通報者。Ammonia 維護者負責修補與公告。', en: 'Vettalon produced the original candidate and disclosure draft; Louis Li manually reproduced and submitted the report, and RustSec publicly credits him as reporter. Ammonia maintainers produced the fix and advisory.' },
+    origin: { artifactPath: '/evidence/origins/ammonia-ghsa-x43w-36pp-96g3.json', sha256: '7bb0de375942bfd31ff6a2296db7fbbf4127997a6ca612b1d39d585a22c25413', observedAt: '2026-10-14', findingStatus: 'needs_human' },
     regression: {
       artifactPath: '/evidence/regressions/ammonia-ghsa-x43w-36pp-96g3.json', sha256: 'afa1001f97d97edbabc477436bbd88d9b82d5a0c481854edaab599448b14da3b', testedAt: '2026-10-18',
       checks: [
@@ -60,6 +61,7 @@ const reviewed = [
       ],
     },
     timeline: [
+      { date: '2026-10-14', event: { zh: 'Vettalon 獵捕提出 needs_human 候選及揭露草稿（UTC；臺灣時間 10 月 15 日）', en: 'Vettalon hunt surfaced a needs_human candidate and generated a disclosure draft (UTC; October 15 in Taiwan)' } },
       { date: '2026-10-16', event: { zh: 'RustSec 記錄通報日期', en: 'Reported date in RustSec' } },
       { date: '2026-10-17', event: { zh: 'GHSA／RustSec 公告與修補版本公開', en: 'GHSA/RustSec advisories and patched releases published' } },
       { date: '2026-10-18', event: { zh: '4.2.3 與 4.2.4 固定政策案例重新測試，整理公開摘要', en: 'Fixed policy cases rerun on 4.2.3 and 4.2.4; public summary curated' } },

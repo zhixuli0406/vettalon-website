@@ -66,20 +66,22 @@ test('both real historical cases expose their own dossier digest and preserve sc
   } finally { await server.close(); }
 });
 
-test('reported ammonia detail shows five policy checks, credit and limits without scanner-discovery claims', async () => {
+test('ammonia discovery detail shows product-origin artifact, five policy checks and bounded credit', async () => {
   const { server, cases, render } = await renderer();
   try {
-    const item = cases.find(value => value.type === 'reported');
+    const item = cases.find(value => value.id === 'ammonia-ghsa-x43w-36pp-96g3');
     for (const locale of ['zh', 'en']) {
       const html = render(locale, item.id);
       assert.ok(html.includes(item.ghsa));
       assert.ok(html.includes(item.regression.artifactPath));
       assert.ok(html.includes(item.regression.sha256));
+      assert.ok(html.includes(item.origin.artifactPath));
+      assert.ok(html.includes(item.origin.sha256));
       assert.ok(html.includes(item.upstreamCreditUrl));
       assert.equal((html.match(/<tbody>/g) || []).length, 1);
       assert.equal((html.match(/<tr>/g) || []).length, 6);
-      assert.ok(html.includes(locale === 'en' ? 'Reported and regression-verified' : '通報並回歸驗證'));
-      assert.ok(!html.includes(locale === 'en' ? 'Original discovery' : '原創發現'));
+      assert.ok(html.includes(locale === 'en' ? 'Fixed-version regression verified' : '修補版回歸驗證'));
+      assert.ok(html.includes(locale === 'en' ? 'Original discovery' : '原創發現'));
       assert.ok(!html.includes('null'));
     }
   } finally { await server.close(); }

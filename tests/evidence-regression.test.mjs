@@ -5,40 +5,47 @@ import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promis
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { cases } from '../src/evidence/cases.js';
-import { validateManifest, validateRegression, readFilters, selectCases } from '../src/evidence/schema.js';
+import { validateManifest, validateRegression, validateOrigin, readFilters, selectCases } from '../src/evidence/schema.js';
 import { validateDossierFiles } from '../scripts/evidence-artifacts.mjs';
 
 const item = cases.find(value => value.id === 'ammonia-ghsa-x43w-36pp-96g3');
 const artifactPath = 'public' + item.regression.artifactPath;
 const digest = bytes => createHash('sha256').update(bytes).digest('hex');
 
-test('public ammonia report keeps upstream credit separate from scanner detection', async () => {
+test('public ammonia discovery binds archived product output, upstream credit and scoped regression', async () => {
   const bytes = await readFile(artifactPath);
   const artifact = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
   assert.equal(digest(bytes), item.regression.sha256);
   assert.doesNotThrow(() => validateManifest(cases));
   assert.doesNotThrow(() => validateRegression(item, artifact));
-  assert.equal(item.type, 'reported');
+  assert.equal(item.type, 'discovery');
   assert.equal(item.status, 'regression-verified');
   assert.equal(item.cve, null); assert.equal(item.cwe, null);
   assert.equal(item.upstreamCreditUrl, 'https://rustsec.org/advisories/RUSTSEC-2026-0373.html');
   assert.equal(item.detection, undefined);
   assert.equal(item.reproduction, undefined);
+  const originBytes = await readFile('public' + item.origin.artifactPath);
+  const origin = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(originBytes));
+  assert.equal(digest(originBytes), item.origin.sha256);
+  assert.doesNotThrow(() => validateOrigin(item, origin));
+  assert.equal(origin.finding.status, 'needs_human');
+  assert.equal(origin.draft.automaticallySubmitted, false);
+  assert.equal(origin.limits.fullHuntReportRecovered, false);
   assert.equal(artifact.scope.originalLogsPublic, false);
   assert.equal(artifact.scope.productScannerUsed, false);
   assert.deepEqual(artifact.checks.map(check => check.vulnerable), ['ok','failed','ok','ok','failed']);
   assert.ok(artifact.checks.every(check => check.fixed === 'ok'));
   assert.equal(artifact.arms.vulnerable.exitCode, 101);
   assert.equal(artifact.arms.fixed.exitCode, 0);
-  assert.doesNotMatch(JSON.stringify(artifact), /\/Users\/|\/home\/|vettalon-pro|Bollard|PRIVATE_SENTINEL/);
+  assert.doesNotMatch(JSON.stringify([artifact, origin]), /\/Users\/|\/home\/|vettalon-pro|Bollard|PRIVATE_SENTINEL/);
 });
 
-test('reporting and regression facets search GHSA and RustSec without requiring a CVE', () => {
-  assert.equal(readFilters('?type=reported&status=regression-verified').type, 'reported');
+test('discovery and regression facets search GHSA and RustSec without requiring a CVE', () => {
+  assert.equal(readFilters('?type=discovery&status=regression-verified').type, 'discovery');
   for (const q of ['GHSA-x43w-36pp-96g3', 'RUSTSEC-2026-0373', 'AMMONIA']) {
-    assert.deepEqual(selectCases(cases, { q, type: 'reported', status: 'regression-verified' }).map(value => value.id), [item.id]);
+    assert.deepEqual(selectCases(cases, { q, type: 'discovery', status: 'regression-verified' }).map(value => value.id), [item.id]);
   }
-  assert.equal(selectCases(cases, { type: 'discovery' }).length, 0);
+  assert.equal(selectCases(cases, { type: 'discovery' }).length, 1);
 });
 
 test('regression schema rejects mismatched identity, policy controls and unsupported claims', async () => {
@@ -65,9 +72,26 @@ test('regression schema rejects mismatched identity, policy controls and unsuppo
     value => value.cve = [],
     value => value.cwe = {},
     value => value.status = 'reproduced',
+    value => { delete value.regression; delete value.rustsecId; value.cve = 'CVE-2026-12345'; value.cwe = 'CWE-79'; },
+    value => delete value.origin,
+    value => value.origin.sha256 = 'bad',
   ]) {
     const changed = structuredClone(item); mutate(changed);
     assert.throws(() => validateManifest([changed]));
+  }
+});
+
+test('origin artifact rejects changed finding, draft, limits and private extras', async () => {
+  const original = JSON.parse(await readFile('public' + item.origin.artifactPath, 'utf8'));
+  for (const mutate of [
+    value => value.finding.status = 'confirmed',
+    value => value.finding.version = '4.2.3',
+    value => value.draft.automaticallySubmitted = true,
+    value => value.limits.fullHuntReportRecovered = true,
+    value => value.privateNotes = 'PRIVATE_SENTINEL',
+  ]) {
+    const changed = structuredClone(original); mutate(changed);
+    assert.throws(() => validateOrigin(item, changed));
   }
 });
 
@@ -81,6 +105,11 @@ test('build verifies regression bytes and rejects missing, symlinked or mutated 
     await assert.rejects(() => validateDossierFiles([item], root));
     const bytes = await readFile(artifactPath);
     await writeFile(path, bytes);
+    await assert.rejects(() => validateDossierFiles([item], root));
+    const originDir = join(root, 'evidence', 'origins');
+    await mkdir(originDir, { recursive: true });
+    const originPath = join(originDir, `${item.id}.json`);
+    await writeFile(originPath, await readFile('public' + item.origin.artifactPath));
     await assert.doesNotReject(() => validateDossierFiles([item], root));
     await writeFile(path, Buffer.concat([bytes, Buffer.from(' ')]));
     await assert.rejects(() => validateDossierFiles([item], root));

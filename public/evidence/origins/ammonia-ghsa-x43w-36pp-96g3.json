@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "caseId": "ammonia-ghsa-x43w-36pp-96g3",
+  "observedAt": "2026-10-14",
+  "recordKind": "curated-archived-vettalon-hunt-output",
+  "archivedToolOutputLineSha256": "2ffcb9b4dc279bcd1303990de185022dbdcce85661cca3229c1934b10e4fbb5e",
+  "finding": {
+    "dependency": "ammonia",
+    "version": "4.1.7",
+    "status": "needs_human",
+    "severityCandidate": "medium",
+    "location": "ammonia-4.1.7/src/style.rs:170",
+    "title": "Case-sensitive url() match lets quoted URL()/Url() bypass style URL scheme and relative-URL filtering"
+  },
+  "draft": {
+    "generatedByHunt": true,
+    "automaticallySubmitted": false,
+    "filename": "ammonia_4_1_7-ai_audit_8c00985855923e82.md"
+  },
+  "limits": {
+    "fullHuntReportRecovered": false,
+    "originalSourceBytesRecovered": false,
+    "sentMessageReceiptPublic": false,
+    "otherCandidatesExcluded": true
+  }
+}
