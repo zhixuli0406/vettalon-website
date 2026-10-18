@@ -4,17 +4,17 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createServer } from 'vite';
 import react from '@vitejs/plugin-react';
-import { validateManifest } from '../src/evidence/schema.js';
+import { readFilters, selectCases, validateManifest } from '../src/evidence/schema.js';
 
 // Test-only module instances; this fixture is never written to the public manifest.
 async function renderer() {
   const server = await createServer({ configFile: false, plugins: [react()], optimizeDeps: { noDiscovery: true, include: [] }, server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' });
-  const [{ default: EvidencePage }, { LocaleCtx }, { cases }] = await Promise.all([
+  const [{ default: EvidencePage, FeaturedAmmonia }, { LocaleCtx }, { cases }] = await Promise.all([
     server.ssrLoadModule('/src/components/EvidencePage.jsx'),
     server.ssrLoadModule('/src/locale.js'),
     server.ssrLoadModule('/src/evidence/cases.js'),
   ]);
-  return { server, cases, render: (locale, id) => renderToStaticMarkup(React.createElement(LocaleCtx.Provider, { value: { locale } }, React.createElement(EvidencePage, { page: `evidence/${id}` }))) };
+  return { server, cases, FeaturedAmmonia, render: (locale, id) => renderToStaticMarkup(React.createElement(LocaleCtx.Provider, { value: { locale } }, React.createElement(EvidencePage, { page: `evidence/${id}` }))) };
 }
 
 test('a private reproduced fixture exposes artifact, digest, three controls and upstream credit in both locales', async () => {
@@ -87,6 +87,43 @@ test('ammonia discovery detail shows product-origin artifact, five policy checks
       assert.ok(html.includes(locale === 'en' ? 'Fixed-version regression verified' : '修補版回歸驗證'));
       assert.ok(html.includes(locale === 'en' ? 'Original discovery' : '原創發現'));
       assert.ok(!html.includes('null'));
+    }
+  } finally { await server.close(); }
+});
+
+test('featured Ammonia path links four distinct evidence stages and states limits in both locales', async () => {
+  const { server, cases, render, FeaturedAmmonia } = await renderer();
+  try {
+    const item = cases.find(value => value.id === 'ammonia-ghsa-x43w-36pp-96g3');
+    for (const locale of ['zh', 'en']) {
+      const html = render(locale, '');
+      const section = html.match(/<section class="evidence__featured"[\s\S]*?<\/section>/)?.[0];
+      assert.ok(section, 'the featured path appears on the public list');
+      assert.ok(html.indexOf('class="evidence__featured"') < html.indexOf('class="evidence__filters"'), 'the evidence path precedes the filters');
+      const headings = locale === 'zh' ? ['候選與擬稿', '人工通報', '修補後回歸', '證據邊界'] : ['Candidate and draft', 'Human report', 'Post-fix regression', 'Evidence boundary'];
+      let previous = -1;
+      for (const heading of headings) {
+        const position = section.indexOf(`<h3>${heading}</h3>`);
+        assert.ok(position > previous, `${heading} appears in sequence`);
+        previous = position;
+      }
+      for (const href of [item.origin.artifactPath, item.fixUrl, item.upstreamCreditUrl, item.pairedBundle.artifactPath]) assert.ok(section.includes(`href="${href}"`), href);
+      assert.ok(section.includes(`href="${locale === 'zh' ? '' : '/en'}/evidence/${item.id}/"`), 'the last step links to the detail and limits');
+      assert.ok(section.includes(`${item.sourceVersion} 3/5 → ${item.fixedVersion} 5/5`));
+      assert.ok(section.includes('needs_human'));
+      assert.ok(section.includes('4.1.7'), 'the original candidate version is distinct from the later pair');
+      assert.ok(section.includes(locale === 'zh' ? '完整原始 hunt 未公開' : 'full original hunt is unavailable'));
+      assert.ok(section.includes(locale === 'zh' ? '後續政策測試結果，不是原始獵捕命中率' : 'later policy test, not the original hunt detection rate'));
+      assert.ok(section.includes(locale === 'zh' ? '通報修補後另行執行' : 'A separate fixed caller-policy test after the report and fix'));
+      assert.ok(!section.includes('CVE-'), 'no CVE is invented for this case');
+      assert.equal((section.match(/class="evidence__featured-number"/g) || []).length, 4);
+    }
+    const featuredFor = (query, locale) => renderToStaticMarkup(React.createElement(FeaturedAmmonia, {
+      item: selectCases(cases, readFilters(query)).find(value => value.id === item.id), locale,
+    }));
+    assert.ok(featuredFor('?q=ammonia', 'zh').includes('class="evidence__featured"'));
+    for (const query of ['?q=phpunit', '?type=historical', '?status=detected', '?ecosystem=PyPI']) {
+      for (const locale of ['zh', 'en']) assert.equal(featuredFor(query, locale), '', `${query} must hide the featured case`);
     }
   } finally { await server.close(); }
 });

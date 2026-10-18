@@ -72,6 +72,42 @@ const aiohttpPairedLabels = {
     digest: 'ZIP SHA-256',
   },
 };
+const featuredLabels = {
+  zh: {
+    eyebrow: '精選案例 / Ammonia', title: '從產品候選到上游修補',
+    intro: 'Vettalon 對 ammonia 4.1.7 提出 needs_human 候選與揭露草稿；Louis Li 人工重現、送件，上游修補。以下是各段可核對的材料。',
+    candidate: '候選與擬稿', candidateText: '公開的是 4.1.7 產品輸出的人工選編節錄；完整原始 hunt 未公開。', candidateLink: '查看輸出節錄',
+    report: '人工通報', reportText: '維護者在修補 PR 確認收到 email；RustSec 列 Louis Li 為通報者。', reportLink: '修補 PR', creditLink: 'RustSec 歸屬',
+    comparison: '修補後回歸', comparisonText: '通報修補後另行執行的固定 caller-policy 測試，使用官方雙版本：', comparisonLink: '下載原始證據包',
+    boundary: '證據邊界', boundaryText: '上述通過數是後續政策測試結果，不是原始獵捕命中率；未驗證瀏覽器 XSS 或完整應用流程。', detailLink: '閱讀完整紀錄與限制',
+  },
+  en: {
+    eyebrow: 'Featured case / Ammonia', title: 'From candidate to upstream fix',
+    intro: 'Vettalon produced a needs_human candidate and disclosure draft for ammonia 4.1.7. Louis Li reproduced and submitted it; upstream fixed it. Follow the evidence for each step.',
+    candidate: 'Candidate and draft', candidateText: 'The public excerpt curates the 4.1.7 product output; the full original hunt is unavailable.', candidateLink: 'Read output excerpt',
+    report: 'Human report', reportText: 'The maintainer confirms email receipt in the fix PR; RustSec credits Louis Li as reporter.', reportLink: 'Fix PR', creditLink: 'RustSec credit',
+    comparison: 'Post-fix regression', comparisonText: 'A separate fixed caller-policy test after the report and fix, using two official versions:', comparisonLink: 'Download raw evidence bundle',
+    boundary: 'Evidence boundary', boundaryText: 'These pass counts belong to the later policy test, not the original hunt detection rate; browser XSS and complete application flow remain untested.', detailLink: 'Read full record and limits',
+  },
+};
+
+export function FeaturedAmmonia({ item, locale }) {
+  if (!item?.origin || !item.regression || !item.pairedBundle || !item.upstreamCreditUrl) return null;
+  const t = featuredLabels[locale];
+  const checks = item.regression.checks;
+  const sourcePassed = checks.filter(check => check.vulnerable === 'ok').length;
+  const fixedPassed = checks.filter(check => check.fixed === 'ok').length;
+  const detail = pagePath(locale, `evidence/${item.id}`);
+  return <section className="evidence__featured" aria-labelledby="evidence-featured-title">
+    <div className="evidence__featured-head"><p className="eyebrow">{t.eyebrow}</p><h2 id="evidence-featured-title">{t.title}</h2><p>{t.intro}</p></div>
+    <ol className="evidence__featured-steps">
+      <li><span className="evidence__featured-number" aria-hidden="true">01</span><h3>{t.candidate}</h3><p>{t.candidateText}</p><a href={item.origin.artifactPath}>{t.candidateLink}<ArrowUpRight size={15} aria-hidden="true" /></a></li>
+      <li><span className="evidence__featured-number" aria-hidden="true">02</span><h3>{t.report}</h3><p>{t.reportText}</p><div className="evidence__featured-links"><ExternalLink href={item.fixUrl}>{t.reportLink}</ExternalLink><ExternalLink href={item.upstreamCreditUrl}>{t.creditLink}</ExternalLink></div></li>
+      <li><span className="evidence__featured-number" aria-hidden="true">03</span><h3>{t.comparison}</h3><p>{t.comparisonText} <strong className="mono">{item.sourceVersion} {sourcePassed}/{checks.length} → {item.fixedVersion} {fixedPassed}/{checks.length}</strong></p><a href={item.pairedBundle.artifactPath}>{t.comparisonLink}<ArrowUpRight size={15} aria-hidden="true" /></a></li>
+      <li><span className="evidence__featured-number" aria-hidden="true">04</span><h3>{t.boundary}</h3><p>{t.boundaryText}</p><a href={detail}>{t.detailLink}<ArrowUpRight size={15} aria-hidden="true" /></a></li>
+    </ol>
+  </section>;
+}
 
 function EvidenceTypes({ item, locale }) {
   const t = chainLabels[locale];
@@ -149,6 +185,7 @@ export default function EvidencePage({ page }) {
   return <div className="evidence wrap">
     <header className="evidence__head"><p className="eyebrow">{t.kicker}</p><h1>{t.title}<span aria-hidden="true"> /</span></h1><p className="evidence__lead">{t.lead}</p></header>
     <p className="evidence__policy">{t.policy}</p>
+    <FeaturedAmmonia item={results.find(c => c.id === 'ammonia-ghsa-x43w-36pp-96g3')} locale={locale} />
     <form className="evidence__filters" role="search" onSubmit={e => e.preventDefault()}>
       <label className="evidence__search"><Search size={18} aria-hidden="true" /><span className="sr-only">{t.search}</span><input name="q" type="search" maxLength={200} placeholder={t.search} value={filters.q} onChange={e => update('q',e.target.value)} /></label>
       <div className="evidence__facets"><Facet label={t.type} name="type" value={filters.type} values={['historical','reported','discovery']} t={t} onChange={update}/><Facet label={t.status} name="status" value={filters.status} values={['source-reviewed','detected','regression-verified','reproduced']} t={t} onChange={update}/><Facet label={t.ecosystem} name="ecosystem" value={filters.ecosystem} values={['PyPI','npm','Packagist','Cargo','Go','RubyGems']} t={t} onChange={update}/><label className="evidence__field"><span>{t.sort}</span><select name="sort" value={filters.sort} onChange={e => update('sort',e.target.value)}><option value="newest">{t.newest}</option><option value="oldest">{t.oldest}</option></select></label></div>
