@@ -10,7 +10,7 @@
 
 aiohttp／PHPUnit 的 `public/evidence/dossiers/` 只保留逐欄挑選的單筆 finding 及有效覆核文字。原始掃描報告未公開，`detection.sha256` 是供持有原件者比對的雜湊；附件本身另有 SHA-256。PHPUnit 的 runtime error trace 省略且仍為 `no_verdict`；aiohttp 的 `plausible` 仍為 `needs_human`。公開 tag／行號只是參考，不能證明歷史原始碼位元組。
 
-Ammonia 的 `public/evidence/origins/` 是從 2026-10-14 UTC（臺灣 10 月 15 日）歸檔的 Vettalon hunt 工具輸出中，逐欄選取此案例的候選位置、`needs_human` 判定、產生草稿及原始 JSONL 行雜湊；未公開其他候選。原完整 `hunt.json`、當時來源位元組及可公開寄件收據未找回；人工送件依使用者原始陳述，RustSec 公開列 Louis Li 為通報者。此節錄只證產品輸出與擬稿紀錄，未單獨證明寄送或當時原始碼位元組。原始 JSONL 沒有公開，第三方也無法單靠行雜湊獨立重算這筆輸出。
+Ammonia 的 `public/evidence/origins/` 是從 2026-10-14 UTC（臺灣 10 月 15 日）歸檔的 Vettalon hunt 工具輸出中，逐欄選取此案例的候選位置、`needs_human` 判定、產生草稿及原始 JSONL 行雜湊；未公開其他候選。原完整 `hunt.json`、當時來源位元組及可公開寄件收據未找回；人工送件由使用者確認，Ammonia 維護者在修補 PR #267 公開確認收到 zhixuli0406 的 email，RustSec 列 Louis Li 為通報者。原始 email 與寄件系統收據未公開。此節錄只證產品輸出與擬稿紀錄，未單獨證明寄送或當時原始碼位元組。原始 JSONL 沒有公開，第三方也無法單靠行雜湊獨立重算這筆輸出。
 
 `public/evidence/regressions/` 放五項固定函式庫政策測試摘要：4.2.3 為 3 過 2 失敗，官方 4.2.4 為 5 過 0 失敗。HTTPS 正常控制有三種大小寫輸入，因此合計七組輸入。第二輪 4.2.3 比較的外層控制器因額外指紋檢查回報失敗；保存的原始測試輸出及來源綁定，後經修正的唯讀驗證器核對，並未重跑目標。完整原始 log 不公開；JSON 含兩版各六行測試輸出節錄。這不代表瀏覽器實際載入、完整產品掃描流程、應用整合或所有受影響版本已驗證。
 
