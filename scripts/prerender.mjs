@@ -12,12 +12,13 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
 const dist = join(root, 'dist');
 
-const { content, LOCALE_META, SITE_URL, GITHUB, BUY_PRO, BUY_TEAM, DOWNLOADS, pagePath } = await import(join(root, 'src/i18n.js'));
+const { content, LOCALE_META, SITE_URL, GITHUB, BUY_PRO, BUY_TEAM, downloadPath, pagePath } = await import(join(root, 'src/i18n.js'));
 const { legal, LEGAL_PAGES, LEGAL_NAME_EN, LEGAL_NAME_ZH } = await import(join(root, 'src/legal.js'));
 const { PLAN } = await import(join(root, 'src/plan.js'));
 const { cases } = await import(join(root, 'src/evidence/cases.js'));
 const { homepageEvidence } = await import(join(root, 'src/evidence/homepage.js'));
 const { render } = await import(join(root, 'dist-server/entry-server.js'));
+const { downloadCopy } = await import(join(root, 'src/download-copy.js'));
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -36,11 +37,11 @@ function softwareApp(locale) {
     '@type': 'SoftwareApplication',
     name: 'Vettalon',
     applicationCategory: 'DeveloperApplication',
-    operatingSystem: 'macOS, Linux, Windows',
+    operatingSystem: 'macOS 11+ (Apple Silicon only; Intel Macs not supported), Windows 10/11 (x64), Linux (x86_64)',
     description: c.meta.description,
     url: SITE_URL + LOCALE_META[locale].path,
     softwareHelp: GITHUB,
-    downloadUrl: DOWNLOADS,
+    downloadUrl: SITE_URL + downloadPath(locale),
     offers: [
       { '@type': 'Offer', price: '0', priceCurrency: 'USD', description: 'Open-source core (Apache 2.0)' },
       { '@type': 'Offer', price: PLAN.proPrice.replace(/\D/g, ''), priceCurrency: 'USD', description: 'Vettalon Pro, one-time purchase', url: BUY_PRO },
@@ -67,6 +68,7 @@ function faqPage(locale) {
 function jsonLd(locale, page) {
   if (page.startsWith('evidence')) return serializeJsonLd({ '@context': 'https://schema.org', '@type': 'CollectionPage', name: metaFor(locale,page).title, url: SITE_URL + pagePath(locale,page), inLanguage: locale === 'en' ? 'en' : 'zh-Hant' });
   const lang = locale === 'en' ? 'en' : 'zh-Hant';
+  if (page === 'download') return serializeJsonLd({ '@context': 'https://schema.org', '@graph': [ORG, { '@type': 'WebPage', name: downloadCopy[locale].title, url: SITE_URL + pagePath(locale, page), inLanguage: lang, publisher: ORG }, softwareApp(locale)] });
   const graph = page
     ? [ORG, { '@type': 'WebPage', name: legal[locale][page].title, url: SITE_URL + pagePath(locale, page), inLanguage: lang, publisher: ORG }]
     : [ORG, softwareApp(locale), faqPage(locale)];
@@ -81,6 +83,7 @@ function metaFor(locale, page) {
     const item = cases.find(c => page === 'evidence/' + c.id);
     return { title: (item ? item.package + ' · ' + (item.cve ?? item.ghsa) + ' | ' : '') + (locale === 'en' ? 'Evidence wall | Vettalon' : '證據牆｜Vettalon'), description: item ? item.summary[locale] : (locale === 'en' ? 'Public case evidence with sources, methods, and verification limits.' : '公開逐案證據，附來源、測試方法與驗證限制。') };
   }
+  if (page === 'download') return { title: downloadCopy[locale].title + (locale === 'en' ? ' | ' : '｜') + 'Vettalon', description: downloadCopy[locale].metaDescription };
   const doc = legal[locale][page];
   return { title: doc.title + (locale === 'en' ? ' | ' : '｜') + 'Vettalon', description: doc.metaDescription };
 }
@@ -119,7 +122,7 @@ function headFor(locale, page) {
 
 const template = await readFile(join(dist, 'index.html'), 'utf8');
 
-const PAGES = ['', ...LEGAL_PAGES, 'evidence', ...cases.map(c => 'evidence/' + c.id)];
+const PAGES = ['', 'download', ...LEGAL_PAGES, 'evidence', ...cases.map(c => 'evidence/' + c.id)];
 
 async function writePage(locale, page) {
   const lm = LOCALE_META[locale];
@@ -185,7 +188,8 @@ function llms(locale) {
     `# Vettalon\n\n` +
     `> ${c.meta.description}\n\n` +
     `${L('官網', 'Site')}: ${SITE_URL}/${locale === 'en' ? 'en/' : ''}\n` +
-    `${L('原始碼', 'Source')}: ${GITHUB}\n\n` +
+    `${L('原始碼', 'Source')}: ${GITHUB}\n` +
+    `${L('桌面 App 下載', 'Desktop app download')}: ${SITE_URL}${downloadPath(locale)} (${downloadCopy[locale].metaDescription})\n\n` +
     `## ${L('核心能力', 'Capabilities')}\n` +
     c.product.cards.map((x) => `- ${x.name}: ${x.desc}`).join('\n') +
     `\n\n## ${L('價格', 'Pricing')}\n` +

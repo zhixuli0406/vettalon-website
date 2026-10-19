@@ -69,6 +69,7 @@ export default function Nav() {
           {links.map((l) => (
             <a key={l.href} href={home + l.href} onClick={close}>{l.label}</a>
           ))}
+          <a href={pagePath(locale, 'download')} onClick={close} aria-current={page === 'download' ? 'page' : undefined}>{locale === 'en' ? 'Download' : '下載'}</a>
           <a className="nav__lang" href={page.startsWith('evidence') ? pagePath(locale === 'en' ? 'zh' : 'en', page) + locationSuffix : otherLocaleHref(locale, page)} hrefLang={locale === 'en' ? 'zh-Hant' : 'en'}>
             {locale === 'en' ? '中文' : 'EN'}
           </a>

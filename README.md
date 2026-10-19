@@ -45,6 +45,16 @@ npm run preview -- --host 127.0.0.1 --port 18873 --strictPort
 
 公開資料只從 `src/evidence/cases.js` 的人工審查清單生成。每筆 JSON 記錄、歷史報告節錄、Ammonia 產品輸出節錄及舊版測試摘要皆可下載；附件核對固定路徑、SHA-256 與 schema。另有新封存的 Ammonia 4.2.3／4.2.4 雙版本實跑 ZIP，含兩版 raw stdout／stderr、收據、harness、manifest 與離線 verifier，下載後可自行解壓核對。完整原始 `hunt.json`、歷史 JSONL 原行、寄件收據及此輪 pinned vendor payload 未公開；離線 verifier 只證封存內部一致。維護與驗收規則見 [公開案例維護指南](docs/evidence-wall.md)。
 
+## 桌面 App 下載頁
+
+`/download/` 與 `/en/download/` 列出 macOS（限 Apple Silicon）、Windows、Linux 安裝檔，載入後依瀏覽器判斷作業系統並推薦對應檔案。Mac 的晶片只能從 Chromium 的 client hints 或 WebGL 顯示卡名稱判斷；判斷為 Intel Mac 時改顯示不支援的警告，判斷不出來時仍提供下載並附上確認晶片的方法。價格區、Pro／Team 卡片、FAQ 與 JSON-LD 都標明桌面 App 不支援 Intel Mac。
+
+安裝檔資訊集中在 `src/downloads.js`（版本、檔名、位元組數、SHA-256），文案在 `src/download-copy.js`。桌面版發佈後：
+
+1. 把 `DESKTOP_VERSION` 與四個檔案的大小、SHA-256 改成新 release 的值。
+2. `npm run check:downloads`：每個連結都要能公開下載且大小相符；草稿 release 會回 404，檢查失敗就不能部署。加 `--sha`（`node scripts/check-downloads.mjs --sha`）會完整下載並核對雜湊。
+3. `npm run check` 後再部署。
+
 ## 稜鏡與效能邊界
 
 `src/prism/scene.js` 使用 pinned Three.js 0.185.1、封閉的 bevel 三角形實體與 `MeshPhysicalMaterial` 的 transmission、IOR、dispersion。光路為視覺隱喻，並非數值光學模擬或掃描結果。覆核案例與側邊視覺共用一個 canvas／WebGL2 context；Finder、Verifier、Human 按鈕同步改變輸出光路與覆核內容。指標及左右按鈕調整觀看角度，暫停鈕停止循環光點。
@@ -71,7 +81,8 @@ Uncut Sans 由作者儲存庫自架，字檔 78,072 bytes；OFL 1.1 授權及來
 - `src/i18n.js`、`src/plan.js`、`src/legal.js`：既有產品敘述、版本價格與法律內容。
 - `src/evidence/`、`src/components/EvidencePage.jsx`：公開案例清單、驗證、篩選與逐案頁。
 - `public/evidence/`、`scripts/validate-evidence.mjs`：人工挑選的公開附件與建置檢查。
-- `scripts/prerender.mjs`：十六頁預先渲染、公開 JSON、SEO 與 llms 檔案。
+- `src/downloads.js`、`src/download-copy.js`、`src/components/DownloadPage.jsx`：下載頁資料、系統偵測與雙語文案；`scripts/check-downloads.mjs` 為部署前連結檢查。
+- `scripts/prerender.mjs`：十八頁預先渲染、公開 JSON、SEO 與 llms 檔案。
 - `tests/prism.test.mjs`：封閉幾何、有限座標、三階段光路、SSR 海報／字體與雙語區塊順序。
 - `tests/review-demo.test.mjs`：候選切換、覆核分支、理由隔離、雙語、SSR 與靜態資產檢查。
 

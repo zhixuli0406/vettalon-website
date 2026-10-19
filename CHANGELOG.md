@@ -2,7 +2,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- 桌面 App 下載頁（`/download/`、`/en/download/`）：依作業系統推薦安裝檔，列出各平台系統需求、檔案大小與 SHA-256，附安裝啟用步驟。導覽列、價格區與頁尾的下載連結改到這一頁，不再連到 GitHub Releases 頁面。
+- `npm run check:downloads`：部署前確認每個安裝檔都能公開下載且大小相符。
+
 ### Changed
+
+- 明確標示桌面 App 不支援 Intel Mac：下載頁偵測到 Intel Mac 時顯示警告，價格說明、Pro／Team 卡片、新增的 FAQ 與結構化資料都寫明只支援 Apple Silicon。
 
 - 新版 Prism 官網新增雙語證據牆一級分頁；首頁案例入口改連到逐案證據，移除缺乏可公開支撐的成效數字。
 - 公開案例分開呈現兩筆歷史聚焦識別與 Ammonia 原創發現。Ammonia 明列 Vettalon 候選與擬稿、人工送件、上游修補及限定回歸，不把 `needs_human` 候選稱為全自動確認。
