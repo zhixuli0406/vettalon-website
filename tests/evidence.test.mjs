@@ -89,12 +89,13 @@ test('reproduction data must include successful differential controls and a publ
 
 test('calendar dates must exist, including century leap-year rules', () => {
   for (const invalid of ['2026-02-29','2026-02-30','2026-04-31','1900-02-29','2026-13-01','2026-00-10']) {
-    const data = clone(); delete data[0].pairedBundle; data[0].reviewedAt = invalid;
+    // The public review block must restate reviewedAt, so both move together in these fixtures.
+    const data = clone(); delete data[0].pairedBundle; data[0].reviewedAt = invalid; data[0].review.reviewedAt = invalid;
     data[0].publishedAt = '1800-01-01'; data[0].timeline = [{date:'1800-01-01',event:{zh:'已公開',en:'Public'}}];
     data[0].detection.observedAt = '1800-01-01';
     assert.throws(() => validateManifest(data),invalid);
   }
-  const data=clone(); delete data[0].pairedBundle; data[0].reviewedAt = '2000-02-29'; data[0].publishedAt = '2000-02-28';
+  const data=clone(); delete data[0].pairedBundle; data[0].reviewedAt = '2000-02-29'; data[0].review.reviewedAt = '2000-02-29'; data[0].publishedAt = '2000-02-28';
   data[0].detection.observedAt = '2000-02-28';data[0].timeline=[{date:'2000-02-28',event:{zh:'已公開',en:'Public'}}];
   assert.equal(validateManifest(data)[0].reviewedAt,'2000-02-29');
 });

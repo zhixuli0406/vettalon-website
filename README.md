@@ -43,6 +43,8 @@ npm run preview -- --host 127.0.0.1 --port 18873 --strictPort
 
 `/evidence/` 與 `/en/evidence/` 提供搜尋、類型／狀態／生態篩選及逐案頁。目前有兩筆歷史聚焦識別（aiohttp、PHPUnit）及一筆 Vettalon 原創 Ammonia 發現。Vettalon 獵捕先提出 `needs_human` 候選並產生揭露草稿；依當事人陳述，Louis Li 人工重現與送件；Ammonia 維護者在修補 PR #267 公開確認 email 收件，RustSec 列 Louis Li 為通報者。上游修復後再做限定回歸。前兩筆歷史識別的狀態仍是 `needs_human` 與 `candidate`；Ammonia 的 4.2.3 五項政策測試為 3 過 2 失敗，官方 4.2.4 為 5 過 0 失敗。候選輸出不等於產品自動確認漏洞；尚在協調揭露期間的案件不會出現在本站。
 
+逐案頁側欄列出人工審閱者化名、審閱日期與 AI 使用說明。列表下方的通報漏斗依案例類型列出 n 與「已通報上游 → 維護者確認收到 → 修補版本釋出 → 公告／CVE 公開」的筆數及日期，只讀案例的結構化欄位，n 少於 10 不顯示比例。欄位規則與維護方式見 [docs/evidence-wall.md](docs/evidence-wall.md)。
+
 公開資料只從 `src/evidence/cases.js` 的人工審查清單生成。每筆 JSON 記錄、歷史報告節錄、Ammonia 產品輸出節錄及舊版測試摘要皆可下載；附件核對固定路徑、SHA-256 與 schema。另有新封存的 Ammonia 4.2.3／4.2.4 雙版本實跑 ZIP，含兩版 raw stdout／stderr、收據、harness、manifest 與離線 verifier，下載後可自行解壓核對。完整原始 `hunt.json`、歷史 JSONL 原行、寄件收據及此輪 pinned vendor payload 未公開；離線 verifier 只證封存內部一致。維護與驗收規則見 [公開案例維護指南](docs/evidence-wall.md)。
 
 ## 桌面 App 下載頁
