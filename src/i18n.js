@@ -1,7 +1,7 @@
 // Vettalon 官網雙語內容。zh-TW 為主、en 為輔。
 // 內容紀律：誠實、不誇大，數字直接呈現並附限制。
 
-import { PLAN, LEGAL_NAME_EN, LEGAL_NAME_ZH, TAX_ID } from './plan.js';
+import { PLAN, LEGAL_NAME_EN, LEGAL_NAME_ZH, TAX_ID, ADDRESS_EN, ADDRESS_ZH } from './plan.js';
 
 export const GITHUB = 'https://github.com/zhixuli0406/vettalon';
 export const SITE_URL = 'https://vettalon.dudustudio.monster';
@@ -131,9 +131,9 @@ export const content = {
           name: 'Vettalon Pro',
           type: '個人',
           price: P.proPrice,
-          priceNote: `一次買斷，含 ${P.updateMonths} 個月更新。之後續訂更新 ${P.proRenewal}／年，不續也能永久使用。`,
+          priceNote: `一次買斷，永久使用。含 ${P.updateMonths} 個月的功能更新與新版本，之後 Update Plan ${P.proRenewal}／年，不續也能繼續用。安全更新至少免費 ${P.supportYears} 年，不需要 Update Plan。`,
           desc: '桌面 App 與本機 dashboard、對齊台灣資安檢測報告慣例的企業報告（PDF／Word／HTML）。讀同一份掃描 JSON；供應鏈獵捕與揭露草稿已含在免費 CLI。',
-          points: ['桌面 App＋本機 dashboard', '企業報告 PDF／Word／HTML', '整合核心掃描工作流程', `單人授權，最多 ${P.proDevices} 台裝置`, '桌面 App 支援 Apple Silicon Mac、Windows、Linux，不支援 Intel Mac'],
+          points: ['桌面 App＋本機 dashboard', '企業報告 PDF／Word／HTML', '整合核心掃描工作流程', `單人授權，最多 ${P.proDevices} 台裝置`, `安全更新至少免費到購買日起第 ${P.supportYears} 年同月月底`, '桌面 App 支援 Apple Silicon Mac、Windows、Linux，不支援 Intel Mac'],
           cta: '購買 Pro',
           href: BUY_PRO,
         },
@@ -149,6 +149,11 @@ export const content = {
         },
       ],
       note: `價格以美元計，未含稅，結帳時依所在地計算。付款完成後，授權金鑰會寄到你的 email，桌面 App 從下載頁安裝（Apple Silicon Mac、Windows、Linux；不支援 Intel Mac）。首次購買與續訂 ${P.refundDays} 天內可全額退款。台灣企業與政府採購可來信索取新台幣報價。`,
+      support: {
+        rule: `每筆購買的安全更新至少免費到購買日起第 ${P.supportYears} 年同一個月的月底，不需要 Update Plan。Update Plan 只涵蓋新功能與新的主要版本。`,
+        today: (end) => `今天購買，安全更新至少到 ${end}。`,
+        link: { label: '支援期與安全更新', href: pagePath('zh', 'support') },
+      },
       download: { label: '下載桌面 App', href: downloadPath('zh') },
     },
     faq: {
@@ -161,6 +166,7 @@ export const content = {
         { q: '開源版和企業版差在哪？', a: '開源核心提供命令列掃描、供應鏈獵捕、揭露草稿與 SARIF。企業版加上桌面 App、本機 dashboard 與企業報告排版，讀的是同一份掃描 JSON。' },
         { q: 'Pro 的授權驗證會連網嗎？', a: '只有啟用時，以及之後每 30 天一次。送出的是授權金鑰、一組裝置 ID（本機識別碼的雜湊值，無法還原）和版本號，不含程式碼或報告；其餘時間可以完全離線使用。開源核心 vettalon 不做授權檢查。' },
         { q: 'Intel Mac 可以用嗎？', a: '桌面 App 不行，只支援 Apple Silicon（M1 以上）的 Mac，Windows 與 Linux 不受影響。購買前請點左上角蘋果選單 →「關於這台 Mac」確認：顯示「晶片 Apple M…」可以使用，顯示「處理器 … Intel」則無法使用。免費的開源 CLI 仍可在 Intel Mac 上執行。' },
+        { q: 'Update Plan 到期後還有安全更新嗎？', a: `有。每筆購買的安全更新至少免費提供到購買日起第 ${P.supportYears} 年同一個月的月底，例如 2026 年 10 月購買，至少到 2031 年 10 月底。安全更新和 Update Plan 分開計算，Update Plan 只涵蓋新功能與新的主要版本；如果新版本要付費，我們會替你能免費使用的版本另外出安全修補。桌面 App 0.4.0 起，「設定 → 關於 Vettalon」會顯示你的結束年月。` },
         { q: '買了不合用可以退款嗎？', a: `可以。Pro 與 Team 首次購買和每次續訂，付款後 ${P.refundDays} 天內來信就能全額退款，不用說明原因。` },
       ],
     },
@@ -179,9 +185,9 @@ export const content = {
         { title: '產品', links: [{ t: 'GitHub 原始碼', href: GITHUB }, { t: '證據牆', href: pagePath('zh', 'evidence') }, { t: '價格', href: pagePath('zh') + '#editions' }, { t: '下載桌面 App', href: downloadPath('zh') }, { t: '企業版', href: CONTACT }] },
         { title: '原廠', links: [{ t: 'Dudu Technology Ltd.', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
         { title: '聯絡', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
-        { title: '法律', links: [{ t: '服務條款', href: pagePath('zh', 'terms') }, { t: '隱私權政策', href: pagePath('zh', 'privacy') }, { t: '退款政策', href: pagePath('zh', 'refund') }] },
+        { title: '法律', links: [{ t: '服務條款', href: pagePath('zh', 'terms') }, { t: '隱私權政策', href: pagePath('zh', 'privacy') }, { t: '退款政策', href: pagePath('zh', 'refund') }, { t: '支援期與安全更新', href: pagePath('zh', 'support') }] },
       ],
-      company: `${LEGAL_NAME_EN} · ${LEGAL_NAME_ZH} · 統編 ${TAX_ID}`,
+      company: `${LEGAL_NAME_EN} · ${LEGAL_NAME_ZH} · 統編 ${TAX_ID} · ${ADDRESS_ZH}`,
     },
   },
 
@@ -283,9 +289,9 @@ export const content = {
           name: 'Vettalon Pro',
           type: 'Individual',
           price: P.proPrice,
-          priceNote: `One-time purchase with ${P.updateMonths} months of updates. Renew updates for ${P.proRenewal}/year after that, or keep using your version forever.`,
+          priceNote: `One-time purchase, yours to keep. Includes ${P.updateMonths} months of feature updates and new versions; after that the Update Plan is ${P.proRenewal}/year, or keep using your version. Security updates stay free for at least ${P.supportYears} years, no Update Plan needed.`,
           desc: 'Desktop app and local dashboard, plus enterprise reports aligned with Taiwan security-assessment conventions (PDF / Word / HTML). Reads the same scan JSON; supply-chain hunting and disclosure drafts are already in the free CLI.',
-          points: ['Desktop app + local dashboard', 'Enterprise reports: PDF / Word / HTML', 'Integrated core scan workflow', `One user, up to ${P.proDevices} devices`, 'Desktop app runs on Apple Silicon Macs, Windows and Linux; Intel Macs are not supported'],
+          points: ['Desktop app + local dashboard', 'Enterprise reports: PDF / Word / HTML', 'Integrated core scan workflow', `One user, up to ${P.proDevices} devices`, `Free security updates until at least the end of the same month ${P.supportYears} years after purchase`, 'Desktop app runs on Apple Silicon Macs, Windows and Linux; Intel Macs are not supported'],
           cta: 'Get Pro',
           href: BUY_PRO,
         },
@@ -301,6 +307,11 @@ export const content = {
         },
       ],
       note: `Prices in USD, excluding tax, which is calculated at checkout for your location. Your license key is emailed once payment completes; install the desktop app from the download page (Apple Silicon Macs, Windows, Linux; Intel Macs are not supported). Full refund within ${P.refundDays} days of a first purchase or renewal. Businesses and government agencies in Taiwan can request a TWD quote.`,
+      support: {
+        rule: `Security updates are free for every purchase until at least the end of the same calendar month ${P.supportYears} years after the purchase date, with no Update Plan needed. The Update Plan covers new features and new major versions only.`,
+        today: (end) => `Buy today and security updates are free until at least ${end}.`,
+        link: { label: 'Support and security updates', href: pagePath('en', 'support') },
+      },
       download: { label: 'Download the desktop app', href: downloadPath('en') },
     },
     faq: {
@@ -313,6 +324,7 @@ export const content = {
         { q: 'Open-source vs enterprise?', a: 'The free core provides command-line scanning, supply-chain hunting, disclosure drafts, and SARIF. Pro adds a desktop app, local dashboard, and enterprise report layouts; both read the same scan JSON.' },
         { q: 'Does the Pro license check go online?', a: 'Only when you activate, and then once every 30 days. It sends the license key, a device ID (a one-way hash of the system identifier of this computer) and the app version, never code or reports; the rest of the time Pro works fully offline. The open-source vettalon core never checks a license.' },
         { q: 'Does it run on Intel Macs?', a: 'The desktop app does not. It needs a Mac with Apple Silicon (M1 or later); Windows and Linux are unaffected. Before buying, open the Apple menu > About This Mac: "Chip Apple M…" is supported, "Processor … Intel" is not. The free open-source CLI still runs on Intel Macs.' },
+        { q: 'Do security updates continue after the Update Plan ends?', a: `Yes. Every purchase gets free security updates until at least the end of the same calendar month ${P.supportYears} years after the purchase date; a purchase in October 2026 is covered until at least the end of October 2031. Security updates are separate from the Update Plan, which covers new features and new major versions only. If a newer version requires payment, we release security fixes for the version you can use for free. From desktop app 0.4.0, Settings > About Vettalon shows your end month.` },
         { q: "Can I get a refund if it doesn't fit?", a: `Yes. Email us within ${P.refundDays} days of a first purchase or any renewal of Pro or Team for a full refund, no reason needed.` },
       ],
     },
@@ -331,9 +343,9 @@ export const content = {
         { title: 'Product', links: [{ t: 'Source on GitHub', href: GITHUB }, { t: 'Evidence wall', href: pagePath('en', 'evidence') }, { t: 'Pricing', href: pagePath('en') + '#editions' }, { t: 'Download', href: downloadPath('en') }, { t: 'Enterprise', href: CONTACT }] },
         { title: 'Vendor', links: [{ t: 'Dudu Technology Ltd.', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
         { title: 'Contact', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
-        { title: 'Legal', links: [{ t: 'Terms of Service', href: pagePath('en', 'terms') }, { t: 'Privacy Policy', href: pagePath('en', 'privacy') }, { t: 'Refund Policy', href: pagePath('en', 'refund') }] },
+        { title: 'Legal', links: [{ t: 'Terms of Service', href: pagePath('en', 'terms') }, { t: 'Privacy Policy', href: pagePath('en', 'privacy') }, { t: 'Refund Policy', href: pagePath('en', 'refund') }, { t: 'Support and security updates', href: pagePath('en', 'support') }] },
       ],
-      company: `${LEGAL_NAME_EN} · ${LEGAL_NAME_ZH} · Tax ID ${TAX_ID}`,
+      company: `${LEGAL_NAME_EN} · ${LEGAL_NAME_ZH} · Tax ID ${TAX_ID} · ${ADDRESS_EN}`,
     },
   },
 };

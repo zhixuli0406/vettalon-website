@@ -80,11 +80,12 @@ Uncut Sans 由作者儲存庫自架，字檔 78,072 bytes；OFL 1.1 授權及來
 - `src/index.css`、`src/prism/prism.css`：語意色彩、海報字排、光路文法與響應式版面。
 - `src/components/PrismView.jsx`、`src/prism/scene.js`：延後載入、GPU 稜鏡及生命週期清理。
 - `src/prism/review-context.js`：稜鏡與覆核示意共享階段。
-- `src/i18n.js`、`src/plan.js`、`src/legal.js`：既有產品敘述、版本價格與法律內容。
+- `src/i18n.js`、`src/plan.js`、`src/legal.js`：既有產品敘述、版本價格與法律內容（服務條款、隱私權、退款、支援期與安全更新四頁）。
+- `src/support.js`：支援期結束年月的計算（購買日起第 5 年同月月底，UTC），價格區與 `tests/support-period.test.mjs` 共用。
 - `src/evidence/`、`src/components/EvidencePage.jsx`：公開案例清單、驗證、篩選與逐案頁。
 - `public/evidence/`、`scripts/validate-evidence.mjs`：人工挑選的公開附件與建置檢查。
 - `src/downloads.js`、`src/download-copy.js`、`src/components/DownloadPage.jsx`：下載頁資料、系統偵測與雙語文案；`scripts/check-downloads.mjs` 為部署前連結檢查。
-- `scripts/prerender.mjs`：十八頁預先渲染、公開 JSON、SEO 與 llms 檔案。
+- `scripts/prerender.mjs`：二十頁預先渲染、公開 JSON、SEO 與 llms 檔案。
 - `tests/prism.test.mjs`：封閉幾何、有限座標、三階段光路、SSR 海報／字體與雙語區塊順序。
 - `tests/review-demo.test.mjs`：候選切換、覆核分支、理由隔離、雙語、SSR 與靜態資產檢查。
 
