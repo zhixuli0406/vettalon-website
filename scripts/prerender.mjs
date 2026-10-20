@@ -29,6 +29,13 @@ const ORG = {
   alternateName: '嘟嘟數位科技有限公司',
   url: 'https://www.dudustudio.monster/',
   email: 'info@dudustudio.monster',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '3F., No. 42, Yixin 2nd Rd., Qianzhen Dist.',
+    addressLocality: 'Kaohsiung City',
+    postalCode: '806',
+    addressCountry: 'TW',
+  },
 };
 
 function softwareApp(locale) {

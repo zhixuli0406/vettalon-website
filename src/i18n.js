@@ -1,7 +1,7 @@
 // Vettalon 官網雙語內容。zh-TW 為主、en 為輔。
 // 內容紀律：誠實、不誇大，數字直接呈現並附限制。
 
-import { PLAN, LEGAL_NAME_EN, LEGAL_NAME_ZH, TAX_ID } from './plan.js';
+import { PLAN, LEGAL_NAME_EN, LEGAL_NAME_ZH, TAX_ID, ADDRESS_EN, ADDRESS_ZH } from './plan.js';
 
 export const GITHUB = 'https://github.com/zhixuli0406/vettalon';
 export const SITE_URL = 'https://vettalon.dudustudio.monster';
@@ -182,7 +182,7 @@ export const content = {
         { title: '聯絡', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
         { title: '法律', links: [{ t: '服務條款', href: pagePath('zh', 'terms') }, { t: '隱私權政策', href: pagePath('zh', 'privacy') }, { t: '退款政策', href: pagePath('zh', 'refund') }, { t: '支援期與安全更新', href: pagePath('zh', 'support') }] },
       ],
-      company: `${LEGAL_NAME_EN} · ${LEGAL_NAME_ZH} · 統編 ${TAX_ID}`,
+      company: `${LEGAL_NAME_EN} · ${LEGAL_NAME_ZH} · 統編 ${TAX_ID} · ${ADDRESS_ZH}`,
     },
   },
 
@@ -335,7 +335,7 @@ export const content = {
         { title: 'Contact', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
         { title: 'Legal', links: [{ t: 'Terms of Service', href: pagePath('en', 'terms') }, { t: 'Privacy Policy', href: pagePath('en', 'privacy') }, { t: 'Refund Policy', href: pagePath('en', 'refund') }, { t: 'Support and security updates', href: pagePath('en', 'support') }] },
       ],
-      company: `${LEGAL_NAME_EN} · ${LEGAL_NAME_ZH} · Tax ID ${TAX_ID}`,
+      company: `${LEGAL_NAME_EN} · ${LEGAL_NAME_ZH} · Tax ID ${TAX_ID} · ${ADDRESS_EN}`,
     },
   },
 };

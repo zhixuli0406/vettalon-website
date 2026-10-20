@@ -3,7 +3,7 @@
 // reachable from site navigation, and to name the seller's legal entity.
 
 import { EMAIL, SITE_URL } from './i18n.js';
-import { LEGAL_NAME_EN, LEGAL_NAME_ZH, PLAN, TAX_ID } from './plan.js';
+import { ADDRESS_EN, ADDRESS_ZH, LEGAL_NAME_EN, LEGAL_NAME_ZH, PLAN, TAX_ID } from './plan.js';
 
 export { LEGAL_NAME_EN, LEGAL_NAME_ZH, EFFECTIVE_DATE } from './plan.js';
 
@@ -26,7 +26,7 @@ export const legal = {
           h: '1. 適用範圍與提供者',
           p: [
             `本條款規範你對 Vettalon 官網，以及 Vettalon Pro、Vettalon Team（以下合稱「付費產品」）的購買與使用。付費產品由 ${LEGAL_NAME_EN}（${LEGAL_NAME_ZH}，以下稱「我們」）提供，公司設立於台灣。`,
-            `聯絡方式：${EMAIL}。購買或使用付費產品，即表示你同意本條款。代表公司或組織購買時，你須有權代表該組織同意本條款。`,
+            `地址：${ADDRESS_ZH}。聯絡方式：${EMAIL}。購買或使用付費產品，即表示你同意本條款。代表公司或組織購買時，你須有權代表該組織同意本條款。`,
           ],
         },
         {
@@ -115,7 +115,7 @@ export const legal = {
       sections: [
         {
           h: '1. 負責單位',
-          p: [`${LEGAL_NAME_EN}（${LEGAL_NAME_ZH}）負責本政策所述個人資料的處理。聯絡方式：${EMAIL}。`],
+          p: [`${LEGAL_NAME_EN}（${LEGAL_NAME_ZH}）負責本政策所述個人資料的處理。地址：${ADDRESS_ZH}。聯絡方式：${EMAIL}。`],
         },
         {
           h: '2. Vettalon 產品本身',
@@ -218,6 +218,7 @@ export const legal = {
           h: '製造商與聯絡方式',
           p: [
             `Vettalon Pro 與 Vettalon Team 由 ${LEGAL_NAME_EN}（${LEGAL_NAME_ZH}）開發與銷售，公司設立於台灣，統一編號 ${TAX_ID}。`,
+            `地址：${ADDRESS_ZH}（英文：${ADDRESS_EN}）。`,
             `Email：${EMAIL}。網站：${SITE_URL}。`,
           ],
         },
@@ -282,7 +283,7 @@ export const legal = {
           h: '1. Scope and provider',
           p: [
             `These terms govern your purchase and use of the Vettalon website, Vettalon Pro and Vettalon Team (together, the "Paid Products"). The Paid Products are provided by ${LEGAL_NAME_EN} (${LEGAL_NAME_ZH}, "we", "us"), a company incorporated in Taiwan.`,
-            `Contact: ${EMAIL}. By buying or using a Paid Product you agree to these terms. If you buy on behalf of a company or organisation, you confirm you are authorised to accept these terms for it.`,
+            `Address: ${ADDRESS_EN}. Contact: ${EMAIL}. By buying or using a Paid Product you agree to these terms. If you buy on behalf of a company or organisation, you confirm you are authorised to accept these terms for it.`,
           ],
         },
         {
@@ -371,7 +372,7 @@ export const legal = {
       sections: [
         {
           h: '1. Who is responsible',
-          p: [`${LEGAL_NAME_EN} (${LEGAL_NAME_ZH}) is responsible for the personal data described in this policy. Contact: ${EMAIL}.`],
+          p: [`${LEGAL_NAME_EN} (${LEGAL_NAME_ZH}) is responsible for the personal data described in this policy. Address: ${ADDRESS_EN}. Contact: ${EMAIL}.`],
         },
         {
           h: '2. The Vettalon product',
@@ -474,6 +475,7 @@ export const legal = {
           h: 'Manufacturer and contact',
           p: [
             `Vettalon Pro and Vettalon Team are developed and sold by ${LEGAL_NAME_EN} (${LEGAL_NAME_ZH}), a company incorporated in Taiwan, Unified Business Number ${TAX_ID}.`,
+            `Postal address: ${ADDRESS_EN} (${ADDRESS_ZH}).`,
             `Email: ${EMAIL}. Website: ${SITE_URL}.`,
           ],
         },

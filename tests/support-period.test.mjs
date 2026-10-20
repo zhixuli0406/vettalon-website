@@ -44,6 +44,17 @@ test('the support page is a public legal page in both languages', () => {
   }
 });
 
+test('the manufacturer postal address appears wherever the manufacturer is named with contact details', () => {
+  const zh = '高雄市前鎮區一心二路42號3樓';
+  const en = '3F., No. 42, Yixin 2nd Rd., Qianzhen Dist., Kaohsiung City 806, Taiwan';
+  for (const [locale, address] of [['zh', zh], ['en', en]]) {
+    for (const page of ['terms', 'privacy', 'support']) {
+      assert.ok(all(legal[locale][page].sections[0]).includes(address), `${locale} ${page}`);
+    }
+    assert.ok(content[locale].footer.company.includes(address), `${locale} footer`);
+  }
+});
+
 test('public copy never names private repositories or embargoed cases', async () => {
   const sources = await Promise.all(['src/legal.js', 'src/i18n.js', 'src/download-copy.js', 'src/support.js', 'src/components/Editions.jsx']
     .map((path) => readFile(path, 'utf8')));
