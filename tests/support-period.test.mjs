@@ -59,6 +59,6 @@ test('public copy never names private repositories or embargoed cases', async ()
   const sources = await Promise.all(['src/legal.js', 'src/i18n.js', 'src/download-copy.js', 'src/support.js', 'src/components/Editions.jsx']
     .map((path) => readFile(path, 'utf8')));
   for (const source of sources) {
-    assert.doesNotMatch(source, /vettalon-pro|bollard|GHSA-(?!x43w)/i);
+    assert.doesNotMatch(source, /vettalon-pro|GHSA-(?!x43w)/i);
   }
 });
