@@ -52,7 +52,7 @@ test('historical detection keeps its finding verdict and never displays reproduc
 test('both real historical cases expose their own dossier digest and preserve scan completeness', async () => {
   const { server, cases, render } = await renderer();
   try {
-    const historical = cases.filter(item => item.type === 'historical');
+    const historical = cases.filter(item => item.type === 'historical' && item.dossier);
     assert.equal(historical.length, 2);
     for (const item of historical) for (const locale of ['zh', 'en']) {
       const html = render(locale, item.id);
@@ -186,7 +186,7 @@ test('four-stage chain links real case evidence and keeps missing work explicit 
       assert.ok(chain.includes(ammonia.limitations[locale].slice(0, 24)), 'the unverified stage states the case-specific limit');
       assert.ok(!chain.includes('data-state="missing"'));
     }
-    for (const item of cases.filter(value => value.type === 'historical')) for (const locale of ['zh', 'en']) {
+    for (const item of cases.filter(value => value.type === 'historical' && value.dossier)) for (const locale of ['zh', 'en']) {
       const html = render(locale, item.id);
       const chain = html.match(/<section class="evidence__chain"[\s\S]*?<\/section>/)?.[0];
       assert.ok(chain.includes(`href="${item.dossier.artifactPath}"`));

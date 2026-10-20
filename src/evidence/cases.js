@@ -1,4 +1,5 @@
 import { validateManifest } from './schema.js';
+import { benchmarkCases, benchmarkAiUse } from './benchmark-cases.js';
 
 // Public pseudonym of the human reviewer shown on case pages. Change it here only.
 export const PUBLIC_REVIEWER = 'zhixuli0406';
@@ -89,4 +90,4 @@ const reviewed = [
     ],
   },
 ];
-export const cases = validateManifest(reviewed);
+export const cases = validateManifest([...reviewed, ...benchmarkCases.map(item => ({ ...item, review: humanReview(item.reviewedAt, benchmarkAiUse) }))]);

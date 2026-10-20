@@ -138,13 +138,13 @@ test('funnel derives counts and dates from structured fields only', () => {
   for (const id of ['reported', 'acknowledged', 'fixedRelease', 'advisory']) assert.equal(stage('discovery', id).count, 1);
   assert.equal(byType.reported.n, 0);
   assert.ok(byType.reported.stages.every(s => s.count === null && s.entries.length === 0));
-  assert.equal(byType.historical.n, 2);
+  assert.equal(byType.historical.n, 7);
   for (const id of ['reported', 'acknowledged']) {
     assert.equal(stage('historical', id).count, null); assert.equal(stage('historical', id).notApplicable, true);
   }
-  assert.equal(stage('historical', 'fixedRelease').count, 2);
+  assert.equal(stage('historical', 'fixedRelease').count, 7);
   assert.ok(stage('historical', 'fixedRelease').entries.every(e => e.date === null), 'no fixed-release date is invented');
-  assert.deepEqual(stage('historical', 'advisory').entries.map(e => e.date), ['2017-06-27', '2024-01-29']);
+  assert.deepEqual(stage('historical', 'advisory').entries.map(e => e.date), ['2017-06-27', '2019-08-25', '2021-01-08', '2022-03-17', '2022-03-20', '2022-05-12', '2024-01-29']);
   for (const group of Object.values(byType)) for (const s of group.stages) assert.equal(s.interval, null, 'n < 10 never yields a rate');
   const noDisclosure = structuredClone(cases[ammoniaIndex]); delete noDisclosure.disclosure;
   assert.deepEqual(caseStages(noDisclosure).reported, { state: 'unknown', date: null });
@@ -163,11 +163,11 @@ test('Wilson interval is only produced for n >= 10', () => {
 });
 
 test('policy sentence counts follow the manifest', () => {
-  assert.equal(policyText('zh', cases), '兩筆歷史聚焦識別測試與一筆 Vettalon 原創發現分開列示。Ammonia 保留產品候選及擬稿、人工送件、上游修補與限定回歸的證據邊界；未公開候選不在此列。');
-  assert.equal(policyText('en', cases), 'Two historical focused detections and one original Vettalon discovery are labeled separately. Ammonia traces the product candidate and draft, human submission, upstream fix, and scoped regression. Unpublished candidates are excluded.');
+  assert.equal(policyText('zh', cases), '七筆歷史漏洞識別測試與一筆 Vettalon 原創發現分開列示。Ammonia 保留產品候選及擬稿、人工送件、上游修補與限定回歸的證據邊界；未公開候選不在此列。');
+  assert.equal(policyText('en', cases), 'Seven historical detection tests and one original Vettalon discovery are labeled separately. Ammonia traces the product candidate and draft, human submission, upstream fix, and scoped regression. Unpublished candidates are excluded.');
   const extra = [...cases, { ...cases[ammoniaIndex], id: 'extra-reported-fixture', type: 'reported' }];
-  assert.ok(policyText('zh', extra).startsWith('兩筆歷史聚焦識別測試、一筆 Vettalon 原創發現與一筆上游通報分開列示。'));
-  assert.ok(policyText('en', extra).startsWith('Two historical focused detections, one original Vettalon discovery, and one upstream report are labeled separately.'));
+  assert.ok(policyText('zh', extra).startsWith('七筆歷史漏洞識別測試、一筆 Vettalon 原創發現與一筆上游通報分開列示。'));
+  assert.ok(policyText('en', extra).startsWith('Seven historical detection tests, one original Vettalon discovery, and one upstream report are labeled separately.'));
 });
 
 async function renderer() {
@@ -211,9 +211,9 @@ test('evidence wall renders the funnel per case type with n, dates, legend and h
       assert.ok(section, 'funnel appears on the list page');
       assert.ok(html.indexOf('class="evidence__list"') < html.indexOf('class="evidence__funnel"'));
       for (const type of ['discovery', 'reported', 'historical']) assert.ok(section.includes(`data-type="${type}"`));
-      assert.ok(section.includes('n = 1') && section.includes('n = 2') && section.includes('n = 0'));
+      assert.ok(section.includes('n = 1') && section.includes('n = 7') && section.includes('n = 0'));
       for (const date of ['2026-10-16', '2026-10-17', '2017-06-27', '2024-01-29']) assert.ok(section.includes(`<time dateTime="${date}">${date}</time>`), date);
-      assert.ok(section.includes('1 / 1') && section.includes('2 / 2'));
+      assert.ok(section.includes('1 / 1') && section.includes('7 / 7'));
       assert.ok(!section.includes('%'), 'no percentages for n < 10');
       assert.ok(section.includes(locale === 'zh' ? '「—」表示沒有可公開的結構化資料' : '“—” means no publishable structured data'));
       assert.ok(section.includes(locale === 'zh' ? '哪些階段經人工審閱' : 'Which stages are human-reviewed'));

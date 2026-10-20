@@ -74,7 +74,8 @@ test('minimal public snapshots exclude unrelated finding fields', () => {
   for (const item of cases.filter(item => item.detection)) {
     assert.ok(item.detection.claim.en.length > 0 && item.detection.reviewerConclusion.zh.length > 0);
     assert.match(item.detection.rerun,/vettalon scan/);
-    assert.match(item.detection.modelVersions,/not recorded/);
+    // Older focused scans did not record model versions; release-archive benchmark scans name them.
+    assert.match(item.detection.modelVersions, item.detection.mode === 'focused' ? /not recorded/ : /claude-opus-5-5/);
   }
 });
 

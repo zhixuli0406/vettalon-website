@@ -17,7 +17,7 @@ npm run preview -- --host 127.0.0.1 --port 18873 --strictPort
 
 `check` 依序執行 ESLint、正式建置與互動狀態／SSR 檢查。建置會先驗證公開案例及附件，再檢查輸出的文字資產是否含私有路徑。`preview` 提供建置後的靜態網站；先執行 `check` 或 `build`。
 
-正式建置會輸出繁體中文及英文首頁、證據牆與三筆案例頁，並在兩種語言下各產生服務條款、隱私權政策與退款政策，共十六頁。頁面保留原本的 URL、導覽錨點、SEO metadata、結構化資料及 Polar 購買連結。
+正式建置會輸出繁體中文及英文首頁、下載頁、支援期頁、證據牆與八筆案例頁，並在兩種語言下各產生服務條款、隱私權政策與退款政策，共三十頁。頁面保留原本的 URL、導覽錨點、SEO metadata、結構化資料及 Polar 購買連結。
 
 ## 資訊架構與使用流程
 
@@ -41,7 +41,7 @@ npm run preview -- --host 127.0.0.1 --port 18873 --strictPort
 
 ## 公開證據牆
 
-`/evidence/` 與 `/en/evidence/` 提供搜尋、類型／狀態／生態篩選及逐案頁。目前有兩筆歷史聚焦識別（aiohttp、PHPUnit）及一筆 Vettalon 原創 Ammonia 發現。Vettalon 獵捕先提出 `needs_human` 候選並產生揭露草稿；依當事人陳述，Louis Li 人工重現與送件；Ammonia 維護者在修補 PR #267 公開確認 email 收件，RustSec 列 Louis Li 為通報者。上游修復後再做限定回歸。前兩筆歷史識別的狀態仍是 `needs_human` 與 `candidate`；Ammonia 的 4.2.3 五項政策測試為 3 過 2 失敗，官方 4.2.4 為 5 過 0 失敗。候選輸出不等於產品自動確認漏洞；尚在協調揭露期間的案件不會出現在本站。
+`/evidence/` 與 `/en/evidence/` 提供搜尋、類型／狀態／生態篩選及逐案頁。目前有兩筆歷史聚焦識別（aiohttp、PHPUnit）、五筆預先登錄的封存版本掃描（minimist、PyJWT、guzzlehttp/psr7、gorilla/websocket、smallvec，各含修補版對照）及一筆 Vettalon 原創 Ammonia 發現。Vettalon 獵捕先提出 `needs_human` 候選並產生揭露草稿；依當事人陳述，Louis Li 人工重現與送件；Ammonia 維護者在修補 PR #267 公開確認 email 收件，RustSec 列 Louis Li 為通報者。上游修復後再做限定回歸。前兩筆歷史識別的狀態仍是 `needs_human` 與 `candidate`；Ammonia 的 4.2.3 五項政策測試為 3 過 2 失敗，官方 4.2.4 為 5 過 0 失敗。候選輸出不等於產品自動確認漏洞；尚在協調揭露期間的案件不會出現在本站。
 
 逐案頁側欄列出人工審閱者化名、審閱日期與 AI 使用說明。列表下方的通報漏斗依案例類型列出 n 與「已通報上游 → 維護者確認收到 → 修補版本釋出 → 公告／CVE 公開」的筆數及日期，只讀案例的結構化欄位，n 少於 10 不顯示比例。欄位規則與維護方式見 [docs/evidence-wall.md](docs/evidence-wall.md)。
 

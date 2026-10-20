@@ -5,7 +5,7 @@
  * @property {'public'} publication
  * @property {string} reviewedAt
  * @property {'historical'|'discovery'|'reported'} type
- * @property {'source-reviewed'|'detected'|'reproduced'|'regression-verified'} status
+ * @property {'source-reviewed'|'detected'|'not-detected'|'reproduced'|'regression-verified'} status
  * @property {string} package
  * @property {'PyPI'|'npm'|'Packagist'|'Cargo'|'Go'|'RubyGems'} ecosystem
  * @property {Localized} title
@@ -34,6 +34,7 @@
  * @property {{artifactPath: string, sha256: string, observedAt: string, findingStatus: 'needs_human'}} [origin]
  * @property {{reviewer: string, reviewedAt: string, aiUse: Localized}} [review]
  * @property {{reportedAt: string, acknowledgement: {at: string|null, url: string}|null, fixedReleaseAt: string|null}} [disclosure]
+ * @property {{artifactPath: string, sha256: string, runAt: string, vulnerable: {outcome: string, calls: number}, fixed: {outcome: string, calls: number}}} [benchmark]
  */
 // Per-case expectations for curated public artifacts, keyed by case id.
 // A reported/discovery case with a regression summary or product-origin excerpt
@@ -49,7 +50,19 @@ const ammoniaChecks = [
   ['relative_mixed', 'denied-policy', 'failed'],
 ].map(([id, role, vulnerable]) => ({ id, role, vulnerable, testName: `policy_css_url_${id}${id === 'https_control' ? '' : '_denied'}` }));
 
-/** @type {Readonly<Record<string, {regression?: object, origin?: object, pairedBundle?: object}>>} */
+// Pre-registered release-archive benchmark (L0: no hint). The registration file is
+// fixed by path and digest; per-case artifacts live next to it.
+export const BENCHMARK_RUN = deepFreeze({
+  id: 'historical-detection-20261020',
+  directory: '/evidence/benchmarks/historical-detection-20261020',
+  preregistration: { artifactPath: '/evidence/benchmarks/historical-detection-20261020/preregistration.json', sha256: '6c7ef71cffa3729de787444c67823b01afcda71d61b42f2a005fda892a07db91', websiteCommit: 'aeb254a5673d716048f72d500fc57aaca477042c' },
+});
+export const BENCHMARK_VULNERABLE_OUTCOMES = Object.freeze(['found','foundButRefuted','locationOnly','missedReviewed','missedNotSelected','notRun']);
+export const BENCHMARK_FIXED_OUTCOMES = Object.freeze(['flagged','notFlagged','notRun']);
+export const BENCHMARK_INCOMPLETE_REASONS = Object.freeze(['scope_not_fully_reviewed','units_failed','injection_uncrosschecked','time_budget_exhausted','engine_unavailable']);
+const benchmarkProfile = (targetFile, vulnerableArchiveSha256, fixedArchiveSha256) => ({ benchmark: { targetFile, vulnerableArchiveSha256, fixedArchiveSha256 } });
+
+/** @type {Readonly<Record<string, {regression?: object, origin?: object, pairedBundle?: object, benchmark?: object}>>} */
 export const caseProfiles = deepFreeze({
   'ammonia-ghsa-x43w-36pp-96g3': {
     regression: {
@@ -71,10 +84,16 @@ export const caseProfiles = deepFreeze({
   'aiohttp-cve-2024-23334': {
     pairedBundle: { artifactPath: '/evidence/bundles/aiohttp-paired-20261019.zip', kind: 'historical-http', testedAt: '2026-10-18' },
   },
+  'minimist-cve-2021-44906': benchmarkProfile('index.js', 'a1800ce4d39356e96497bd09a41fad0033a13dd8eeb469008333547505ce4350', '49c9124665fc1900e589be610b8dc69d5e61a179e9ed8547c6d61d30a225e726'),
+  'pyjwt-cve-2022-29217': benchmarkProfile('jwt/algorithms.py', 'b888b4d56f06f6dcd777210c334e69c737be74755d3e5e9ee3fe67dc18a0ee41', 'd42908208c699b3b973cbeb01a969ba6a96c821eefb1c5bfe4c390c01d67abba'),
+  'guzzle-psr7-cve-2022-24775': benchmarkProfile('src/MessageTrait.php', '2b0b4998cf069344114189d7ad994960e86131b96c31c19716c86581ba7a49cc', '8779f4b13551df09105021dc2b259045aa0f467595fa9c9ff38b377125fb3513'),
+  'gorilla-websocket-cve-2020-27813': benchmarkProfile('conn.go', '937dac399bca2f88344c31ee295cd57310244bc1a3a58e8bcb14ab26a6009d0e', '86eb427567de9e2dc84da52ee4f4315496c5ffc2152928df0e3ac4ce8a359ff7'),
+  'smallvec-cve-2021-25900': benchmarkProfile('src/lib.rs', '1a55ca5f3b68e41c979bf8c46a6f1da892ca4db8f94023ce0bd32407573b1ac0', 'fe0f37c9e8f3c5a4a66ad655a93c74daac4ad00c441533bf5c6e7990bb42604e'),
 });
 
 const required = ['id','publication','reviewedAt','type','status','package','ecosystem','title','summary','cve','ghsa','cwe','sourceVersion','fixedVersion','sourceUrl','advisoryUrl','fixUrl','publishedAt','boundary','method','limitations','credit','timeline'];
-const optional = ['detection','reproduction','upstreamCreditUrl','dossier','rustsecId','regression','origin','pairedBundle','review','disclosure'];
+const optional = ['detection','reproduction','upstreamCreditUrl','dossier','rustsecId','regression','origin','pairedBundle','review','disclosure','benchmark'];
+export const STATUSES = Object.freeze(['source-reviewed','detected','not-detected','reproduced','regression-verified']);
 const ecosystems = ['PyPI','npm','Packagist','Cargo','Go','RubyGems'];
 // Public reviewer handle: GitHub-style pseudonym only, never an email or a free-text name.
 const reviewerPattern = /^[A-Za-z0-9](?:[A-Za-z0-9]|-(?=[A-Za-z0-9])){0,38}$/;
@@ -113,7 +132,7 @@ export function validateManifest(input, { profiles = caseProfiles } = {}) {
   for (const item of input) {
     ensure(item && typeof item === 'object');
     ensure(Object.keys(item).every(k => [...required,...optional].includes(k)) && required.every(k => Object.hasOwn(item,k)));
-    ensure(item.publication === 'public' && ['historical','discovery','reported'].includes(item.type) && ['source-reviewed','detected','reproduced','regression-verified'].includes(item.status));
+    ensure(item.publication === 'public' && ['historical','discovery','reported'].includes(item.type) && STATUSES.includes(item.status));
     ensure(typeof item.id === 'string' && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(item.id) && !ids.has(item.id)); ids.add(item.id);
     for (const key of ['title','summary','boundary','method','limitations','credit']) localized(item[key]);
     for (const key of ['package','sourceVersion','fixedVersion']) text(item[key]);
@@ -196,7 +215,8 @@ export function validateManifest(input, { profiles = caseProfiles } = {}) {
     }
     if (item.detection) {
       exactKeys(item.detection,['mode','findingStatus','file','line','observedAt','sha256','claim','reviewerConclusion','finder','reviewer','toolVersion','modelVersions','scope','rerun']);
-      ensure(item.detection.mode === 'focused' && ['candidate','needs_human','refuted'].includes(item.detection.findingStatus));
+      ensure((item.detection.mode === 'focused' && !item.benchmark) || (item.detection.mode === 'release-archive' && Boolean(item.benchmark)));
+      ensure(['candidate','needs_human','refuted'].includes(item.detection.findingStatus));
       localized(item.detection.claim); localized(item.detection.reviewerConclusion);
       for (const key of ['finder','reviewer','toolVersion','modelVersions','scope','rerun']) text(item.detection[key]);
       text(item.detection.file); ensure(!item.detection.file.startsWith('/') && !/[\\:]/.test(item.detection.file) && item.detection.file.split('/').every(part => part && part !== '.' && part !== '..'));
@@ -209,6 +229,8 @@ export function validateManifest(input, { profiles = caseProfiles } = {}) {
       digest(item.dossier.sha256);
       validateRunStatus(item.dossier);
     }
+    if (item.benchmark !== undefined) validateBenchmarkSummary(item, profiles);
+    if (item.status === 'not-detected') ensure(Boolean(item.benchmark) && !item.detection && !item.dossier && !item.pairedBundle && !item.reproduction && !item.regression);
     if (item.status === 'detected') ensure(Boolean(item.detection));
     if (item.reproduction) {
       exactKeys(item.reproduction,['mode','artifactUrl','sha256','vulnerable','fixed','control']);
@@ -222,6 +244,112 @@ export function validateManifest(input, { profiles = caseProfiles } = {}) {
 function validateRunStatus(value) {
   ensure(['complete','incomplete'].includes(value.runStatus));
   ensure(value.runStatus === 'complete' ? value.incompleteReason === null : ['units_failed','time_budget_exhausted','scope_not_fully_reviewed'].includes(value.incompleteReason));
+}
+function benchmarkRanges(value) {
+  ensure(Array.isArray(value) && value.length > 0 && value.length <= 4);
+  for (const range of value) ensure(Array.isArray(range) && range.length === 2 && range.every(n => Number.isInteger(n) && n > 0) && range[0] <= range[1]);
+}
+function count(value) { ensure(Number.isInteger(value) && value >= 0 && value <= 1000); }
+/** Manifest-level summary of one pre-registered release-archive benchmark case. */
+function validateBenchmarkSummary(item, profiles) {
+  ensure(item.type === 'historical');
+  profileFor(profiles, item.id, 'benchmark');
+  const b = item.benchmark;
+  exactKeys(b, ['artifactPath','sha256','runAt','vulnerable','fixed']);
+  ensure(b.artifactPath === `${BENCHMARK_RUN.directory}/${item.id}.json`);
+  digest(b.sha256); date(b.runAt); ensure(b.runAt <= item.reviewedAt);
+  for (const arm of [b.vulnerable, b.fixed]) {
+    exactKeys(arm, ['outcome','calls','runStatus','incompleteReason','targetReviewed']); count(arm.calls);
+    // A scan that did not run has no status and no coverage; one that ran states both,
+    // and an incomplete run always names the product's reason.
+    ensure(arm.outcome === 'notRun' ? arm.runStatus === null && arm.incompleteReason === null && arm.targetReviewed === null && arm.calls === 0 : ['complete','incomplete'].includes(arm.runStatus) && typeof arm.targetReviewed === 'boolean');
+    if (arm.runStatus === 'complete') ensure(arm.incompleteReason === null);
+    if (arm.runStatus === 'incomplete') ensure(BENCHMARK_INCOMPLETE_REASONS.includes(arm.incompleteReason));
+  }
+  ensure(BENCHMARK_VULNERABLE_OUTCOMES.includes(b.vulnerable.outcome) && BENCHMARK_FIXED_OUTCOMES.includes(b.fixed.outcome));
+  // Only a pre-registered "found" may be shown as a detection; every other outcome is a disclosed miss.
+  ensure(b.vulnerable.outcome === 'found' ? item.status === 'detected' && item.detection?.mode === 'release-archive' && item.detection.findingStatus !== 'refuted' && b.vulnerable.targetReviewed : item.status === 'not-detected');
+  ensure(!item.dossier && !item.pairedBundle && !item.reproduction && !item.regression);
+}
+/** Validate one public benchmark-case artifact against the manifest and its profile. */
+export function validateBenchmark(item, artifact, { profiles = caseProfiles } = {}) {
+  ensure(Boolean(item.benchmark));
+  const expected = profileFor(profiles, item.id, 'benchmark');
+  exactKeys(artifact, ['schemaVersion','caseId','run','preregistration','tool','models','command','hintLevel','target','arms','limitations']);
+  ensure(artifact.schemaVersion === 1 && artifact.caseId === item.id && artifact.run === BENCHMARK_RUN.id && artifact.hintLevel === 'L0');
+  exactKeys(artifact.preregistration, ['artifactPath','sha256','websiteCommit']);
+  for (const key of ['artifactPath','sha256','websiteCommit']) ensure(artifact.preregistration[key] === BENCHMARK_RUN.preregistration[key]);
+  exactKeys(artifact.tool, ['name','version']); ensure(artifact.tool.name === 'vettalon'); text(artifact.tool.version);
+  exactKeys(artifact.models, ['finder','verifiers']); text(artifact.models.finder);
+  ensure(Array.isArray(artifact.models.verifiers) && artifact.models.verifiers.length > 0); artifact.models.verifiers.forEach(text);
+  text(artifact.command); ensure(!artifact.command.includes('--poc'));
+  exactKeys(artifact.target, ['file','vulnerableRanges','fixedRanges','acceptedCwes']);
+  ensure(artifact.target.file === expected.targetFile);
+  benchmarkRanges(artifact.target.vulnerableRanges); benchmarkRanges(artifact.target.fixedRanges);
+  ensure(Array.isArray(artifact.target.acceptedCwes) && artifact.target.acceptedCwes.length > 0 && artifact.target.acceptedCwes.every(c => typeof c === 'string' && /^CWE-\d+$/.test(c)));
+  exactKeys(artifact.arms, ['vulnerable','fixed']);
+  for (const name of ['vulnerable','fixed']) validateBenchmarkArm(item, artifact.arms[name], item.benchmark[name], expected, name);
+  // Published matches are only in-range findings with an accepted CWE; the outcome must follow from them.
+  const accepted = new Set(artifact.target.acceptedCwes);
+  const inRange = (ranges, line) => ranges.some(([lo, hi]) => lo <= line && line <= hi);
+  for (const [name, ranges] of [['vulnerable', artifact.target.vulnerableRanges], ['fixed', artifact.target.fixedRanges]]) {
+    for (const match of artifact.arms[name].matches) ensure(accepted.has(match.cwe) && inRange(ranges, match.line));
+  }
+  const vulnerable = artifact.arms.vulnerable; const fixed = artifact.arms.fixed;
+  const kept = vulnerable.matches.filter(m => m.status !== 'refuted');
+  if (vulnerable.outcome === 'found') {
+    ensure(kept.some(m => m.line === item.detection.line && m.status === item.detection.findingStatus && m.file === item.detection.file));
+  } else if (vulnerable.outcome === 'foundButRefuted') {
+    ensure(kept.length === 0 && vulnerable.matches.length > 0);
+  } else ensure(vulnerable.matches.length === 0);
+  if (vulnerable.outcome === 'missedNotSelected') ensure(!vulnerable.targetFile.reviewed);
+  if (['missedReviewed','locationOnly','foundButRefuted','found'].includes(vulnerable.outcome)) ensure(vulnerable.targetFile.reviewed);
+  if (fixed.outcome === 'flagged') ensure(fixed.matches.some(m => m.status !== 'refuted'));
+  if (fixed.outcome === 'notFlagged') ensure(fixed.matches.every(m => m.status === 'refuted'));
+  localized(artifact.limitations);
+  return artifact;
+}
+function validateBenchmarkArm(item, arm, summary, expected, name) {
+  exactKeys(arm, ['version','archiveUrl','archiveSha256','treeSha256','excludedFiles','scannedAt','exitCode','runStatus','incompleteReason','calls','reportSha256','modules','targetFile','outcome','matches','otherFindings']);
+  ensure(arm.version === (name === 'vulnerable' ? item.sourceVersion : item.fixedVersion));
+  text(arm.archiveUrl); ensure(arm.archiveUrl.startsWith('https://'));
+  ensure(arm.archiveSha256 === expected[name === 'vulnerable' ? 'vulnerableArchiveSha256' : 'fixedArchiveSha256']);
+  digest(arm.treeSha256);
+  ensure(Array.isArray(arm.excludedFiles) && arm.excludedFiles.every(f => typeof f === 'string' && f.length > 0 && !f.startsWith('/') && !f.includes('..')));
+  ensure(arm.outcome === summary.outcome);
+  if (arm.outcome === 'notRun') {
+    for (const key of ['scannedAt','exitCode','runStatus','incompleteReason','calls','reportSha256','modules','targetFile','otherFindings']) ensure(arm[key] === null);
+    ensure(Array.isArray(arm.matches) && arm.matches.length === 0 && summary.calls === 0); return;
+  }
+  date(arm.scannedAt); ensure(arm.scannedAt === item.benchmark.runAt);
+  ensure(Number.isInteger(arm.exitCode) && ['complete','incomplete'].includes(arm.runStatus) && arm.runStatus === summary.runStatus && arm.incompleteReason === summary.incompleteReason);
+  exactKeys(arm.calls, ['total','finder','verifier','failed']);
+  for (const key of ['total','finder','verifier','failed']) count(arm.calls[key]);
+  ensure(arm.calls.total === summary.calls && arm.calls.finder + arm.calls.verifier === arm.calls.total && arm.calls.failed <= arm.calls.total);
+  digest(arm.reportSha256);
+  exactKeys(arm.modules, ['selected','reviewed']); count(arm.modules.selected); count(arm.modules.reviewed); ensure(arm.modules.reviewed <= arm.modules.selected);
+  exactKeys(arm.targetFile, ['reviewed','truncated','submittedSha256']);
+  ensure(typeof arm.targetFile.reviewed === 'boolean' && typeof arm.targetFile.truncated === 'boolean' && arm.targetFile.reviewed === summary.targetReviewed);
+  if (arm.targetFile.submittedSha256 === null) ensure(!arm.targetFile.reviewed);
+  else { digest(arm.targetFile.submittedSha256); ensure(arm.targetFile.reviewed); }
+  ensure(Array.isArray(arm.matches) && arm.matches.length <= 8);
+  for (const match of arm.matches) {
+    exactKeys(match, ['file','line','cwe','severity','status','title','verification']);
+    ensure(match.file === expected.targetFile && Number.isInteger(match.line) && match.line > 0);
+    ensure(match.cwe === null || (typeof match.cwe === 'string' && /^CWE-\d+$/.test(match.cwe)));
+    ensure(['critical','high','medium','low','info'].includes(match.severity));
+    ensure(['candidate','needs_human','confirmed','refuted'].includes(match.status)); text(match.title);
+    ensure(Array.isArray(match.verification));
+    for (const vote of match.verification) { exactKeys(vote, ['model','family','verdict']); text(vote.model); text(vote.family); text(vote.verdict); }
+  }
+  // Other findings are published as counts only; they were not reviewed.
+  exactKeys(arm.otherFindings, ['total','byStatus','reviewed']);
+  count(arm.otherFindings.total); ensure(arm.otherFindings.reviewed === false);
+  const byStatus = arm.otherFindings.byStatus;
+  ensure(byStatus && typeof byStatus === 'object' && !Array.isArray(byStatus));
+  const entries = Object.entries(byStatus);
+  ensure(entries.every(([key, value]) => ['candidate','needs_human','confirmed','refuted','suppressed'].includes(key) && Number.isInteger(value) && value > 0));
+  ensure(entries.reduce((sum, [, value]) => sum + value, 0) === arm.otherFindings.total);
 }
 /** Validate a curated historical excerpt, not the identity or truth of its original report. */
 export function validateDossier(item, dossier) {
@@ -314,7 +442,7 @@ export function validateRegression(item, artifact, { profiles = caseProfiles } =
 export function readFilters(query = '') {
   const params = new URLSearchParams(query);
   const facet = (key, values) => values.includes(params.get(key)) ? params.get(key) : '';
-  return { q: (params.get('q') || '').slice(0,200), type: facet('type',['historical','discovery','reported']), status: facet('status',['source-reviewed','detected','reproduced','regression-verified']), ecosystem: facet('ecosystem',ecosystems), sort: params.get('sort') === 'oldest' ? 'oldest' : 'newest' };
+  return { q: (params.get('q') || '').slice(0,200), type: facet('type',['historical','discovery','reported']), status: facet('status',STATUSES), ecosystem: facet('ecosystem',ecosystems), sort: params.get('sort') === 'oldest' ? 'oldest' : 'newest' };
 }
 export function filterQuery(filters) {
   const params = new URLSearchParams();
