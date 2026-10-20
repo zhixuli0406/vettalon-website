@@ -41,7 +41,7 @@ export const downloadCopy = {
         linux: '.deb 用 sudo apt install ./檔名.deb 安裝；AppImage 先 chmod +x 再執行。',
       },
       activate: `第一次開啟時，貼上購買後 email 收到的授權金鑰。Pro 可啟用 ${PLAN.proDevices} 台裝置，Team 可啟用 ${PLAN.teamSeats} 台。`,
-      update: '已安裝的 App 會在設定頁「檢查更新」取得新版本。',
+      update: `App 會自動檢查並下載更新，通過簽章驗證後先問你再安裝；側欄的「檢查更新」可以立即檢查。安全更新至少免費 ${PLAN.supportYears} 年，不需要 Update Plan。`,
     },
     notes: {
       title: '下載前請確認',
@@ -49,6 +49,7 @@ export const downloadCopy = {
         `桌面 App 不支援 Intel 處理器的 Mac。購買後才發現無法使用，可在付款後 ${PLAN.refundDays} 天內來信全額退款。`,
         '匯出 PDF 時需要電腦上已安裝 Chrome、Edge 或 Chromium。HTML 與 Word 匯出不需要。',
         '下載後可用上方的 SHA-256 核對檔案是否完整。',
+        `每筆購買的安全更新至少免費到購買日起第 ${PLAN.supportYears} 年同一個月的月底，和 Update Plan 無關。細節見頁尾的「支援期與安全更新」。`,
       ],
     },
     cli: { title: '只需要命令列？', body: '開源 CLI 免費，Intel Mac、Apple Silicon 與 Linux 都能用：', cmd: 'npm install -g vettalon' },
@@ -89,7 +90,7 @@ export const downloadCopy = {
         linux: 'Install the .deb with sudo apt install ./file.deb, or chmod +x the AppImage and run it.',
       },
       activate: `On first launch, paste the license key from your purchase email. Pro activates up to ${PLAN.proDevices} devices, Team up to ${PLAN.teamSeats}.`,
-      update: 'An installed app picks up new versions from Settings > Check for updates.',
+      update: `The app checks for and downloads updates automatically and asks before installing a signature-checked update; Check for updates in the sidebar checks right away. Security updates stay free for at least ${PLAN.supportYears} years, no Update Plan needed.`,
     },
     notes: {
       title: 'Before you download',
@@ -97,6 +98,7 @@ export const downloadCopy = {
         `The desktop app does not support Macs with Intel processors. If you bought it and it does not run, email us within ${PLAN.refundDays} days of payment for a full refund.`,
         'PDF export needs Chrome, Edge or Chromium installed. HTML and Word export do not.',
         'Use the SHA-256 values above to check each download.',
+        `Security updates are free for every purchase until at least the end of the same calendar month ${PLAN.supportYears} years after the purchase date, whatever your Update Plan status. See Support and security updates in the footer.`,
       ],
     },
     cli: { title: 'Only need the command line?', body: 'The open-source CLI is free and runs on Intel Macs, Apple Silicon and Linux:', cmd: 'npm install -g vettalon' },

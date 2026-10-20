@@ -29,6 +29,13 @@ const ORG = {
   alternateName: '嘟嘟數位科技有限公司',
   url: 'https://www.dudustudio.monster/',
   email: 'info@dudustudio.monster',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '3F., No. 42, Yixin 2nd Rd., Qianzhen Dist.',
+    addressLocality: 'Kaohsiung City',
+    postalCode: '806',
+    addressCountry: 'TW',
+  },
 };
 
 function softwareApp(locale) {
@@ -194,10 +201,11 @@ function llms(locale) {
     c.product.cards.map((x) => `- ${x.name}: ${x.desc}`).join('\n') +
     `\n\n## ${L('價格', 'Pricing')}\n` +
     c.editions.cards.map((x) => `- ${x.name}: ${x.price}. ${x.priceNote}`).join('\n') +
-    `\n${c.editions.note}\n` +
+    `\n${c.editions.note}\n${c.editions.support.rule}\n` +
     `${L('服務條款', 'Terms')}: ${SITE_URL}${pagePath(locale, 'terms')} · ` +
     `${L('隱私權政策', 'Privacy')}: ${SITE_URL}${pagePath(locale, 'privacy')} · ` +
-    `${L('退款政策', 'Refunds')}: ${SITE_URL}${pagePath(locale, 'refund')}` +
+    `${L('退款政策', 'Refunds')}: ${SITE_URL}${pagePath(locale, 'refund')} · ` +
+    `${L('支援期與安全更新', 'Support and security updates')}: ${SITE_URL}${pagePath(locale, 'support')}` +
     `\n\n## ${L('案例證據', 'Case evidence')}\n` +
     homepageEvidence(cases, c.benchmarks.items).items.map((x) => `- ${x.v} ${x.k}: ${x.d}`).join('\n') +
     `\n\n## FAQ\n` +
