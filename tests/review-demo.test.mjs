@@ -103,8 +103,8 @@ test('all generated pages resolve original-color PNG logo and favicon files', as
     return (await Promise.all(entries.map((entry) => entry.isDirectory() ? htmlFiles(`${folder}/${entry.name}`) : entry.name.endsWith('.html') ? [`${folder}/${entry.name}`] : []))).flat();
   }
   const files = await htmlFiles(`${root}/dist`);
-  // 2 locales x (home, download, 3 legal pages, evidence wall + one page per case)
-  assert.equal(files.length, 10 + 2 * (1 + cases.length));
+  // 2 locales x (home, download, 4 legal pages, evidence wall + one page per case)
+  assert.equal(files.length, 12 + 2 * (1 + cases.length));
   for (const file of files) {
     const html = await readFile(file, 'utf8');
     for (const asset of ['/brand/vettalon-mark.png', '/brand/company-mark.png', '/favicon.ico', '/favicon-32.png', '/favicon-48.png', '/apple-touch-icon.png']) {

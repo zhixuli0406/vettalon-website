@@ -6,7 +6,7 @@ export const LEGAL_NAME_EN = 'Dudu Technology Ltd.';
 export const LEGAL_NAME_ZH = '嘟嘟數位科技有限公司';
 // Taiwan Unified Business Number (統一編號).
 export const TAX_ID = '94139082';
-export const EFFECTIVE_DATE = '2026-10-15';
+export const EFFECTIVE_DATE = '2026-10-20';
 
 export const PLAN = {
   proPrice: 'US$149',
@@ -15,5 +15,8 @@ export const PLAN = {
   teamSeats: 10,
   proDevices: 3,
   updateMonths: 12,
+  // Security updates stay free at least until the end of the same calendar
+  // month this many years after the purchase date (see support.js).
+  supportYears: 5,
   refundDays: 14,
 };

@@ -2,12 +2,15 @@
 // Payment-provider review (Paddle / Polar / Dodo) requires these to be public,
 // reachable from site navigation, and to name the seller's legal entity.
 
-import { EMAIL } from './i18n.js';
-import { LEGAL_NAME_EN, LEGAL_NAME_ZH, PLAN } from './plan.js';
+import { EMAIL, SITE_URL } from './i18n.js';
+import { LEGAL_NAME_EN, LEGAL_NAME_ZH, PLAN, TAX_ID } from './plan.js';
 
 export { LEGAL_NAME_EN, LEGAL_NAME_ZH, EFFECTIVE_DATE } from './plan.js';
 
-export const LEGAL_PAGES = ['terms', 'privacy', 'refund'];
+export const LEGAL_PAGES = ['terms', 'privacy', 'refund', 'support'];
+
+const SECURITY_TXT = `${SITE_URL}/.well-known/security.txt`;
+const CVD_POLICY = 'https://github.com/zhixuli0406/vettalon/security/policy';
 
 const P = PLAN;
 
@@ -42,14 +45,25 @@ export const legal = {
         {
           h: '4. 授權內容',
           p: [
-            `Vettalon Pro：一次付費，取得單一使用者的永久使用授權，可安裝在該使用者自己的最多 ${P.proDevices} 台裝置上。購買後 ${P.updateMonths} 個月內釋出的版本都可免費更新；之後如需繼續取得新版本，可選擇續訂更新服務（每年 ${P.proRenewal}）。不續訂也能永久使用已取得的版本。`,
-            `Vettalon Team：年費訂閱，同一組織內最多 ${P.teamSeats} 位具名使用者可使用。訂閱期間包含所有更新與優先 email 支援。訂閱到期且未續約時，Team 授權隨之終止。`,
+            `Vettalon Pro：一次付費，取得單一使用者的永久使用授權，可安裝在該使用者自己的最多 ${P.proDevices} 台裝置上。購買後 ${P.updateMonths} 個月內釋出的功能更新與新的主要版本都包含在內；之後要繼續取得功能更新與新的主要版本，可續訂 Update Plan（更新方案，每年 ${P.proRenewal}）。不續訂也能永久使用已取得的版本，安全更新也照常免費，見第 5 條。`,
+            `Vettalon Team：年費訂閱，同一組織內最多 ${P.teamSeats} 位具名使用者可使用。訂閱期間包含所有版本與更新（含安全更新），以及優先 email 支援。訂閱到期且未續約時，Team 授權隨之終止。`,
             '授權金鑰與下載連結會在付款完成後寄到你購買時填寫的 email。',
             '你不得轉售、出租或散布授權金鑰，不得讓超過授權人數或裝置數的人使用，也不得規避授權檢查機制。付費產品的著作權與其他智慧財產權屬於我們，本條款沒有明示授予的權利，均予保留。',
           ],
         },
         {
-          h: '5. 合法使用',
+          h: '5. 支援期與安全更新',
+          p: [
+            `每一筆付費產品的購買都有自己的支援期：從購買日起，至少到第 ${P.supportYears} 年同一個月的月底。例如 2026 年 10 月 20 日購買，支援期至少到 2031 年 10 月 31 日。購買日以訂單付款日（UTC）為準。桌面 App 0.4.0 起，「設定 → 關於 Vettalon」會顯示你的支援期結束年月。`,
+            '支援期內，我們會處理付費產品的漏洞，並免費提供安全更新。安全更新不屬於 Update Plan，不需要續訂，也不會因為 Update Plan 到期而停止。技術上可行時，安全更新會和功能更新分開發布。',
+            `每個版本自第一次發布起，也至少支援 ${P.supportYears} 年。你使用的版本若因此支援到更晚的日期，以較晚的日期為準。`,
+            '如果你能免費升級到最新版本，我們可以只在最新版本修補漏洞，你升級後就能取得修補。如果較新的版本要有 Update Plan 或另外付費才能取得，我們會在你的支援期內，為你不必付費就能使用的最新版本另外發布免費的安全修補，不會要求你付費升級。',
+            '安全更新透過 App 內建的自動更新（安裝前驗證簽章，並先徵求你同意）與官網下載頁提供。支援期結束後，App 仍可繼續使用，但我們不再保證提供安全更新。支援期不會延長 Team 訂閱的授權期間。',
+          ],
+          link: { page: 'support', label: '查看支援期與安全更新說明' },
+        },
+        {
+          h: '6. 合法使用',
           p: [
             '你只能用 Vettalon 稽核你擁有，或已取得明確授權可測試的程式碼與系統。',
             '供應鏈獵捕模式審查的是公開發佈的第三方套件原始碼。Vettalon 只產生漏洞揭露草稿，不會自動送出；是否送出、送給誰，由你決定，並由你負責遵守各專案的揭露政策與相關法律。',
@@ -57,38 +71,38 @@ export const legal = {
           ],
         },
         {
-          h: '6. 第三方 AI 模型',
+          h: '7. 第三方 AI 模型',
           p: [
             'AI 審查使用你自行設定的模型供應商帳號或 API 金鑰（例如 Anthropic、OpenAI、Google），或你本機執行的模型。你與模型供應商之間的關係與費用，受該供應商的條款規範。程式碼片段由你的機器直接送到你選的供應商，我們不會收到。',
           ],
         },
         {
-          h: '7. 結果的性質與免責',
+          h: '8. 結果的性質與免責',
           p: [
             'AI 與靜態分析都可能漏報或誤報。Vettalon 的報告是協助人工判斷的參考資料，不保證程式碼沒有漏洞，也不能取代專業資安人員的判斷。',
             '在法律允許的範圍內，付費產品依「現狀」提供，我們不提供適售性、特定用途適用性等任何明示或默示的保證。',
           ],
         },
         {
-          h: '8. 責任限制',
+          h: '9. 責任限制',
           p: [
             '在法律允許的最大範圍內，我們對你的全部賠償責任，以你在損害發生前 12 個月內為該付費產品實際支付的金額為上限；對於間接、附帶或衍生性損害（包括利潤損失、資料遺失），我們不負賠償責任。',
             '本條款不排除依適用法律不得排除的消費者權利。',
           ],
         },
         {
-          h: '9. 退款',
+          h: '10. 退款',
           p: [`退款依《退款政策》辦理：首次購買與每次續訂，自付款日起 ${P.refundDays} 天內可申請全額退款。`],
           link: { page: 'refund', label: '查看退款政策' },
         },
         {
-          h: '10. 條款變更',
+          h: '11. 條款變更',
           p: [
-            '我們可能修改本條款，修改後的版本會公布在本頁並更新生效日期。重大變更會在生效前至少 14 天公告。你已購買的授權範圍不會因為日後的條款修改而縮減。',
+            '我們可能修改本條款，修改後的版本會公布在本頁並更新生效日期。重大變更會在生效前至少 14 天公告。你已購買的授權範圍與購買時告知的支援期，都不會因為日後的條款修改而縮減。',
           ],
         },
         {
-          h: '11. 準據法與管轄',
+          h: '12. 準據法與管轄',
           p: [
             '本條款以中華民國（台灣）法律為準據法。因本條款產生的爭議，雙方同意以臺灣臺北地方法院為第一審管轄法院；但適用法律賦予消費者向其住所地法院起訴的權利，不受影響。',
           ],
@@ -166,7 +180,7 @@ export const legal = {
           h: `${P.refundDays} 天全額退款`,
           p: [
             `Vettalon Pro 與 Vettalon Team 的首次購買，自付款日起 ${P.refundDays} 天內都可以申請全額退款，不需要說明原因。`,
-            `Pro 的更新續訂與 Team 的年費續約，同樣在每次扣款後 ${P.refundDays} 天內可申請全額退款。`,
+            `Pro 的 Update Plan 續訂與 Team 的年費續約，同樣在每次扣款後 ${P.refundDays} 天內可申請全額退款。`,
           ],
         },
         {
@@ -188,11 +202,70 @@ export const legal = {
         },
         {
           h: '取消自動續約',
-          p: ['Team 年費與 Pro 更新續訂都可以隨時取消自動續約。取消後，當期結束前仍可正常使用。'],
+          p: ['Team 年費與 Pro 的 Update Plan 都可以隨時取消自動續約。取消後，當期結束前仍可正常使用。取消 Update Plan 不影響安全更新。'],
         },
         {
           h: '法定權利',
           p: ['本政策不影響你依所在地消費者保護法規享有的權利。'],
+        },
+      ],
+    },
+    support: {
+      title: '支援期與安全更新',
+      metaDescription: `Vettalon Pro 與 Team 的支援期、安全更新方式與漏洞回報窗口。每筆購買至少有 ${P.supportYears} 年免費安全更新，不需要 Update Plan。`,
+      sections: [
+        {
+          h: '製造商與聯絡方式',
+          p: [
+            `Vettalon Pro 與 Vettalon Team 由 ${LEGAL_NAME_EN}（${LEGAL_NAME_ZH}）開發與銷售，公司設立於台灣，統一編號 ${TAX_ID}。`,
+            `Email：${EMAIL}。網站：${SITE_URL}。`,
+          ],
+        },
+        {
+          h: '回報漏洞',
+          p: [
+            `付費產品、官網或其他問題，請寄信到 ${EMAIL}，由專人閱讀與回覆。開源核心的漏洞也可以在 GitHub 上私下回報。`,
+            `聯絡方式列在 ${SECURITY_TXT}，協調揭露政策在 ${CVD_POLICY}。`,
+          ],
+        },
+        {
+          h: '產品與版本',
+          p: [
+            '付費產品是 Vettalon 桌面 App（Apple Silicon Mac、Windows、Linux），用 Pro 或 Team 授權金鑰啟用。目前版本號顯示在 App 側欄底部；各平台安裝檔與 SHA-256 列在下載頁。',
+          ],
+          link: { page: 'download', label: '前往下載頁' },
+        },
+        {
+          h: '支援期',
+          p: [
+            `每一筆購買都有自己的支援期：從購買日起，至少到第 ${P.supportYears} 年同一個月的月底。2026 年 10 月 20 日購買，至少到 2031 年 10 月底；2027 年 3 月 1 日購買，至少到 2032 年 3 月底。每個版本自第一次發布起也至少支援 ${P.supportYears} 年，兩者以較晚的日期為準。`,
+            '支援期內安全更新一律免費，不需要 Update Plan。Update Plan 只涵蓋新功能與新的主要版本。如果較新的版本要付費才能取得，我們會為你不必付費就能使用的最新版本另外發布免費安全修補。',
+            '桌面 App 0.4.0 起，「設定 → 關於 Vettalon」會依授權金鑰的發放日顯示你的支援期結束年月，結束後也會在同一處標示。完整條款見服務條款第 5 條。',
+          ],
+          link: { page: 'terms', label: '查看服務條款' },
+        },
+        {
+          h: '安全更新怎麼送到',
+          p: [
+            'App 會自動檢查並下載更新，更新包通過 Minisign 簽章驗證後，安裝前會先問你；選「稍後」可以延後安裝。macOS、Windows 與 Linux AppImage 都支援 App 內更新。',
+            'Debian／Ubuntu 的 .deb 版由系統套件管理，請從下載頁取得新版安裝。技術上可行時，安全更新會和功能更新分開發布。',
+            '目前沒有關閉自動檢查更新的設定。安裝一律要你確認，延後安裝期間已修補的漏洞仍會留在你的電腦上，請盡快安裝安全更新。',
+          ],
+        },
+        {
+          h: '用途與資料去向',
+          p: [
+            'Vettalon 用來審查你擁有或已取得授權測試的原始碼，找出可能的安全弱點，產生給人判斷的報告。AI 與靜態分析都可能漏報或誤報，結果需要人工確認。',
+            'App 在你的電腦上執行，不回傳遙測。會連網的情況有：啟用授權與之後每 30 天一次的授權驗證、你設定的雲端模型供應商（深掃會送出選取的程式碼與上下文）、更新檢查與下載，以及供應鏈獵捕查詢套件登錄處與 OSV。',
+            '使用雲端模型前，請先確認供應商的資料政策；機密專案可以改用本機模型。報告與 SARIF 寫出前會遮蔽偵測到的秘密。',
+          ],
+        },
+        {
+          h: '停用與移除資料',
+          p: [
+            '換電腦或不再使用時，先到「設定 → 授權」按「停用本機授權」釋出裝置名額，再移除 App。',
+            '授權快取、裝置 ID、模型設定與儲存的掃描報告放在使用者目錄下的 .vettalon 資料夾（macOS 與 Linux 是 ~/.vettalon，Windows 是 %USERPROFILE%\\.vettalon），刪除這個資料夾就會清除。匯出的報告存在你選的位置，請另外刪除。',
+          ],
         },
       ],
     },
@@ -228,14 +301,25 @@ export const legal = {
         {
           h: '4. License',
           p: [
-            `Vettalon Pro: a one-time payment gives one named user a perpetual license to install the product on up to ${P.proDevices} of their own devices. Versions released within ${P.updateMonths} months of purchase are included. After that, you can renew the update plan for ${P.proRenewal} per year to keep receiving new versions. If you don't renew, you can keep using the versions you already have, forever.`,
-            `Vettalon Team: an annual subscription for up to ${P.teamSeats} named users within one organisation, including all updates and priority email support during the term. If the subscription expires without renewal, the Team license ends.`,
+            `Vettalon Pro: a one-time payment gives one named user a perpetual license to install the product on up to ${P.proDevices} of their own devices. Feature updates and new major versions released within ${P.updateMonths} months of purchase are included. After that, you can renew the Update Plan for ${P.proRenewal} per year to keep receiving feature updates and new major versions. If you don't renew, you can keep using the versions you already have, forever, and security updates stay free as described in section 5.`,
+            `Vettalon Team: an annual subscription for up to ${P.teamSeats} named users within one organisation, including all versions and updates (security updates included) and priority email support during the term. If the subscription expires without renewal, the Team license ends.`,
             'Your license key and download link are emailed to the address you used at checkout once payment completes.',
             'You may not resell, rent or distribute license keys, let more users or devices use the product than your license allows, or circumvent license checks. We retain all copyright and other intellectual property in the Paid Products; any right not expressly granted here is reserved.',
           ],
         },
         {
-          h: '5. Lawful use',
+          h: '5. Support period and security updates',
+          p: [
+            `Every purchase of a Paid Product has its own support period: from the purchase date until at least the end of the same calendar month ${P.supportYears} years later. For example, a purchase on 20 October 2026 is supported until at least 31 October 2031. The purchase date is the date your order was paid (UTC). From desktop app 0.4.0, Settings > About Vettalon shows the month and year your support period ends.`,
+            'During the support period we handle vulnerabilities in the Paid Products and provide security updates free of charge. Security updates are not part of the Update Plan: they never require a renewal and do not stop when an Update Plan lapses. Where technically feasible, security updates are released separately from feature updates.',
+            `Each version is also supported for at least ${P.supportYears} years from its first release. If that gives the version you use a later end date, the later date applies.`,
+            'If you can upgrade to the latest version free of charge, we may fix vulnerabilities in the latest version only, and you get the fix by upgrading. If a newer version requires an Update Plan or another payment, we release free security fixes for the latest version you can use without paying, for as long as your support period runs. We never require a paid upgrade to receive a security fix.',
+            "Security updates are delivered through the app's built-in updater, which checks the update signature and asks before installing, and through the download page on this website. After the support period ends the app keeps working, but security updates are no longer guaranteed. The support period does not extend a Team subscription.",
+          ],
+          link: { page: 'support', label: 'Read about support and security updates' },
+        },
+        {
+          h: '6. Lawful use',
           p: [
             'Use Vettalon only on code and systems you own or are explicitly authorised to test.',
             "Supply-chain hunting reviews the public source of published third-party packages. Vettalon only produces disclosure drafts and never sends them automatically. Whether and where to send a disclosure is your decision, and you are responsible for following each project's disclosure policy and applicable law.",
@@ -243,38 +327,38 @@ export const legal = {
           ],
         },
         {
-          h: '6. Third-party AI models',
+          h: '7. Third-party AI models',
           p: [
             "AI review uses the model-provider account or API key you configure (for example Anthropic, OpenAI or Google), or a model running locally on your machine. Your relationship with, and any charges from, a model provider are governed by that provider's terms. Code snippets go straight from your machine to the provider you choose; we never receive them.",
           ],
         },
         {
-          h: '7. Nature of results and disclaimer',
+          h: '8. Nature of results and disclaimer',
           p: [
             "AI and static analysis can miss issues and can report false positives. Vettalon's reports support human judgement. They do not guarantee that code is free of vulnerabilities and do not replace a qualified security professional.",
             'To the extent permitted by law, the Paid Products are provided "as is", without any express or implied warranty, including merchantability or fitness for a particular purpose.',
           ],
         },
         {
-          h: '8. Limitation of liability',
+          h: '9. Limitation of liability',
           p: [
             'To the maximum extent permitted by law, our total liability to you is limited to the amount you actually paid for the relevant Paid Product in the 12 months before the event giving rise to the claim. We are not liable for indirect, incidental or consequential damages, including lost profits or lost data.',
             'Nothing in these terms excludes consumer rights that cannot be excluded under applicable law.',
           ],
         },
         {
-          h: '9. Refunds',
+          h: '10. Refunds',
           p: [`Refunds follow our Refund Policy: you can get a full refund within ${P.refundDays} days of your first purchase or of any renewal charge.`],
           link: { page: 'refund', label: 'Read the Refund Policy' },
         },
         {
-          h: '10. Changes',
+          h: '11. Changes',
           p: [
-            'We may update these terms. The updated version will be posted on this page with a new effective date, and material changes will be announced at least 14 days before they take effect. Later changes will never reduce the scope of a license you have already bought.',
+            'We may update these terms. The updated version will be posted on this page with a new effective date, and material changes will be announced at least 14 days before they take effect. Later changes will never reduce the scope of a license you have already bought or shorten the support period you were given at purchase.',
           ],
         },
         {
-          h: '11. Governing law and jurisdiction',
+          h: '12. Governing law and jurisdiction',
           p: [
             'These terms are governed by the laws of the Republic of China (Taiwan). The Taiwan Taipei District Court has jurisdiction as the court of first instance, without affecting any right a consumer has under applicable law to bring proceedings in their home courts.',
           ],
@@ -352,7 +436,7 @@ export const legal = {
           h: `${P.refundDays}-day full refund`,
           p: [
             `You can get a full refund on a first purchase of Vettalon Pro or Vettalon Team within ${P.refundDays} days of payment. No reason needed.`,
-            `Pro update-plan renewals and Team annual renewals can also be fully refunded within ${P.refundDays} days of each charge.`,
+            `Pro Update Plan renewals and Team annual renewals can also be fully refunded within ${P.refundDays} days of each charge.`,
           ],
         },
         {
@@ -374,11 +458,70 @@ export const legal = {
         },
         {
           h: 'Cancelling auto-renewal',
-          p: ['You can cancel auto-renewal for Team and for the Pro update plan at any time. You keep access until the end of the current period.'],
+          p: ['You can cancel auto-renewal for Team and for the Pro Update Plan at any time. You keep access until the end of the current period. Cancelling the Update Plan does not affect security updates.'],
         },
         {
           h: 'Statutory rights',
           p: ['This policy does not affect your rights under the consumer-protection laws where you live.'],
+        },
+      ],
+    },
+    support: {
+      title: 'Support and security updates',
+      metaDescription: `Support period, security-update delivery and the vulnerability contact for Vettalon Pro and Team. Every purchase gets at least ${P.supportYears} years of free security updates, no Update Plan needed.`,
+      sections: [
+        {
+          h: 'Manufacturer and contact',
+          p: [
+            `Vettalon Pro and Vettalon Team are developed and sold by ${LEGAL_NAME_EN} (${LEGAL_NAME_ZH}), a company incorporated in Taiwan, Unified Business Number ${TAX_ID}.`,
+            `Email: ${EMAIL}. Website: ${SITE_URL}.`,
+          ],
+        },
+        {
+          h: 'Reporting a vulnerability',
+          p: [
+            `For the paid products, this website or anything else, email ${EMAIL}; a person reads and answers reports. Vulnerabilities in the open-source core can also be reported privately on GitHub.`,
+            `Contacts are listed at ${SECURITY_TXT} and the coordinated disclosure policy is at ${CVD_POLICY}.`,
+          ],
+        },
+        {
+          h: 'Product and version',
+          p: [
+            'The paid product is the Vettalon desktop app (Apple Silicon Macs, Windows, Linux), activated with a Pro or Team license key. The running version is shown at the bottom of the app sidebar; installers and SHA-256 checksums for each platform are on the download page.',
+          ],
+          link: { page: 'download', label: 'Go to the download page' },
+        },
+        {
+          h: 'Support period',
+          p: [
+            `Every purchase has its own support period: from the purchase date until at least the end of the same calendar month ${P.supportYears} years later. A purchase on 20 October 2026 is covered until at least the end of October 2031; a purchase on 1 March 2027 until at least the end of March 2032. Each version is also supported for at least ${P.supportYears} years from its first release, and the later of the two dates applies.`,
+            'Security updates are free throughout the support period and never need the Update Plan. The Update Plan covers new features and new major versions only. If a newer version requires payment, we release free security fixes for the latest version you can use without paying.',
+            'From desktop app 0.4.0, Settings > About Vettalon shows the month and year your support period ends, based on the date your license key was issued, and marks it once it has passed. The full terms are in section 5 of the Terms of Service.',
+          ],
+          link: { page: 'terms', label: 'Read the Terms of Service' },
+        },
+        {
+          h: 'How security updates reach you',
+          p: [
+            'The app checks for and downloads updates automatically. Once an update passes its Minisign signature check, the app asks before installing it; choose Later to postpone. In-app updates work on macOS, Windows and the Linux AppImage.',
+            'The Debian/Ubuntu .deb package is managed by the system package manager; install new versions from the download page. Where technically feasible, security updates are released separately from feature updates.',
+            'There is currently no setting to turn off the automatic update check. Installation always waits for your confirmation; while you postpone it, the fixed vulnerability stays on your computer, so install security updates promptly.',
+          ],
+        },
+        {
+          h: 'Intended use and where data goes',
+          p: [
+            'Vettalon reviews source code you own or are authorised to test, looks for possible security weaknesses and produces reports for people to judge. AI and static analysis can miss issues or raise false positives, so results need human review.',
+            'The app runs on your computer and sends no telemetry. It goes online only for license activation and the license check every 30 days, the cloud model providers you configure (deep review sends selected code and context), update checks and downloads, and supply-chain hunting queries to package registries and OSV.',
+            'Check a cloud provider\'s data policy before using it; for confidential projects you can use a local model instead. Detected secrets are redacted before any report or SARIF file is written.',
+          ],
+        },
+        {
+          h: 'Deactivating and removing data',
+          p: [
+            'Before moving to another computer or uninstalling, open Settings > License and choose Deactivate this computer to free the device slot, then remove the app.',
+            'The license cache, device ID, model settings and saved scan reports live in the .vettalon folder in your home directory (~/.vettalon on macOS and Linux, %USERPROFILE%\\.vettalon on Windows). Deleting that folder removes them. Exported reports are saved where you chose; delete those separately.',
+          ],
         },
       ],
     },
