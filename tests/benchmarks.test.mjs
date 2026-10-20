@@ -8,12 +8,12 @@ import { homepageEvidence } from '../src/evidence/homepage.js';
 
 test('homepage covers the exact public manifest with manifest-derived references and types', () => {
   const publicCases = cases.filter((item) => item.publication === 'public');
-  assert.equal(publicCases.length, 3);
-  assert.equal(publicCases.filter((item) => item.type === 'historical').length, 2);
+  assert.equal(publicCases.length, 8);
+  assert.equal(publicCases.filter((item) => item.type === 'historical').length, 7);
   assert.equal(publicCases.filter((item) => item.type === 'discovery').length, 1);
   for (const locale of ['zh', 'en']) {
     const { items, counts } = homepageEvidence(cases, content[locale].benchmarks.items);
-    assert.deepEqual(counts, { public: 3, historical: 2, discovery: 1, reported: 0 });
+    assert.deepEqual(counts, { public: 8, historical: 7, discovery: 1, reported: 0 });
     assert.equal(items[0].id, 'ammonia-ghsa-x43w-36pp-96g3');
     assert.deepEqual(new Set(items.map((item) => item.id)), new Set(publicCases.map((item) => item.id)));
     for (const item of items) {
@@ -22,11 +22,11 @@ test('homepage covers the exact public manifest with manifest-derived references
       assert.equal(item.v, item.type === 'historical' ? (record.cve || record.ghsa) : (record.ghsa || record.cve));
     }
     const html = render(locale, '');
-    assert.match(html, /data-public-case-count="3"/);
+    assert.match(html, /data-public-case-count="8"/);
     assert.ok(html.includes(content[locale].benchmarks.collection.boundary));
     if (locale === 'en') {
-      const countText = html.match(/<p class="section-note rv" data-public-case-count="3">([\s\S]*?)<\/p>/)?.[1].replace(/<[^>]*>/g, '');
-      assert.match(countText, /3 public cases.*2 historical focused detections.*1 original discovery/);
+      const countText = html.match(/<p class="section-note rv" data-public-case-count="8">([\s\S]*?)<\/p>/)?.[1].replace(/<[^>]*>/g, '');
+      assert.match(countText, /8 public cases.*7 historical detection tests.*1 original discovery/);
       assert.doesNotMatch(countText, /1 original discoveries/);
     }
     const grid = html.match(/<div class="benchmark-grid">([\s\S]*?)<\/div>/)?.[1];
@@ -49,7 +49,7 @@ test('homepage fails closed when public cases or translated cards drift', () => 
   const copy = content.en.benchmarks.items;
   assert.throws(() => homepageEvidence(cases, copy.slice(1)), /must match/);
   assert.throws(() => homepageEvidence(cases, [...copy, copy[0]]), /must match/);
-  assert.throws(() => homepageEvidence(cases, [...copy.slice(0, 2), { ...copy[2], id: 'unpublished-case' }]), /incomplete/);
+  assert.throws(() => homepageEvidence(cases, [...copy.slice(0, -1), { ...copy.at(-1), id: 'unpublished-case' }]), /incomplete/);
   const added = [...cases, { ...cases[0], id: 'new-public-case' }];
   assert.throws(() => homepageEvidence(added, copy), /must match/);
 });

@@ -83,7 +83,9 @@ test('actual public dossiers pass the same build gate and preserve the known his
   const { validateDossierFiles } = await import('../scripts/evidence-artifacts.mjs');
   await assert.doesNotReject(() => validateDossierFiles(cases, new URL('../public', import.meta.url).pathname));
   const historical = cases.filter(item => item.type === 'historical');
-  assert.equal(historical.length, 2); assert.ok(historical.every(item => item.status === 'detected'));
+  assert.equal(historical.length, 7); assert.ok(historical.every(item => item.status === 'detected'));
+  assert.equal(historical.filter(item => item.dossier).length, 2);
+  assert.equal(historical.filter(item => item.benchmark).length, 5);
   const phpunit = cases.find(item => item.id.startsWith('phpunit-'));
   assert.equal(phpunit.dossier.runStatus, 'incomplete'); assert.equal(phpunit.dossier.incompleteReason, 'units_failed');
 });

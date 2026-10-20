@@ -4,6 +4,9 @@
 
 ### Added
 
+- 證據牆新增五筆歷史識別案例（minimist、PyJWT、guzzlehttp/psr7、gorilla/websocket、smallvec）。每筆都先公開登錄比對標準，再掃官方發布封存檔的脆弱版與修補版；案例頁列出兩臂結果、模型呼叫數、預先登錄檔與附件 SHA-256。
+- 案例 schema 新增選填 `benchmark` 欄、`not-detected` 狀態與 `release-archive` 識別模式，讓預先登錄掃描的未命中也能公開，不會被當成命中或略過。
+
 - 桌面 App 下載頁（`/download/`、`/en/download/`）：依作業系統推薦安裝檔，列出各平台系統需求、檔案大小與 SHA-256，附安裝啟用步驟。導覽列、價格區與頁尾的下載連結改到這一頁，不再連到 GitHub Releases 頁面。
 - `npm run check:downloads`：部署前確認每個安裝檔都能公開下載且大小相符。
 - 證據牆案例頁顯示人工審閱者化名與審閱日期（例：「人工審閱：zhixuli0406（2026-10-19）」），並附逐案 AI 使用說明。化名集中在 `PUBLIC_REVIEWER` 一個常數，審閱日期直接沿用案例的 `reviewedAt`。
@@ -12,6 +15,7 @@
 
 ### Changed
 
+- 證據牆政策句與首頁計數的「歷史聚焦識別」改稱「歷史識別測試」，涵蓋聚焦單檔與整包封存掃描兩種做法。
 - 上游通報案例的回歸摘要、產品輸出節錄與雙版本證據包驗證，改用以案例 ID 為鍵的 `caseProfiles`，不再寫死 Ammonia。Ammonia 的所有預期值原樣搬進它自己的 profile，檢查強度不變；沒有 profile 的案例一律拒絕。
 - 證據牆政策說明的案例數改由 manifest 計算。
 
