@@ -13,6 +13,6 @@ export default function Editions() {
       <div className="edition__scope"><p>{c.desc}</p><ul className="checks">{c.points.map((point) => <li key={point}><Check aria-hidden="true" />{point}</li>)}</ul></div>
       <a className={`btn ${c.href === GITHUB ? 'btn--secondary' : 'btn--primary'}`} href={c.href} target="_blank" rel="noopener noreferrer">{c.cta}<ArrowUpRight size={17} aria-hidden="true" /></a>
     </article>)}</div>
-    <div className="edition-footnotes"><p>{editions.note}</p><a className="link" href={editions.download.href} target="_blank" rel="noopener noreferrer">{editions.download.label}<ArrowUpRight size={16} aria-hidden="true" /></a></div>
+    <div className="edition-footnotes"><p>{editions.note}</p><a className="link" href={editions.download.href}>{editions.download.label}<ArrowUpRight size={16} aria-hidden="true" /></a></div>
   </section>;
 }

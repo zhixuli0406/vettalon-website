@@ -5,6 +5,6 @@ import { LEGAL_PAGES } from './legal.js';
 export function parseRoute(pathname) {
   const locale = /^\/en(?:\/|$)/.test(pathname) ? 'en' : 'zh';
   const rest = pathname.replace(/^\/en(?=\/|$)/, '').replace(/^\/+|\/+$/g, '');
-  const page = LEGAL_PAGES.includes(rest) || /^evidence(?:\/[a-z0-9-]+)?$/.test(rest) ? rest : '';
+  const page = LEGAL_PAGES.includes(rest) || rest === 'download' || /^evidence(?:\/[a-z0-9-]+)?$/.test(rest) ? rest : '';
   return { locale, page };
 }

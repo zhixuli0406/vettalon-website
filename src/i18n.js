@@ -9,14 +9,14 @@ export const EMAIL = 'info@dudustudio.monster';
 // Commercial / enterprise inquiries go to the vendor directly.
 export const CONTACT = 'mailto:' + EMAIL;
 // Hosted checkout (Polar, merchant of record). The license key is emailed by
-// Polar; installers live on the public releases repo.
+// Polar; installers are offered on the site's own download page.
 export const BUY_PRO = 'https://buy.polar.sh/polar_cl_Ho83TonhMJOzLP6RoHLuT5tu84UZlilt7qkKw393Lvt';
 export const BUY_TEAM = 'https://buy.polar.sh/polar_cl_EJBhntqvKHajZm2HspEXqIx8ChPPKwirmH4Z33b57co';
-export const DOWNLOADS = 'https://github.com/zhixuli0406/vettalon-releases/releases/latest';
-
 // Locale-aware path for a site page ('' = home).
 export const pagePath = (locale, page = '') =>
   (locale === 'en' ? '/en/' : '/') + (page ? page + '/' : '');
+
+export const downloadPath = (locale) => pagePath(locale, 'download');
 
 export const countLabel = (label, count) =>
   typeof label === 'string' ? label : (count === 1 ? label.one : label.other);
@@ -128,7 +128,7 @@ export const content = {
           price: P.proPrice,
           priceNote: `一次買斷，含 ${P.updateMonths} 個月更新。之後續訂更新 ${P.proRenewal}／年，不續也能永久使用。`,
           desc: '桌面 App 與本機 dashboard、對齊台灣資安檢測報告慣例的企業報告（PDF／Word／HTML）。讀同一份掃描 JSON；供應鏈獵捕與揭露草稿已含在免費 CLI。',
-          points: ['桌面 App＋本機 dashboard', '企業報告 PDF／Word／HTML', '整合核心掃描工作流程', `單人授權，最多 ${P.proDevices} 台裝置`],
+          points: ['桌面 App＋本機 dashboard', '企業報告 PDF／Word／HTML', '整合核心掃描工作流程', `單人授權，最多 ${P.proDevices} 台裝置`, '桌面 App 支援 Apple Silicon Mac、Windows、Linux，不支援 Intel Mac'],
           cta: '購買 Pro',
           href: BUY_PRO,
         },
@@ -138,13 +138,13 @@ export const content = {
           price: P.teamPrice,
           priceNote: `年費，含 ${P.teamSeats} 席。`,
           desc: `給資安或開發團隊。Pro 的全部功能，同一組織最多 ${P.teamSeats} 人使用，訂閱期間持續更新並有優先 email 支援。`,
-          points: ['Pro 全部功能', `最多 ${P.teamSeats} 位具名使用者`, '訂閱期間所有更新', '優先 email 支援'],
+          points: ['Pro 全部功能', `最多 ${P.teamSeats} 位具名使用者`, '訂閱期間所有更新', '優先 email 支援', '桌面 App 不支援 Intel Mac'],
           cta: '購買 Team',
           href: BUY_TEAM,
         },
       ],
-      note: `價格以美元計，未含稅，結帳時依所在地計算。付款完成後，授權金鑰會寄到你的 email，桌面 App 從下載頁安裝（macOS、Windows、Linux）。首次購買與續訂 ${P.refundDays} 天內可全額退款。台灣企業與政府採購可來信索取新台幣報價。`,
-      download: { label: '下載桌面 App', href: DOWNLOADS },
+      note: `價格以美元計，未含稅，結帳時依所在地計算。付款完成後，授權金鑰會寄到你的 email，桌面 App 從下載頁安裝（Apple Silicon Mac、Windows、Linux；不支援 Intel Mac）。首次購買與續訂 ${P.refundDays} 天內可全額退款。台灣企業與政府採購可來信索取新台幣報價。`,
+      download: { label: '下載桌面 App', href: downloadPath('zh') },
     },
     faq: {
       tag: '常見問題',
@@ -155,6 +155,7 @@ export const content = {
         { q: '供應鏈獵捕會送出我的私有碼嗎？', a: '獵捕處理公開相依套件，會連套件登錄處並向 OSV 查詢 name@version；AI 審查可能把選取的套件原始碼送到你設定的模型。它不會自動送出漏洞通報，揭露草稿由人決定。' },
         { q: '開源版和企業版差在哪？', a: '開源核心提供命令列掃描、供應鏈獵捕、揭露草稿與 SARIF。企業版加上桌面 App、本機 dashboard 與企業報告排版，讀的是同一份掃描 JSON。' },
         { q: 'Pro 的授權驗證會連網嗎？', a: '只有啟用時，以及之後每 30 天一次。送出的是授權金鑰、一組裝置 ID（本機識別碼的雜湊值，無法還原）和版本號，不含程式碼或報告；其餘時間可以完全離線使用。開源核心 vettalon 不做授權檢查。' },
+        { q: 'Intel Mac 可以用嗎？', a: '桌面 App 不行，只支援 Apple Silicon（M1 以上）的 Mac，Windows 與 Linux 不受影響。購買前請點左上角蘋果選單 →「關於這台 Mac」確認：顯示「晶片 Apple M…」可以使用，顯示「處理器 … Intel」則無法使用。免費的開源 CLI 仍可在 Intel Mac 上執行。' },
         { q: '買了不合用可以退款嗎？', a: `可以。Pro 與 Team 首次購買和每次續訂，付款後 ${P.refundDays} 天內來信就能全額退款，不用說明原因。` },
       ],
     },
@@ -170,7 +171,7 @@ export const content = {
     footer: {
       tagline: '多模型對抗式資安稽核。由 Dudu Technology Ltd. 開發。',
       groups: [
-        { title: '產品', links: [{ t: 'GitHub 原始碼', href: GITHUB }, { t: '證據牆', href: pagePath('zh', 'evidence') }, { t: '價格', href: pagePath('zh') + '#editions' }, { t: '下載桌面 App', href: DOWNLOADS }, { t: '企業版', href: CONTACT }] },
+        { title: '產品', links: [{ t: 'GitHub 原始碼', href: GITHUB }, { t: '證據牆', href: pagePath('zh', 'evidence') }, { t: '價格', href: pagePath('zh') + '#editions' }, { t: '下載桌面 App', href: downloadPath('zh') }, { t: '企業版', href: CONTACT }] },
         { title: '原廠', links: [{ t: 'Dudu Technology Ltd.', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
         { title: '聯絡', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
         { title: '法律', links: [{ t: '服務條款', href: pagePath('zh', 'terms') }, { t: '隱私權政策', href: pagePath('zh', 'privacy') }, { t: '退款政策', href: pagePath('zh', 'refund') }] },
@@ -274,7 +275,7 @@ export const content = {
           price: P.proPrice,
           priceNote: `One-time purchase with ${P.updateMonths} months of updates. Renew updates for ${P.proRenewal}/year after that, or keep using your version forever.`,
           desc: 'Desktop app and local dashboard, plus enterprise reports aligned with Taiwan security-assessment conventions (PDF / Word / HTML). Reads the same scan JSON; supply-chain hunting and disclosure drafts are already in the free CLI.',
-          points: ['Desktop app + local dashboard', 'Enterprise reports: PDF / Word / HTML', 'Integrated core scan workflow', `One user, up to ${P.proDevices} devices`],
+          points: ['Desktop app + local dashboard', 'Enterprise reports: PDF / Word / HTML', 'Integrated core scan workflow', `One user, up to ${P.proDevices} devices`, 'Desktop app runs on Apple Silicon Macs, Windows and Linux; Intel Macs are not supported'],
           cta: 'Get Pro',
           href: BUY_PRO,
         },
@@ -284,13 +285,13 @@ export const content = {
           price: P.teamPrice,
           priceNote: `Per year, ${P.teamSeats} seats included.`,
           desc: `For security and engineering teams. Everything in Pro for up to ${P.teamSeats} people in one organisation, with updates and priority email support for the whole term.`,
-          points: ['Everything in Pro', `Up to ${P.teamSeats} named users`, 'All updates during the term', 'Priority email support'],
+          points: ['Everything in Pro', `Up to ${P.teamSeats} named users`, 'All updates during the term', 'Priority email support', 'Desktop app does not support Intel Macs'],
           cta: 'Get Team',
           href: BUY_TEAM,
         },
       ],
-      note: `Prices in USD, excluding tax, which is calculated at checkout for your location. Your license key is emailed once payment completes; install the desktop app from the download page (macOS, Windows, Linux). Full refund within ${P.refundDays} days of a first purchase or renewal. Businesses and government agencies in Taiwan can request a TWD quote.`,
-      download: { label: 'Download the desktop app', href: DOWNLOADS },
+      note: `Prices in USD, excluding tax, which is calculated at checkout for your location. Your license key is emailed once payment completes; install the desktop app from the download page (Apple Silicon Macs, Windows, Linux; Intel Macs are not supported). Full refund within ${P.refundDays} days of a first purchase or renewal. Businesses and government agencies in Taiwan can request a TWD quote.`,
+      download: { label: 'Download the desktop app', href: downloadPath('en') },
     },
     faq: {
       tag: 'FAQ',
@@ -301,6 +302,7 @@ export const content = {
         { q: 'Does supply-chain hunting send my private code?', a: "Hunting works on public dependency packages, reaches package registries, and queries OSV with name@version. AI review may send selected package code to your configured model. It does not submit vulnerability reports automatically; a human decides what to do with each draft." },
         { q: 'Open-source vs enterprise?', a: 'The free core provides command-line scanning, supply-chain hunting, disclosure drafts, and SARIF. Pro adds a desktop app, local dashboard, and enterprise report layouts; both read the same scan JSON.' },
         { q: 'Does the Pro license check go online?', a: 'Only when you activate, and then once every 30 days. It sends the license key, a device ID (a one-way hash of the system identifier of this computer) and the app version, never code or reports; the rest of the time Pro works fully offline. The open-source vettalon core never checks a license.' },
+        { q: 'Does it run on Intel Macs?', a: 'The desktop app does not. It needs a Mac with Apple Silicon (M1 or later); Windows and Linux are unaffected. Before buying, open the Apple menu > About This Mac: "Chip Apple M…" is supported, "Processor … Intel" is not. The free open-source CLI still runs on Intel Macs.' },
         { q: "Can I get a refund if it doesn't fit?", a: `Yes. Email us within ${P.refundDays} days of a first purchase or any renewal of Pro or Team for a full refund, no reason needed.` },
       ],
     },
@@ -316,7 +318,7 @@ export const content = {
     footer: {
       tagline: 'Multi-model adversarial security auditing. Built by Dudu Technology Ltd.',
       groups: [
-        { title: 'Product', links: [{ t: 'Source on GitHub', href: GITHUB }, { t: 'Evidence wall', href: pagePath('en', 'evidence') }, { t: 'Pricing', href: pagePath('en') + '#editions' }, { t: 'Download', href: DOWNLOADS }, { t: 'Enterprise', href: CONTACT }] },
+        { title: 'Product', links: [{ t: 'Source on GitHub', href: GITHUB }, { t: 'Evidence wall', href: pagePath('en', 'evidence') }, { t: 'Pricing', href: pagePath('en') + '#editions' }, { t: 'Download', href: downloadPath('en') }, { t: 'Enterprise', href: CONTACT }] },
         { title: 'Vendor', links: [{ t: 'Dudu Technology Ltd.', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
         { title: 'Contact', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
         { title: 'Legal', links: [{ t: 'Terms of Service', href: pagePath('en', 'terms') }, { t: 'Privacy Policy', href: pagePath('en', 'privacy') }, { t: 'Refund Policy', href: pagePath('en', 'refund') }] },
