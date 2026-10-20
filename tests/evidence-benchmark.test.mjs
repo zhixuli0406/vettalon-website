@@ -62,6 +62,12 @@ test('artifact validation rejects drift, unreviewed detail and invented outcomes
     d => { d.arms.vulnerable.matches[0].privateTrace = 'SECRET_SENTINEL'; },
     d => { d.command += ' --poc'; },
     d => { d.hintLevel = 'L3'; },
+    d => { d.arms.vulnerable.matches[0].cwe = 'CWE-79'; },
+    d => { d.arms.vulnerable.matches[0].line = 1; },
+    d => { d.arms.vulnerable.matches[0].status = 'refuted'; },
+    d => { d.arms.fixed.matches.push({ ...structuredClone(d.arms.vulnerable.matches[0]) }); },
+    d => { d.arms.vulnerable.runStatus = d.arms.vulnerable.runStatus === 'complete' ? 'incomplete' : 'complete'; },
+    d => { d.arms.vulnerable.targetFile.reviewed = false; d.arms.vulnerable.targetFile.submittedSha256 = null; },
   ]) {
     const changed = structuredClone(data); mutate(changed);
     assert.throws(() => validateBenchmark(item, changed));
@@ -77,10 +83,13 @@ test('a pre-registered miss is shown as not-detected and can never be shown as a
   assert.throws(() => validateManifest(data), 'a miss cannot carry a detection snapshot');
   delete miss.detection;
   assert.equal(validateManifest(data)[index].status, 'not-detected');
-  for (const outcome of ['foundButRefuted', 'locationOnly', 'missedNotSelected', 'notRun']) {
+  for (const outcome of ['foundButRefuted', 'locationOnly', 'missedNotSelected']) {
     const value = structuredClone(data); value[index].benchmark.vulnerable.outcome = outcome;
     assert.doesNotThrow(() => validateManifest(value), outcome);
   }
+  const notRun = structuredClone(data); Object.assign(notRun[index].benchmark.vulnerable, { outcome: 'notRun', calls: 0, runStatus: null, incompleteReason: null, targetReviewed: null });
+  assert.doesNotThrow(() => validateManifest(notRun));
+  notRun[index].benchmark.vulnerable.calls = 3; assert.throws(() => validateManifest(notRun), 'a scan that did not run has no calls');
   const found = clone(); found[index].status = 'not-detected';
   assert.throws(() => validateManifest(found), 'a found outcome cannot be hidden as not-detected');
   assert.equal(selectCases(data, readFilters('?status=not-detected')).length, 1);
@@ -93,6 +102,10 @@ test('benchmark fields are confined to historical cases with a registered profil
     c => { c.benchmark.fixed.outcome = 'maybe'; },
     c => { c.benchmark.extra = true; },
     c => { c.detection.mode = 'focused'; },
+    c => { c.detection.findingStatus = 'refuted'; },
+    c => { c.benchmark.vulnerable.targetReviewed = false; },
+    c => { c.benchmark.fixed.runStatus = 'incomplete'; c.benchmark.fixed.incompleteReason = null; },
+    c => { c.benchmark.fixed.incompleteReason = 'made_up_reason'; },
     c => { c.id = 'unregistered-case'; c.benchmark.artifactPath = '/evidence/benchmarks/historical-detection-20261020/unregistered-case.json'; },
   ]) {
     const data = clone(); mutate(data.find(item => item.benchmark)); assert.throws(() => validateManifest(data));
@@ -135,4 +148,29 @@ test('detail page shows both arms, call counts, the pre-registration and the tra
       }
     } finally { live.pop(); }
   } finally { await server.close(); }
+});
+
+test('build gate rejects an artifact that drifts from the pre-registration', async () => {
+  const { mkdtemp, mkdir, writeFile, copyFile, rm } = await import('node:fs/promises');
+  const { tmpdir } = await import('node:os'); const { join } = await import('node:path');
+  const { validateDossierFiles } = await import('../scripts/evidence-artifacts.mjs');
+  const root = await mkdtemp(join(tmpdir(), 'vettalon-benchmark-'));
+  try {
+    const dir = join(root, BENCHMARK_RUN.directory.slice(1)); await mkdir(dir, { recursive: true });
+    await copyFile('public' + BENCHMARK_RUN.preregistration.artifactPath, join(root, BENCHMARK_RUN.preregistration.artifactPath.slice(1)));
+    const item = structuredClone(benchmarkCases[0]); const data = await artifact(item);
+    const write = async value => {
+      const bytes = JSON.stringify(value, null, 2) + '\n';
+      await writeFile(join(dir, `${item.id}.json`), bytes);
+      item.benchmark.sha256 = createHash('sha256').update(bytes).digest('hex');
+    };
+    await write(data);
+    await assert.doesNotReject(() => validateDossierFiles([item], root));
+    const drift = structuredClone(data); drift.target.vulnerableRanges = [[1, 400]];
+    await write(drift);
+    await assert.rejects(() => validateDossierFiles([item], root), 'widened ranges differ from the registration');
+    const otherArchive = structuredClone(data); otherArchive.arms.fixed.treeSha256 = 'c'.repeat(64);
+    await write(otherArchive);
+    await assert.rejects(() => validateDossierFiles([item], root), 'a different scanned tree differs from the registration');
+  } finally { await rm(root, { recursive: true, force: true }); }
 });

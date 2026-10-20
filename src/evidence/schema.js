@@ -59,6 +59,7 @@ export const BENCHMARK_RUN = deepFreeze({
 });
 export const BENCHMARK_VULNERABLE_OUTCOMES = Object.freeze(['found','foundButRefuted','locationOnly','missedReviewed','missedNotSelected','notRun']);
 export const BENCHMARK_FIXED_OUTCOMES = Object.freeze(['flagged','notFlagged','notRun']);
+export const BENCHMARK_INCOMPLETE_REASONS = Object.freeze(['scope_not_fully_reviewed','units_failed','injection_uncrosschecked','time_budget_exhausted','engine_unavailable']);
 const benchmarkProfile = (targetFile, vulnerableArchiveSha256, fixedArchiveSha256) => ({ benchmark: { targetFile, vulnerableArchiveSha256, fixedArchiveSha256 } });
 
 /** @type {Readonly<Record<string, {regression?: object, origin?: object, pairedBundle?: object, benchmark?: object}>>} */
@@ -257,11 +258,17 @@ function validateBenchmarkSummary(item, profiles) {
   exactKeys(b, ['artifactPath','sha256','runAt','vulnerable','fixed']);
   ensure(b.artifactPath === `${BENCHMARK_RUN.directory}/${item.id}.json`);
   digest(b.sha256); date(b.runAt); ensure(b.runAt <= item.reviewedAt);
-  exactKeys(b.vulnerable, ['outcome','calls']); exactKeys(b.fixed, ['outcome','calls']);
+  for (const arm of [b.vulnerable, b.fixed]) {
+    exactKeys(arm, ['outcome','calls','runStatus','incompleteReason','targetReviewed']); count(arm.calls);
+    // A scan that did not run has no status and no coverage; one that ran states both,
+    // and an incomplete run always names the product's reason.
+    ensure(arm.outcome === 'notRun' ? arm.runStatus === null && arm.incompleteReason === null && arm.targetReviewed === null && arm.calls === 0 : ['complete','incomplete'].includes(arm.runStatus) && typeof arm.targetReviewed === 'boolean');
+    if (arm.runStatus === 'complete') ensure(arm.incompleteReason === null);
+    if (arm.runStatus === 'incomplete') ensure(BENCHMARK_INCOMPLETE_REASONS.includes(arm.incompleteReason));
+  }
   ensure(BENCHMARK_VULNERABLE_OUTCOMES.includes(b.vulnerable.outcome) && BENCHMARK_FIXED_OUTCOMES.includes(b.fixed.outcome));
-  count(b.vulnerable.calls); count(b.fixed.calls);
   // Only a pre-registered "found" may be shown as a detection; every other outcome is a disclosed miss.
-  ensure(b.vulnerable.outcome === 'found' ? item.status === 'detected' && item.detection?.mode === 'release-archive' : item.status === 'not-detected');
+  ensure(b.vulnerable.outcome === 'found' ? item.status === 'detected' && item.detection?.mode === 'release-archive' && item.detection.findingStatus !== 'refuted' && b.vulnerable.targetReviewed : item.status === 'not-detected');
   ensure(!item.dossier && !item.pairedBundle && !item.reproduction && !item.regression);
 }
 /** Validate one public benchmark-case artifact against the manifest and its profile. */
@@ -282,35 +289,47 @@ export function validateBenchmark(item, artifact, { profiles = caseProfiles } = 
   ensure(Array.isArray(artifact.target.acceptedCwes) && artifact.target.acceptedCwes.length > 0 && artifact.target.acceptedCwes.every(c => typeof c === 'string' && /^CWE-\d+$/.test(c)));
   exactKeys(artifact.arms, ['vulnerable','fixed']);
   for (const name of ['vulnerable','fixed']) validateBenchmarkArm(item, artifact.arms[name], item.benchmark[name], expected, name);
-  const vulnerable = artifact.arms.vulnerable;
-  if (vulnerable.outcome === 'found') {
-    ensure(vulnerable.matches.some(m => m.line === item.detection.line && m.status === item.detection.findingStatus && m.file === item.detection.file));
-  } else if (['missedReviewed','missedNotSelected'].includes(vulnerable.outcome)) {
-    ensure(vulnerable.matches.length === 0);
+  // Published matches are only in-range findings with an accepted CWE; the outcome must follow from them.
+  const accepted = new Set(artifact.target.acceptedCwes);
+  const inRange = (ranges, line) => ranges.some(([lo, hi]) => lo <= line && line <= hi);
+  for (const [name, ranges] of [['vulnerable', artifact.target.vulnerableRanges], ['fixed', artifact.target.fixedRanges]]) {
+    for (const match of artifact.arms[name].matches) ensure(accepted.has(match.cwe) && inRange(ranges, match.line));
   }
+  const vulnerable = artifact.arms.vulnerable; const fixed = artifact.arms.fixed;
+  const kept = vulnerable.matches.filter(m => m.status !== 'refuted');
+  if (vulnerable.outcome === 'found') {
+    ensure(kept.some(m => m.line === item.detection.line && m.status === item.detection.findingStatus && m.file === item.detection.file));
+  } else if (vulnerable.outcome === 'foundButRefuted') {
+    ensure(kept.length === 0 && vulnerable.matches.length > 0);
+  } else ensure(vulnerable.matches.length === 0);
   if (vulnerable.outcome === 'missedNotSelected') ensure(!vulnerable.targetFile.reviewed);
-  if (vulnerable.outcome === 'missedReviewed') ensure(vulnerable.targetFile.reviewed);
+  if (['missedReviewed','locationOnly','foundButRefuted','found'].includes(vulnerable.outcome)) ensure(vulnerable.targetFile.reviewed);
+  if (fixed.outcome === 'flagged') ensure(fixed.matches.some(m => m.status !== 'refuted'));
+  if (fixed.outcome === 'notFlagged') ensure(fixed.matches.every(m => m.status === 'refuted'));
   localized(artifact.limitations);
   return artifact;
 }
 function validateBenchmarkArm(item, arm, summary, expected, name) {
-  exactKeys(arm, ['version','archiveUrl','archiveSha256','treeSha256','excludedFiles','scannedAt','exitCode','runStatus','calls','reportSha256','modules','targetFile','outcome','matches','otherFindings']);
+  exactKeys(arm, ['version','archiveUrl','archiveSha256','treeSha256','excludedFiles','scannedAt','exitCode','runStatus','incompleteReason','calls','reportSha256','modules','targetFile','outcome','matches','otherFindings']);
   ensure(arm.version === (name === 'vulnerable' ? item.sourceVersion : item.fixedVersion));
   text(arm.archiveUrl); ensure(arm.archiveUrl.startsWith('https://'));
   ensure(arm.archiveSha256 === expected[name === 'vulnerable' ? 'vulnerableArchiveSha256' : 'fixedArchiveSha256']);
   digest(arm.treeSha256);
   ensure(Array.isArray(arm.excludedFiles) && arm.excludedFiles.every(f => typeof f === 'string' && f.length > 0 && !f.startsWith('/') && !f.includes('..')));
   ensure(arm.outcome === summary.outcome);
-  if (arm.outcome === 'notRun') { ensure(arm.calls === null && arm.reportSha256 === null && arm.scannedAt === null && summary.calls === 0); return; }
+  if (arm.outcome === 'notRun') {
+    for (const key of ['scannedAt','exitCode','runStatus','incompleteReason','calls','reportSha256','modules','targetFile','otherFindings']) ensure(arm[key] === null);
+    ensure(Array.isArray(arm.matches) && arm.matches.length === 0 && summary.calls === 0); return;
+  }
   date(arm.scannedAt); ensure(arm.scannedAt === item.benchmark.runAt);
-  ensure(Number.isInteger(arm.exitCode) && ['complete','incomplete'].includes(arm.runStatus));
+  ensure(Number.isInteger(arm.exitCode) && ['complete','incomplete'].includes(arm.runStatus) && arm.runStatus === summary.runStatus && arm.incompleteReason === summary.incompleteReason);
   exactKeys(arm.calls, ['total','finder','verifier','failed']);
   for (const key of ['total','finder','verifier','failed']) count(arm.calls[key]);
   ensure(arm.calls.total === summary.calls && arm.calls.finder + arm.calls.verifier === arm.calls.total && arm.calls.failed <= arm.calls.total);
   digest(arm.reportSha256);
   exactKeys(arm.modules, ['selected','reviewed']); count(arm.modules.selected); count(arm.modules.reviewed); ensure(arm.modules.reviewed <= arm.modules.selected);
   exactKeys(arm.targetFile, ['reviewed','truncated','submittedSha256']);
-  ensure(typeof arm.targetFile.reviewed === 'boolean' && typeof arm.targetFile.truncated === 'boolean');
+  ensure(typeof arm.targetFile.reviewed === 'boolean' && typeof arm.targetFile.truncated === 'boolean' && arm.targetFile.reviewed === summary.targetReviewed);
   if (arm.targetFile.submittedSha256 === null) ensure(!arm.targetFile.reviewed);
   else { digest(arm.targetFile.submittedSha256); ensure(arm.targetFile.reviewed); }
   ensure(Array.isArray(arm.matches) && arm.matches.length <= 8);

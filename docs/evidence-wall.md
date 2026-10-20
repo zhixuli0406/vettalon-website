@@ -34,7 +34,10 @@ schema 對應：
 
 - 案例的 `benchmark` 欄只允許在 `historical` 類型，且 `caseProfiles` 必須有同 ID 的 `benchmark` profile（目標檔與兩臂封存檔 SHA-256）。
 - `benchmark.vulnerable.outcome` 只有 `found` 能配 `status: 'detected'`，且 `detection.mode` 必須是 `release-archive`。其他結果（`foundButRefuted`、`locationOnly`、`missedReviewed`、`missedNotSelected`、`notRun`）一律是 `status: 'not-detected'`，不得帶 `detection`。這是為了讓未命中也能照樣公開；這輪五案都命中，`not-detected` 目前只有測試 fixture。
-- 建置時 `scripts/evidence-artifacts.mjs` 依 manifest 的 SHA-256 讀每案附件與預先登錄檔，並用 `validateBenchmark()` 核對版本、封存檔雜湊、呼叫數、結果與 finding 是否一致。
+- manifest 每臂另記 `runStatus`、`incompleteReason`、`targetReviewed`，案例頁表格照列。十個掃描臂裡只有 minimist 兩臂是 complete；其他是 incomplete，原因是有單元延後或截斷（`scope_not_fully_reviewed`）、注入字樣單元無法交叉核對（`injection_uncrosschecked`，PyJWT）或覆核逾時（`units_failed`，gorilla/websocket 脆弱版）。每一臂的目標檔都有送審；smallvec 的 `src/lib.rs` 只送出第 1–1500 行。
+- 建置時 `scripts/evidence-artifacts.mjs` 依 manifest 的 SHA-256 讀每案附件與預先登錄檔，並用 `validateBenchmark()` 核對版本、封存檔雜湊、呼叫數、執行狀態與結果。`found` 必須有一筆未被駁回、CWE 在清單內、行號落在登錄範圍內的 finding；修補版 `notFlagged` 不得有未被駁回的符合項。附件的目標範圍、CWE 清單、封存檔 URL 與 SHA-256、樹雜湊也逐項對照預先登錄檔。
+- 修補版「未被標記」只代表對應範圍沒有符合標準的輸出。同一臂的其他輸出沒有審閱，不能據此說修補版沒有別的問題。
+- 預先登錄檔的 psr7 段落有一句事前註記，說標頭名稱檢查屬於另一份已公開公告；這是掃描前寫的歸屬規則，不是掃描輸出。案例頁不描述其他輸出的內容。
 
 新增同類案例時，先更新（或另開一份）預先登錄檔並提交，再掃描；不要在看到結果後改比對標準。
 

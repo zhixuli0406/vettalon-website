@@ -46,16 +46,25 @@ const benchmarkSegments = BENCHMARK_RUN.directory.split('/').filter(Boolean);
 /** Check only explicitly listed public artifacts; never import private reports or logs. */
 export async function validateDossierFiles(cases, publicRoot) {
   validateManifest(cases);
+  const benchmarks = new Map();
   for (const item of cases) {
     if (item.dossier) validateDossier(item, await readBoundArtifact(publicRoot, 'dossiers', item));
     if (item.regression) validateRegression(item, await readBoundArtifact(publicRoot, 'regressions', item));
     if (item.origin) validateOrigin(item, await readBoundArtifact(publicRoot, 'origins', item));
-    if (item.benchmark) validateBenchmark(item, await readPinnedJson(publicRoot, benchmarkSegments, `${item.id}.json`, item.benchmark.sha256));
+    if (item.benchmark) benchmarks.set(item.id, validateBenchmark(item, await readPinnedJson(publicRoot, benchmarkSegments, `${item.id}.json`, item.benchmark.sha256)));
   }
   // The pre-registration is published once and pinned by digest for every benchmark case.
   if (cases.some(item => item.benchmark)) {
     const prereg = await readPinnedJson(publicRoot, benchmarkSegments, 'preregistration.json', BENCHMARK_RUN.preregistration.sha256);
-    const ids = new Set(prereg.cases.map(entry => entry.id));
-    for (const item of cases.filter(value => value.benchmark)) if (!ids.has(item.id)) reject();
+    // Each case artifact must restate exactly what was registered before the scan.
+    const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+    for (const [id, artifact] of benchmarks) {
+      const entry = prereg.cases.find(value => value.id === id);
+      if (!entry || !same(entry.acceptedCwes, artifact.target.acceptedCwes) || entry.vulnerable.file !== artifact.target.file || entry.fixed.file !== artifact.target.file) reject();
+      for (const [name, side] of [['vulnerable', entry.vulnerable], ['fixed', entry.fixed]]) {
+        const arm = artifact.arms[name];
+        if (!same(side.ranges, artifact.target[`${name}Ranges`]) || side.version !== arm.version || side.archive !== arm.archiveUrl || side.archiveSha256 !== arm.archiveSha256 || side.treeSha256 !== arm.treeSha256) reject();
+      }
+    }
   }
 }

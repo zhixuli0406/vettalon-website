@@ -11,12 +11,12 @@ const FLAGS = '--profile deep --config ./config.toml --finders claude --verifier
 const dir = '/evidence/benchmarks/historical-detection-20261020';
 
 const method = {
-  zh: '從官方套件庫下載脆弱版與修補版的發布封存檔，核對 SHA-256 後掃描整個樹，沒有 git 歷史。兩版用同一組參數：deep profile、claude 找洞、grok 與 agy（GPT-OSS）跨家族覆核、最多 8 個審查單元、每個候選覆核 1 次、PoC 關閉。模型輸入不含 CVE 編號、公告文字或修補 diff，兩版都先移除 changelog。比對標準（檔案、行號範圍、CWE 清單）在 2026-10-20 12:51 UTC 公開提交，第一次掃描在 29 秒後開始。',
-  en: 'Official release archives of the vulnerable and fixed versions were downloaded from the package registry, checked against SHA-256 and scanned as whole trees without git history. Both arms used the same parameters: deep profile, claude as finder, grok and agy (GPT-OSS) as cross-family verifiers, at most 8 audit units, one verifier run per candidate, PoC off. Model input contained no CVE id, advisory text or fix diff, and changelog files were removed from both arms. Match criteria (file, line ranges, CWE list) were committed publicly at 12:51 UTC on 2026-10-20; the first scan started 29 seconds later.',
+  zh: '從官方套件庫下載脆弱版與修補版的發布封存檔，核對 SHA-256 後掃描整個樹，沒有 git 歷史。兩版用同一組參數：deep profile、claude 找洞、grok 與 agy（GPT-OSS）跨家族覆核、最多 8 個審查單元、每個候選覆核 1 次、PoC 關閉。模型輸入不含 CVE 編號、公告文字或修補 diff，兩版都先移除 changelog。比對標準（檔案、行號範圍、CWE 清單）在 2026-10-20 12:51 UTC 公開提交，第一次掃描在 29 秒後開始。登錄檔內的 registeredAt 寫 12:55，是提交前手填的估計，與實際不符；以提交時間為準，檔案沒有再改，所以雜湊不變。',
+  en: 'Official release archives of the vulnerable and fixed versions were downloaded from the package registry, checked against SHA-256 and scanned as whole trees without git history. Both arms used the same parameters: deep profile, claude as finder, grok and agy (GPT-OSS) as cross-family verifiers, at most 8 audit units, one verifier run per candidate, PoC off. Model input contained no CVE id, advisory text or fix diff, and changelog files were removed from both arms. Match criteria (file, line ranges, CWE list) were committed publicly at 12:51 UTC on 2026-10-20; the first scan started 29 seconds later. The registeredAt field inside the file says 12:55; it was a hand-typed estimate made before the commit and is wrong. The commit time is authoritative, and the file was left unchanged so its digest still matches.',
 };
 const limitationsBase = {
-  zh: '模型可能在訓練時看過這份公告或修補，所以命中不能證明它是從程式碼推理出來的。候選與 needs_human 都不是自動確認，這次也沒有跑 PoC 或任何利用。單次執行，模型輸出有隨機性。五筆案例是挑過的已知漏洞，不能拿來推估召回率或誤報率。其他輸出只公開數量，沒有審閱。原始 report.json 與 trace 不公開，只列 SHA-256。',
-  en: 'The models may have seen this advisory or its fix during training, so a match does not show that they reasoned it out from the code. Candidates and needs_human results are not automatic confirmation, and no PoC or exploit was run. This was a single run and model output is nondeterministic. Five hand-picked known issues cannot support a recall or false-positive rate. Other output is published as counts only and was not reviewed. The raw report.json and trace are not public; only their SHA-256 is listed.',
+  zh: '模型可能在訓練時看過這份公告或修補，所以命中不能證明它是從程式碼推理出來的。候選與 needs_human 都不是自動確認，這次也沒有跑 PoC 或任何利用。單次執行，模型輸出有隨機性。五筆案例是挑過的已知漏洞，不能拿來推估召回率或誤報率。其他輸出只公開數量，沒有審閱。原始 report.json 與 trace 不公開，只列 SHA-256。表格的執行狀態照錄產品回報；incomplete 代表有單元延後、截斷、失敗或沒能交叉核對，原因列在旁邊，但每一臂的目標檔都有送審。修補版「未被標記」只表示對應範圍沒有符合 CWE 清單、且沒被駁回的輸出，同一臂的其他輸出沒有審閱，不能當成修補版沒有其他問題。',
+  en: 'The models may have seen this advisory or its fix during training, so a match does not show that they reasoned it out from the code. Candidates and needs_human results are not automatic confirmation, and no PoC or exploit was run. This was a single run and model output is nondeterministic. Five hand-picked known issues cannot support a recall or false-positive rate. Other output is published as counts only and was not reviewed. The raw report.json and trace are not public; only their SHA-256 is listed. The run status in the table is what the product reported: incomplete means some unit was deferred, truncated, failed or could not be cross-checked, with the reason shown, but the target file was sent for review in every arm. On the fixed release, "not flagged" only means no unrefuted output in the corresponding range carried a listed CWE; the other output in that arm was not reviewed and says nothing about the fixed release being free of other issues.',
 };
 // AI-use statement for the human review block; cases.js appends the shared drafting note.
 export const benchmarkAiUse = {
@@ -49,7 +49,7 @@ export const benchmarkCases = [
     sourceUrl: 'https://github.com/minimistjs/minimist/blob/v1.2.5/index.js',
     advisoryUrl: 'https://github.com/advisories/GHSA-xvch-5gv4-984h',
     fixUrl: 'https://github.com/minimistjs/minimist/commit/c2b981977fa834b223b408cfb860f933c9811e4d', publishedAt: '2022-03-17',
-    boundary: { zh: '1.2.5 封存檔掃描在 index.js:75（setKey）提出 CWE-1321 候選，grok 覆核判 plausible，最後是 needs_human，符合預先登錄的位置與 CWE。修補版 1.2.6 用同一組參數掃描，對應範圍沒有任何輸出。', en: 'The 1.2.5 archive scan raised a CWE-1321 candidate at index.js:75 (setKey); grok judged it plausible and it ended as needs_human, meeting the registered location and CWE. The fixed 1.2.6 scan with the same parameters produced nothing in the corresponding range.' },
+    boundary: { zh: '1.2.5 封存檔掃描在 index.js:75（setKey）提出 CWE-1321 候選，grok 覆核判 plausible，最後是 needs_human，符合預先登錄的位置與 CWE。修補版 1.2.6 用同一組參數掃描，對應範圍沒有符合 CWE 清單的輸出。', en: 'The 1.2.5 archive scan raised a CWE-1321 candidate at index.js:75 (setKey); grok judged it plausible and it ended as needs_human, meeting the registered location and CWE. The fixed 1.2.6 scan with the same parameters produced nothing in the corresponding range with a listed CWE.' },
     credit: { zh: '原始通報與修補歸屬見 GHSA 公告與 minimist 上游。', en: 'Original report and fix credits belong to the GHSA advisory and the minimist maintainers.' },
     timeline: [{ date: '2022-03-17', event: { zh: 'NVD 發布紀錄', en: 'NVD publication date' } }],
     detection: { findingStatus: 'needs_human', file: 'index.js', line: 75, sha256: '1e3b6711cd6922ef6bb78ba791037bebe16a5a7db967aeefcae4e45594a434d0',
@@ -57,7 +57,7 @@ export const benchmarkCases = [
       reviewerConclusion: { zh: 'grok：plausible。覆核沒有駁倒候選，結論停在 needs_human，不算確認。', en: 'grok: plausible. The verifier did not refute the candidate; it remains needs_human and is not a confirmation.' },
       reviewer: 'grok-4.7 (xAI): plausible' },
     rerunUrl: 'https://registry.npmjs.org/minimist/-/minimist-1.2.5.tgz', rerunSha256: 'a1800ce4d39356e96497bd09a41fad0033a13dd8eeb469008333547505ce4350', rerunStrip: 1,
-    benchmark: { sha256: '8aed56f180a3f374b11e48add590577e44100b1326afa2d49d7787103565af72', vulnerable: { outcome: 'found', calls: 5 }, fixed: { outcome: 'notFlagged', calls: 3 } },
+    benchmark: { sha256: '07a665782cd8fcc2273fa8041d7d721c8154c389877e897cc710090e51a931e2', vulnerable: { outcome: 'found', calls: 5, runStatus: 'complete', incompleteReason: null, targetReviewed: true }, fixed: { outcome: 'notFlagged', calls: 3, runStatus: 'complete', incompleteReason: null, targetReviewed: true } },
   }),
   archiveCase({
     id: 'pyjwt-cve-2022-29217', package: 'PyJWT', ecosystem: 'PyPI',
@@ -67,7 +67,7 @@ export const benchmarkCases = [
     sourceUrl: 'https://github.com/jpadilla/pyjwt/blob/2.3.0/jwt/algorithms.py',
     advisoryUrl: 'https://github.com/jpadilla/pyjwt/security/advisories/GHSA-ffqj-6fqr-9h24',
     fixUrl: 'https://github.com/jpadilla/pyjwt/commit/9c528670c455b8d948aff95ed50e22940d1ad3fc', publishedAt: '2022-05-12',
-    boundary: { zh: '2.3.0 封存檔掃描在 jwt/algorithms.py:193（HMACAlgorithm.prepare_key）提出 CWE-327 候選，grok 判 plausible，最後是 needs_human，符合預先登錄的標準。修補版 2.4.0 同參數掃描，對應範圍沒有輸出。', en: 'The 2.3.0 archive scan raised a CWE-327 candidate at jwt/algorithms.py:193 (HMACAlgorithm.prepare_key); grok judged it plausible and it ended as needs_human, meeting the registered criteria. The fixed 2.4.0 scan with the same parameters produced nothing in the corresponding range.' },
+    boundary: { zh: '2.3.0 封存檔掃描在 jwt/algorithms.py:193（HMACAlgorithm.prepare_key）提出 CWE-327 候選，grok 判 plausible，最後是 needs_human，符合預先登錄的標準。修補版 2.4.0 同參數掃描，對應範圍沒有符合 CWE 清單的輸出。', en: 'The 2.3.0 archive scan raised a CWE-327 candidate at jwt/algorithms.py:193 (HMACAlgorithm.prepare_key); grok judged it plausible and it ended as needs_human, meeting the registered criteria. The fixed 2.4.0 scan with the same parameters produced nothing in the corresponding range with a listed CWE.' },
     limitations: { zh: '2.4.0 封存檔內以公告編號命名的回歸測試 tests/test_advisory.py 在掃描前移除；2.3.0 沒有這個檔案。', en: 'The 2.4.0 archive ships a regression test named after the advisory (tests/test_advisory.py); it was removed before scanning. 2.3.0 has no such file.' },
     credit: { zh: '公告寫明由 Aapo Oksman（Nixu）揭露；修補歸屬見 PyJWT 公告。', en: 'The advisory credits Aapo Oksman (Nixu) with the disclosure; see the PyJWT advisory for fix credits.' },
     timeline: [{ date: '2022-05-12', event: { zh: 'PyJWT 公告與 2.4.0 修補公開', en: 'PyJWT advisory and 2.4.0 fix published' } }],
@@ -76,7 +76,7 @@ export const benchmarkCases = [
       reviewerConclusion: { zh: 'grok：plausible。覆核沒有駁倒候選，結論停在 needs_human，不算確認。', en: 'grok: plausible. The verifier did not refute the candidate; it remains needs_human and is not a confirmation.' },
       reviewer: 'grok-4.7 (xAI): plausible' },
     rerunUrl: 'https://files.pythonhosted.org/packages/1d/8e/01bdcfdbb352daaba8ea406d9df149c5bba7dbf70f908d4fa4c269fe6a08/PyJWT-2.3.0.tar.gz', rerunSha256: 'b888b4d56f06f6dcd777210c334e69c737be74755d3e5e9ee3fe67dc18a0ee41', rerunStrip: 1,
-    benchmark: { sha256: '16c57924ea868985a6688c5a2fdce025541c0b500a2be46e36e43e19e7f38f61', vulnerable: { outcome: 'found', calls: 10 }, fixed: { outcome: 'notFlagged', calls: 10 } },
+    benchmark: { sha256: 'cf7636c10081000a50f1f26a7d76c5b29d369e8289f8c8f675ac31f709bc1f08', vulnerable: { outcome: 'found', calls: 10, runStatus: 'incomplete', incompleteReason: 'injection_uncrosschecked', targetReviewed: true }, fixed: { outcome: 'notFlagged', calls: 10, runStatus: 'incomplete', incompleteReason: 'injection_uncrosschecked', targetReviewed: true } },
   }),
   archiveCase({
     id: 'guzzle-psr7-cve-2022-24775', package: 'guzzlehttp/psr7', ecosystem: 'Packagist',
@@ -86,7 +86,7 @@ export const benchmarkCases = [
     sourceUrl: 'https://github.com/guzzle/psr7/blob/2.1.0/src/MessageTrait.php',
     advisoryUrl: 'https://github.com/guzzle/psr7/security/advisories/GHSA-q7rv-6hp3-vh96',
     fixUrl: 'https://github.com/guzzle/psr7/commit/e55afaa3fc138c89adf3b55a8ba20dc60d17f1f1', publishedAt: '2022-03-20',
-    boundary: { zh: '2.1.0 封存檔掃描在 src/MessageTrait.php:208（trimHeaderValues）提出 CWE-113 候選，grok 判 plausible，最後是 needs_human，符合預先登錄的位置與 CWE 清單。另一筆輸出落在 assertHeader 的標頭名稱檢查，對應預先登錄已註明的另一份公告（GHSA-wxmh-65f7-jcvw，2.4.5 修補），不算本案命中。修補版 2.1.1 同參數掃描，對應範圍沒有輸出。', en: 'The 2.1.0 archive scan raised a CWE-113 candidate at src/MessageTrait.php:208 (trimHeaderValues); grok judged it plausible and it ended as needs_human, meeting the registered location and CWE list. Another output fell on the header-name check in assertHeader, which the pre-registration had already assigned to a different advisory (GHSA-wxmh-65f7-jcvw, fixed in 2.4.5), so it does not count here. The fixed 2.1.1 scan with the same parameters produced nothing in the corresponding range.' },
+    boundary: { zh: '2.1.0 封存檔掃描在 src/MessageTrait.php:208（trimHeaderValues）提出 CWE-113 候選，grok 判 plausible，最後是 needs_human，符合預先登錄的位置與 CWE 清單。修補版 2.1.1 同參數掃描，對應範圍沒有符合 CWE 清單的輸出。', en: 'The 2.1.0 archive scan raised a CWE-113 candidate at src/MessageTrait.php:208 (trimHeaderValues); grok judged it plausible and it ended as needs_human, meeting the registered location and CWE list. The fixed 2.1.1 scan with the same parameters produced nothing in the corresponding range with a listed CWE.' },
     limitations: { zh: 'Packagist 的發布檔是 GitHub 依 commit 產生的 zipball，位元組可能隨 GitHub 打包方式變動；本頁釘選的是 2026-10-20 下載到的 SHA-256。', en: 'The Packagist dist is a GitHub zipball generated from a commit, and its bytes can change with GitHub archiving; the SHA-256 pinned here is the one downloaded on 2026-10-20.' },
     credit: { zh: '原始通報與修補歸屬見 guzzle/psr7 公告。', en: 'Original report and fix credits belong to the guzzle/psr7 advisory.' },
     timeline: [{ date: '2022-03-20', event: { zh: 'guzzle/psr7 公告與 2.1.1 修補公開', en: 'guzzle/psr7 advisory and 2.1.1 fix published' } }],
@@ -95,7 +95,7 @@ export const benchmarkCases = [
       reviewerConclusion: { zh: 'grok：plausible。覆核沒有駁倒候選，結論停在 needs_human，不算確認。', en: 'grok: plausible. The verifier did not refute the candidate; it remains needs_human and is not a confirmation.' },
       reviewer: 'grok-4.7 (xAI): plausible' },
     rerunUrl: 'https://api.github.com/repos/guzzle/psr7/zipball/089edd38f5b8abba6cb01567c2a8aaa47cec4c72', rerunSha256: '2b0b4998cf069344114189d7ad994960e86131b96c31c19716c86581ba7a49cc', rerunStrip: 1,
-    benchmark: { sha256: '9f0ebb94bd606d2de2cd802e42aa689f260c2cac1c17e2bdf3ace22be052b9b9', vulnerable: { outcome: 'found', calls: 11 }, fixed: { outcome: 'notFlagged', calls: 9 } },
+    benchmark: { sha256: '33b0e37f2761def83e42c7a1af25ac672b053671fe4b01aec7e013bb41135f59', vulnerable: { outcome: 'found', calls: 11, runStatus: 'incomplete', incompleteReason: 'scope_not_fully_reviewed', targetReviewed: true }, fixed: { outcome: 'notFlagged', calls: 9, runStatus: 'incomplete', incompleteReason: 'scope_not_fully_reviewed', targetReviewed: true } },
   }),
   archiveCase({
     id: 'gorilla-websocket-cve-2020-27813', package: 'github.com/gorilla/websocket', ecosystem: 'Go',
@@ -114,7 +114,7 @@ export const benchmarkCases = [
       reviewerConclusion: { zh: 'grok：no_verdict。覆核呼叫 600 秒逾時，沒有有效判定，結論停在 candidate。', en: 'grok: no_verdict. The verifier call timed out after 600 seconds with no valid verdict, leaving a candidate.' },
       reviewer: 'grok-4.7 (xAI): no_verdict (timeout)' },
     rerunUrl: 'https://proxy.golang.org/github.com/gorilla/websocket/@v/v1.4.0.zip', rerunSha256: '937dac399bca2f88344c31ee295cd57310244bc1a3a58e8bcb14ab26a6009d0e', rerunStrip: 3,
-    benchmark: { sha256: 'c1fbd3553444e0fdd5854307a9391326cabaeb47a13362cfcdfad49802322635', vulnerable: { outcome: 'found', calls: 11 }, fixed: { outcome: 'notFlagged', calls: 12 } },
+    benchmark: { sha256: 'a6bdc3216215625191bdc9ba4d51b0a7f35e9401492d64364130dce857507c24', vulnerable: { outcome: 'found', calls: 11, runStatus: 'incomplete', incompleteReason: 'units_failed', targetReviewed: true }, fixed: { outcome: 'notFlagged', calls: 12, runStatus: 'incomplete', incompleteReason: 'scope_not_fully_reviewed', targetReviewed: true } },
   }),
   archiveCase({
     id: 'smallvec-cve-2021-25900', package: 'smallvec', ecosystem: 'Cargo',
@@ -124,7 +124,7 @@ export const benchmarkCases = [
     sourceUrl: 'https://github.com/servo/rust-smallvec/blob/v1.6.0/src/lib.rs',
     advisoryUrl: 'https://github.com/advisories/GHSA-43w2-9j62-hq99',
     fixUrl: 'https://github.com/servo/rust-smallvec/commit/9998ba0694a6b51aa6604748b00b6a98f0a0039e', publishedAt: '2021-01-08',
-    boundary: { zh: '1.6.0 封存檔掃描在 src/lib.rs:1044（insert_many）提出 CWE-787 候選，grok 判 plausible，最後是 needs_human，符合預先登錄的標準。修補版 1.6.1 同參數掃描，對應範圍沒有輸出。', en: 'The 1.6.0 archive scan raised a CWE-787 candidate at src/lib.rs:1044 (insert_many); grok judged it plausible and it ended as needs_human, meeting the registered criteria. The fixed 1.6.1 scan with the same parameters produced nothing in the corresponding range.' },
+    boundary: { zh: '1.6.0 封存檔掃描在 src/lib.rs:1044（insert_many）提出 CWE-787 候選，grok 判 plausible，最後是 needs_human，符合預先登錄的標準。修補版 1.6.1 同參數掃描，對應範圍沒有符合 CWE 清單的輸出。', en: 'The 1.6.0 archive scan raised a CWE-787 candidate at src/lib.rs:1044 (insert_many); grok judged it plausible and it ended as needs_human, meeting the registered criteria. The fixed 1.6.1 scan with the same parameters produced nothing in the corresponding range with a listed CWE.' },
     limitations: { zh: 'src/lib.rs 有 1,981 行，超過單一審查單元的長度，兩版都只送出第 1–1500 行；目標範圍在送出的部分之內。修補版的該單元標為 partially_reviewed。', en: 'src/lib.rs has 1,981 lines, more than one audit unit holds, so both arms sent lines 1-1500 only; the target range is inside that part. On the fixed arm that unit is marked partially_reviewed.' },
     credit: { zh: 'RustSec 公告寫明由 Yechan Bae（@Qwaz）與 Georgia Tech SSLab 的 Rust 小組發現並通報；修補歸屬見 smallvec 上游。', en: 'The RustSec advisory credits Yechan Bae (@Qwaz) and the Rust group at Georgia Tech SSLab with finding and reporting it; see the smallvec maintainers for fix credits.' },
     timeline: [{ date: '2021-01-08', event: { zh: 'RustSec 公告與 1.6.1 修補', en: 'RustSec advisory and 1.6.1 fix' } }],
@@ -133,6 +133,6 @@ export const benchmarkCases = [
       reviewerConclusion: { zh: 'grok：plausible。覆核沒有駁倒候選，結論停在 needs_human，不算確認。', en: 'grok: plausible. The verifier did not refute the candidate; it remains needs_human and is not a confirmation.' },
       reviewer: 'grok-4.7 (xAI): plausible' },
     rerunUrl: 'https://static.crates.io/crates/smallvec/smallvec-1.6.0.crate', rerunSha256: '1a55ca5f3b68e41c979bf8c46a6f1da892ca4db8f94023ce0bd32407573b1ac0', rerunStrip: 1,
-    benchmark: { sha256: 'e7eb7478e01b55a218de33ba7aa06531d490951388a9aae77a3fed88b12f2657', vulnerable: { outcome: 'found', calls: 7 }, fixed: { outcome: 'notFlagged', calls: 6 } },
+    benchmark: { sha256: 'eac6e7a1514df2718223aeef3d4a6a3d58aa82aba6967b9bc52b66dfe86f84d4', vulnerable: { outcome: 'found', calls: 7, runStatus: 'incomplete', incompleteReason: 'scope_not_fully_reviewed', targetReviewed: true }, fixed: { outcome: 'notFlagged', calls: 6, runStatus: 'incomplete', incompleteReason: 'scope_not_fully_reviewed', targetReviewed: true } },
   }),
 ];
