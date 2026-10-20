@@ -54,7 +54,7 @@ export const legal = {
         {
           h: '5. 支援期與安全更新',
           p: [
-            `每一筆付費產品的購買都有自己的支援期：從購買日起，至少到第 ${P.supportYears} 年同一個月的月底。例如 2026 年 10 月 20 日購買，支援期至少到 2031 年 10 月 31 日。購買日以訂單付款日（UTC）為準。桌面 App 0.4.0 起，「設定 → 關於 Vettalon」會顯示你的支援期結束年月。`,
+            `每一筆付費產品的購買都有自己的支援期：從購買日起，至少到第 ${P.supportYears} 年同一個月的月底。例如 2026 年 10 月 20 日購買，支援期至少到 2031 年 10 月 31 日。購買日以訂單付款日（UTC）為準。桌面 App 0.4.0 起，「設定 → 關於 Vettalon」會顯示你的支援期結束年月；它依授權金鑰的發放日計算，如果顯示的年月比這裡算出的晚，以較晚者為準。`,
             '支援期內，我們會處理付費產品的漏洞，並免費提供安全更新。安全更新不屬於 Update Plan，不需要續訂，也不會因為 Update Plan 到期而停止。技術上可行時，安全更新會和功能更新分開發布。',
             `每個版本自第一次發布起，也至少支援 ${P.supportYears} 年。你使用的版本若因此支援到更晚的日期，以較晚的日期為準。`,
             '如果你能免費升級到最新版本，我們可以只在最新版本修補漏洞，你升級後就能取得修補。如果較新的版本要有 Update Plan 或另外付費才能取得，我們會在你的支援期內，為你不必付費就能使用的最新版本另外發布免費的安全修補，不會要求你付費升級。',
@@ -310,7 +310,7 @@ export const legal = {
         {
           h: '5. Support period and security updates',
           p: [
-            `Every purchase of a Paid Product has its own support period: from the purchase date until at least the end of the same calendar month ${P.supportYears} years later. For example, a purchase on 20 October 2026 is supported until at least 31 October 2031. The purchase date is the date your order was paid (UTC). From desktop app 0.4.0, Settings > About Vettalon shows the month and year your support period ends.`,
+            `Every purchase of a Paid Product has its own support period: from the purchase date until at least the end of the same calendar month ${P.supportYears} years later. For example, a purchase on 20 October 2026 is supported until at least 31 October 2031. The purchase date is the date your order was paid (UTC). From desktop app 0.4.0, Settings > About Vettalon shows the month and year your support period ends; it counts from the date your license key was issued, and if it shows a later month than this rule, the later month applies.`,
             'During the support period we handle vulnerabilities in the Paid Products and provide security updates free of charge. Security updates are not part of the Update Plan: they never require a renewal and do not stop when an Update Plan lapses. Where technically feasible, security updates are released separately from feature updates.',
             `Each version is also supported for at least ${P.supportYears} years from its first release. If that gives the version you use a later end date, the later date applies.`,
             'If you can upgrade to the latest version free of charge, we may fix vulnerabilities in the latest version only, and you get the fix by upgrading. If a newer version requires an Update Plan or another payment, we release free security fixes for the latest version you can use without paying, for as long as your support period runs. We never require a paid upgrade to receive a security fix.',
