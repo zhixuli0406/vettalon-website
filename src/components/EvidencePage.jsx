@@ -133,6 +133,14 @@ export function FeaturedAmmonia({ item, locale }) {
   </section>;
 }
 
+
+// Long module paths (github.com/org/repo) break after a slash before they
+// break inside a word.
+function breakAtSlashes(name) {
+  const parts = name.split('/');
+  return parts.map((part, i) => i < parts.length - 1 ? <span key={i}>{part}/<wbr /></span> : <span key={i}>{part}</span>);
+}
+
 function EvidenceTypes({ item, locale }) {
   const t = chainLabels[locale];
   const types = [
@@ -225,7 +233,7 @@ export default function EvidencePage({ page }) {
     </form>
     <div className="evidence__results-bar"><p role="status" aria-live="polite">{results.length} {locale === 'en' && results.length === 1 ? 'public record' : t.count}</p><button type="button" onClick={() => update('reset')}>{t.reset}</button></div>
     <div className="evidence__list">{results.length ? results.map(c => <article className="evidence__row" key={c.id}>
-      <div className="evidence__package"><strong>{c.package}</strong><span>{c.ecosystem}</span>{c.cwe && <span>{c.cwe}</span>}</div>
+      <div className="evidence__package"><strong>{breakAtSlashes(c.package)}</strong><span>{c.ecosystem}</span>{c.cwe && <span>{c.cwe}</span>}</div>
       <div className="evidence__case"><div className="evidence__badges"><span>{t[c.type]}</span><span>{t[c.status]}</span></div><h2><a href={pagePath(locale,'evidence/' + c.id)}>{c.title[locale]}</a></h2><p>{c.summary[locale]}</p><EvidenceTypes item={c} locale={locale} /><p className="evidence__case-boundary">{c.boundary[locale]}</p><div className="evidence__case-meta"><span>{c.cve ?? c.ghsa}</span><time dateTime={c.publishedAt}>{c.publishedAt}</time></div></div>
       <a className="evidence__view" href={pagePath(locale,'evidence/' + c.id)} aria-label={`${t.view}: ${c.package} ${c.cve ?? c.ghsa}`}>{t.view}<ArrowUpRight size={18} aria-hidden="true" /></a>
     </article>) : <div className="evidence__empty"><h2>{t.empty}</h2><p>{t.emptyHelp}</p><button type="button" onClick={() => update('reset')}>{t.reset}</button></div>}</div>
