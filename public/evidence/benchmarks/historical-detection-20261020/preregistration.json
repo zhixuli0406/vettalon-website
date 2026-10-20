@@ -1,0 +1,106 @@
+{
+  "schema": "vettalon-historical-detection-preregistration/1",
+  "registeredAt": "2026-10-20T12:55:00Z",
+  "purpose": "Detection-accuracy check on already-disclosed and already-patched advisories. Each case scans the official released archive of the last vulnerable version, then the first fixed version as a control. No new vulnerabilities are sought; no exploit code is written; the PoC step is off.",
+  "hintLevel": "L0: no CWE, no file or line, no advisory text, no fix diff and no CVE/GHSA id in any model input.",
+  "tool": {
+    "name": "vettalon",
+    "version": "0.3.0",
+    "build": "cargo build --release -p vettalon from the main branch on 2026-10-20"
+  },
+  "roster": {
+    "finder": { "id": "claude", "family": "anthropic", "cli": "claude 2.1.300", "model": "claude-opus-5-5" },
+    "verifiers": [
+      { "id": "grok", "family": "xai", "cli": "grok 1.0.62 (container sandbox)", "model": "grok-4.7" },
+      { "id": "agy", "family": "openai", "cli": "agy 1.4.3 (host)", "model": "gpt-oss-120b-medium" }
+    ],
+    "verifierAssignment": "one cross-family verifier per finding, rotating between grok and agy (product default)"
+  },
+  "command": "vettalon scan <tree> --profile deep --config roster.toml --finders claude --verifiers grok,agy --max-modules 8 --refuter-runs 1 --no-prior --time-budget 2400 --source-receipts --trace trace.jsonl --report report.json --lang en",
+  "fixedParameters": {
+    "maxModules": 8,
+    "refuterRuns": 1,
+    "finderParseRetries": 1,
+    "crossCheckTop": 0,
+    "poc": false,
+    "timeBudgetSeconds": 2400,
+    "reason": "Same parameters for every arm. refuter-runs 1 (product default is 3 for High and above) keeps the per-scan worst case bounded under the 400-call cap."
+  },
+  "inputPreparation": {
+    "source": "official registry archive of each version (crates.io .crate, PyPI sdist, proxy.golang.org module zip, npm tarball, Packagist dist zipball), checksum-checked against the registry where it publishes one; top-level directory stripped; no git history.",
+    "exclusions": "Applied identically to both arms of a case before scanning: changelog files (CHANGELOG.*, docs/changelog.rst) and any file whose name or content names the advisory (PyJWT 2.4.0 tests/test_advisory.py). Everything else in the archive is scanned as released.",
+    "treeDigest": "sha256 over sorted '<file sha256>  <relative path>' lines of the tree after exclusions"
+  },
+  "budget": {
+    "hardCapModelCalls": 400,
+    "perScanWorstCase": 76,
+    "perScanWorstCaseDerivation": "finder <= 8 modules x (1 + 1 parse retry) = 16; verify <= 60 candidates (run-wide cap) x 1 refuter run = 60; no other model steps run with --poc off and no prescreen",
+    "gate": "a scan starts only when calls used so far + 76 <= 400; calls are counted from each scan's --trace file plus 1 pre-run model-id probe",
+    "stopRules": "benchmarks/common/live_guard.py rules: stop when more than 20% of the last 50 calls are errors or refusals; rate-limit rejections are counted separately, the next scan waits the guard cooldown, and rate limiting that persists 15 minutes stops the run. No scan is retried in a loop.",
+    "rerun": "at most one re-run of an arm, only when more than 20% of its calls failed for infrastructure reasons (rate limit, timeout, CLI error). Both runs are reported."
+  },
+  "outcomes": {
+    "vulnerableArm": {
+      "found": "a reported AI finding whose file equals the target file, whose line lies inside a target range, whose CWE is in acceptedCwes, and whose final status is not refuted",
+      "foundButRefuted": "as found, but the verifier refuted it; reported separately and not counted as found",
+      "locationOnly": "file and line inside a target range but CWE outside acceptedCwes; reported separately and not counted as found",
+      "missedReviewed": "target file was in the audited coverage and no finding meets found or locationOnly",
+      "missedNotSelected": "target file was not in the audited modules (ranking or page cap), so the model never saw it",
+      "notRun": "budget gate or stop rule prevented the scan"
+    },
+    "fixedArm": {
+      "flagged": "a finding on the fixed version inside the corresponding fixed range with a CWE in acceptedCwes and status not refuted (a false positive on patched code)",
+      "notFlagged": "no such finding",
+      "notRun": "budget gate or stop rule prevented the scan"
+    },
+    "otherFindings": "every other finding is listed by file, line, CWE, severity and status only; it is not reviewed here. Anything that might be a different, unpatched issue is not investigated or published."
+  },
+  "cases": [
+    {
+      "id": "smallvec-cve-2021-25900",
+      "package": "smallvec", "ecosystem": "Cargo",
+      "advisory": { "ghsa": "GHSA-43w2-9j62-hq99", "cve": "CVE-2021-25900", "rustsec": "RUSTSEC-2021-0003", "cwe": "CWE-787" },
+      "vulnerable": { "version": "1.6.0", "archive": "https://static.crates.io/crates/smallvec/smallvec-1.6.0.crate", "archiveSha256": "1a55ca5f3b68e41c979bf8c46a6f1da892ca4db8f94023ce0bd32407573b1ac0", "treeSha256": "beac46b7d4c9e50af85375caf5fd432dd89b889360afd6a157b174d81e17b058", "file": "src/lib.rs", "ranges": [[1011, 1070]] },
+      "fixed": { "version": "1.6.1", "archive": "https://static.crates.io/crates/smallvec/smallvec-1.6.1.crate", "archiveSha256": "fe0f37c9e8f3c5a4a66ad655a93c74daac4ad00c441533bf5c6e7990bb42604e", "treeSha256": "be05a1573cbb69261b8933a06da740df3b4e9dc65dd611bd85bed0a28fece046", "file": "src/lib.rs", "ranges": [[1011, 1090]] },
+      "acceptedCwes": ["CWE-787", "CWE-119", "CWE-120", "CWE-122", "CWE-131", "CWE-805", "CWE-788"],
+      "excluded": []
+    },
+    {
+      "id": "pyjwt-cve-2022-29217",
+      "package": "PyJWT", "ecosystem": "PyPI",
+      "advisory": { "ghsa": "GHSA-ffqj-6fqr-9h24", "cve": "CVE-2022-29217", "cwe": "CWE-327" },
+      "vulnerable": { "version": "2.3.0", "archive": "https://files.pythonhosted.org/packages/1d/8e/01bdcfdbb352daaba8ea406d9df149c5bba7dbf70f908d4fa4c269fe6a08/PyJWT-2.3.0.tar.gz", "archiveSha256": "b888b4d56f06f6dcd777210c334e69c737be74755d3e5e9ee3fe67dc18a0ee41", "treeSha256": "985db04acbeeb744cbcc7a6cea9c9b87ebc3fda2914814cd7dba0e31766e2598", "file": "jwt/algorithms.py", "ranges": [[183, 199]] },
+      "fixed": { "version": "2.4.0", "archive": "https://files.pythonhosted.org/packages/d8/6b/6287745054dbcccf75903630346be77d4715c594402cec7c2518032416c2/PyJWT-2.4.0.tar.gz", "archiveSha256": "d42908208c699b3b973cbeb01a969ba6a96c821eefb1c5bfe4c390c01d67abba", "treeSha256": "94987f97d997cc5c063218cabc9c71527977f57dd509e80934c7562bc02c0b5f", "file": "jwt/algorithms.py", "ranges": [[185, 195]] },
+      "acceptedCwes": ["CWE-327", "CWE-347", "CWE-345", "CWE-287", "CWE-290", "CWE-1173"],
+      "excluded": ["CHANGELOG.rst", "docs/changelog.rst", "tests/test_advisory.py (fixed arm only; absent from the vulnerable archive)"]
+    },
+    {
+      "id": "gorilla-websocket-cve-2020-27813",
+      "package": "github.com/gorilla/websocket", "ecosystem": "Go",
+      "advisory": { "ghsa": "GHSA-3xh2-74w9-5vxm", "cve": "CVE-2020-27813", "cwe": "CWE-190, CWE-400" },
+      "vulnerable": { "version": "v1.4.0", "archive": "https://proxy.golang.org/github.com/gorilla/websocket/@v/v1.4.0.zip", "archiveSha256": "937dac399bca2f88344c31ee295cd57310244bc1a3a58e8bcb14ab26a6009d0e", "goSumH1": "h1:WDFjx/TMzVgy9VdMMQi2K2Emtwi2QcUQsztZ/zLaH/Q=", "treeSha256": "572dcbee4d7423a4e3b2588e5dc9d68a82f0fdd9c6d2738c3446adb05a5b82da", "file": "conn.go", "ranges": [[792, 870], [989, 995]] },
+      "fixed": { "version": "v1.4.1", "archive": "https://proxy.golang.org/github.com/gorilla/websocket/@v/v1.4.1.zip", "archiveSha256": "86eb427567de9e2dc84da52ee4f4315496c5ffc2152928df0e3ac4ce8a359ff7", "goSumH1": "h1:q7AeDBpnBk8AogcD4DSag/Ukw/KV+YhzLj2bP5HvKCM=", "treeSha256": "05f13b6075dc41fdcfc29d72557b4d32fa2f30aa0c56dfeb46648301d5421554", "file": "conn.go", "ranges": [[803, 899], [1022, 1030]] },
+      "acceptedCwes": ["CWE-190", "CWE-191", "CWE-400", "CWE-770", "CWE-789", "CWE-680"],
+      "excluded": []
+    },
+    {
+      "id": "minimist-cve-2021-44906",
+      "package": "minimist", "ecosystem": "npm",
+      "advisory": { "ghsa": "GHSA-xvch-5gv4-984h", "cve": "CVE-2021-44906", "cwe": "CWE-1321" },
+      "vulnerable": { "version": "1.2.5", "archive": "https://registry.npmjs.org/minimist/-/minimist-1.2.5.tgz", "archiveSha256": "a1800ce4d39356e96497bd09a41fad0033a13dd8eeb469008333547505ce4350", "registrySha1": "67d66014b66a6a8aaa0c083c5fd58df4e4e97602", "treeSha256": "87f5fe30004aacf835941e044c766f5541c1a19db3ccb4962378a97fc1ba82cb", "file": "index.js", "ranges": [[69, 95]] },
+      "fixed": { "version": "1.2.6", "archive": "https://registry.npmjs.org/minimist/-/minimist-1.2.6.tgz", "archiveSha256": "49c9124665fc1900e589be610b8dc69d5e61a179e9ed8547c6d61d30a225e726", "registrySha1": "8637a5b759ea0d6e98702cfb3a9283323c93af44", "treeSha256": "3d532eb6fe5af7e900b9c626ff08a9e90ba94960896173cf93265dbe4708f0e0", "file": "index.js", "ranges": [[69, 95], [247, 249]] },
+      "acceptedCwes": ["CWE-1321", "CWE-915", "CWE-471"],
+      "excluded": []
+    },
+    {
+      "id": "guzzle-psr7-cve-2022-24775",
+      "package": "guzzlehttp/psr7", "ecosystem": "Packagist",
+      "advisory": { "ghsa": "GHSA-q7rv-6hp3-vh96", "cve": "CVE-2022-24775", "cwe": "CWE-20" },
+      "vulnerable": { "version": "2.1.0", "archive": "https://api.github.com/repos/guzzle/psr7/zipball/089edd38f5b8abba6cb01567c2a8aaa47cec4c72", "archiveSha256": "2b0b4998cf069344114189d7ad994960e86131b96c31c19716c86581ba7a49cc", "treeSha256": "54609a7bc46684319f16d6c2c8997da4ec90dcc611187111d211ff6a15ce0e6d", "file": "src/MessageTrait.php", "ranges": [[166, 211]] },
+      "fixed": { "version": "2.1.1", "archive": "https://api.github.com/repos/guzzle/psr7/zipball/53491b6394cdcb66880063b82c0b16cf082711eb", "archiveSha256": "8779f4b13551df09105021dc2b259045aa0f467595fa9c9ff38b377125fb3513", "treeSha256": "47f79cb403ae2875c39dd0b6522ee929fd9894158e82649c5d9c6840621583f5", "file": "src/MessageTrait.php", "ranges": [[166, 215], [238, 265]] },
+      "acceptedCwes": ["CWE-20", "CWE-93", "CWE-113", "CWE-74", "CWE-116", "CWE-644"],
+      "note": "A finding about header-name validation in assertHeader (vulnerable lines 213-234) matches a different, later advisory (GHSA-wxmh-65f7-jcvw, CVE-2023-29197, fixed in 2.4.5). It is recorded as related-different and is not counted as found for this case.",
+      "excluded": ["CHANGELOG.md"]
+    }
+  ]
+}
