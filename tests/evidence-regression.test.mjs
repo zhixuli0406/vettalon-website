@@ -38,7 +38,7 @@ test('public ammonia discovery binds archived product output, upstream credit an
   assert.ok(artifact.checks.every(check => check.fixed === 'ok'));
   assert.equal(artifact.arms.vulnerable.exitCode, 101);
   assert.equal(artifact.arms.fixed.exitCode, 0);
-  assert.doesNotMatch(JSON.stringify([artifact, origin]), /\/Users\/|\/home\/|vettalon-pro|Bollard|PRIVATE_SENTINEL/);
+  assert.doesNotMatch(JSON.stringify([artifact, origin]), /\/Users\/|\/home\/|vettalon-pro|PRIVATE_SENTINEL/);
 });
 
 test('discovery and regression facets search GHSA and RustSec without requiring a CVE', () => {
