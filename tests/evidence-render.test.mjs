@@ -4,7 +4,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createServer } from 'vite';
 import react from '@vitejs/plugin-react';
-import { readFilters, selectCases, validateManifest } from '../src/evidence/schema.js';
+import { readFilters, selectCases, validateManifest, caseProfiles } from '../src/evidence/schema.js';
 
 // Test-only module instances; this fixture is never written to the public manifest.
 async function renderer() {
@@ -229,7 +229,10 @@ test('schema-valid reported and reproduced cases without original product artifa
     delete reproduced.detection;
     delete reproduced.dossier;
     delete reproduced.pairedBundle;
-    for (const item of [reported, reproduced]) validateManifest([item]);
+    // Regression expectations are keyed by case id; the test-only id borrows the Ammonia profile explicitly.
+    assert.throws(() => validateManifest([reported]), 'an unregistered reported case is rejected');
+    const profiles = { [reported.id]: caseProfiles['ammonia-ghsa-x43w-36pp-96g3'] };
+    for (const item of [reported, reproduced]) validateManifest([item], { profiles });
     cases.push(reported, reproduced);
 
     for (const locale of ['zh', 'en']) {

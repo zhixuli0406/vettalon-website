@@ -1,5 +1,17 @@
 import { validateManifest } from './schema.js';
 
+// Public pseudonym of the human reviewer shown on case pages. Change it here only.
+export const PUBLIC_REVIEWER = 'zhixuli0406';
+const aiAssistedRecord = {
+  zh: '本頁紀錄文字由 AI 程式助理協助整理，經人工審閱者對照公開來源核對後發布。',
+  en: 'This record was drafted with AI coding assistants and published after the human reviewer checked it against public sources.',
+};
+// The review date always equals the case reviewedAt; it is never entered separately.
+const humanReview = (reviewedAt, aiUse) => ({
+  reviewer: PUBLIC_REVIEWER, reviewedAt,
+  aiUse: { zh: `${aiUse.zh}${aiAssistedRecord.zh}`, en: `${aiUse.en} ${aiAssistedRecord.en}` },
+});
+
 // Curated public records only. Never import scan/disclosure directories here.
 /** @type {import('./schema.js').PublicCase[]} */
 const reviewed = [
@@ -19,6 +31,7 @@ const reviewed = [
     dossier: {"artifactPath": "/evidence/dossiers/aiohttp-cve-2024-23334.json", "sha256": "b70361afe9a0f600e09718766a069d739202b047d75d2e9b617733f11c507588", "runStatus": "complete", "incompleteReason": null},
     pairedBundle: { artifactPath: '/evidence/bundles/aiohttp-paired-20261019.zip', sha256: '60eeaf0c3c7a761e34508ce92d2a1efee001d5b84670c5cbface6b5c55f64013', testedAt: '2026-10-18' },
     timeline: [{ date: '2024-01-29', event: { zh: '上游公開公告與修補版本', en: 'Upstream advisory published' } },{ date: '2026-10-12', event: { zh: '聚焦識別測試，待人工確認', en: 'Focused detection; human review required' } },{ date: '2026-10-16', event: { zh: '公開來源與紀錄邊界核對', en: 'Public sources and evidence boundary reviewed' } },{ date: '2026-10-18', event: { zh: '官方 3.9.1／3.9.2 本地固定輸入 HTTP 四格對照完成（UTC）', en: 'Local fixed-input HTTP four-cell pair completed on official 3.9.1/3.9.2 (UTC)' } },{ date: '2026-10-19', event: { zh: '封存 run-08 原始讀回與離線驗證器', en: 'Archived run-08 raw readback and offline verifier' } }],
+    review: humanReview('2026-10-19', { zh: '歷史識別由 AI 模型執行（找洞為 claude 別名，覆核為 codex 別名），結論停在 needs_human，AI 判定不視為確認。', en: 'The historical detection was run by AI models (finder: claude alias; verifier: codex alias). It remains needs_human; an AI verdict is not treated as confirmation.' }),
   },
   {
     id: 'phpunit-cve-2017-9841', publication: 'public', reviewedAt: '2026-10-16', type: 'historical', status: 'detected', package: 'PHPUnit', ecosystem: 'Packagist',
@@ -34,6 +47,7 @@ const reviewed = [
     detection: { mode: 'focused', findingStatus: 'candidate', file: 'eval-stdin.php', line: 3, observedAt: '2026-10-12', claim: { zh: 'eval-stdin.php:3 將 php://input 送入 eval；若檔案可由 HTTP 存取，請求內容可能被當成 PHP 執行。', en: 'eval-stdin.php:3 passes php://input to eval. HTTP accessibility could expose execution of request-supplied PHP.' }, reviewerConclusion: { zh: 'codex：no_verdict。模型呼叫失敗，沒有完成有效覆核，最終保留 candidate。', en: 'codex: no_verdict. A model invocation failed; no valid review verdict was recorded, leaving a candidate.' }, finder: 'claude (Anthropic alias)', reviewer: 'codex (OpenAI alias): no_verdict', toolVersion: 'Not recorded in historical report (schema v2)', modelVersions: 'Exact model versions not recorded; aliases only', scope: 'Single file: eval-stdin.php; focused deep AI review; no truncation recorded', rerun: 'git clone --branch 5.6.2 --depth 1 https://github.com/sebastianbergmann/phpunit.git phpunit-case\nmkdir -p phpunit-focused\ncp phpunit-case/src/Util/PHP/eval-stdin.php phpunit-focused/\nvettalon scan ./phpunit-focused --profile deep --config ./config.toml --max-modules 8 --cross-check-top 8 --report ./phpunit-result.json --no-prior', sha256: '0949c8ab616480fb25c5c781f03f98a0eb8262363239fda7a1f8db3f77131e7b' },
     dossier: {"artifactPath": "/evidence/dossiers/phpunit-cve-2017-9841.json", "sha256": "05cf2431070873402b901cea2e0461be58cd2a133dc52dfce9769a1942189055", "runStatus": "incomplete", "incompleteReason": "units_failed"},
     timeline: [{ date: '2017-06-27', event: { zh: 'NVD 發布紀錄', en: 'NVD publication date' } },{ date: '2026-10-12', event: { zh: '聚焦識別測試，候選未確認', en: 'Focused detection; unconfirmed candidate' } },{ date: '2026-10-16', event: { zh: '公開來源與紀錄邊界核對', en: 'Public sources and evidence boundary reviewed' } }],
+    review: humanReview('2026-10-16', { zh: '歷史識別由 AI 模型執行（找洞為 claude 別名）；codex 覆核呼叫失敗而為 no_verdict，結論停在 candidate。', en: 'The historical detection was run by AI models (finder: claude alias). The codex verifier call failed with no_verdict, so the finding remains a candidate.' }),
   },
   {
     id: 'ammonia-ghsa-x43w-36pp-96g3', publication: 'public', reviewedAt: '2026-10-19', type: 'discovery', status: 'regression-verified', package: 'ammonia', ecosystem: 'Cargo',
@@ -62,6 +76,10 @@ const reviewed = [
       ],
     },
     pairedBundle: { artifactPath: '/evidence/bundles/ammonia-paired-20261019.zip', sha256: 'f0d08e7328cb5e66771522ac76ea5210af1324e4efae4f94ebe0d16f80954204', testedAt: '2026-10-18' },
+    // Stage dates restate timeline entries: RustSec reported date and the patched-release date.
+    // The maintainer's email acknowledgement in the fix PR has no recorded date.
+    disclosure: { reportedAt: '2026-10-16', acknowledgement: { at: null, url: 'https://github.com/rust-ammonia/ammonia/pull/267' }, fixedReleaseAt: '2026-10-17' },
+    review: humanReview('2026-10-19', { zh: '原始 needs_human 候選與揭露草稿由 Vettalon 獵捕（AI 模型審查）產生；草稿沒有自動送出，重現與送件由人工完成。', en: 'The original needs_human candidate and disclosure draft came from a Vettalon hunt (AI model review). The draft was not sent automatically; reproduction and submission were done by a human.' }),
     timeline: [
       { date: '2026-10-14', event: { zh: 'Vettalon 獵捕提出 needs_human 候選及揭露草稿（UTC；臺灣時間 10 月 15 日）', en: 'Vettalon hunt surfaced a needs_human candidate and generated a disclosure draft (UTC; October 15 in Taiwan)' } },
       { date: '2026-10-16', event: { zh: 'RustSec 記錄通報日期', en: 'Reported date in RustSec' } },

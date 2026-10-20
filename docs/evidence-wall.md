@@ -2,7 +2,25 @@
 
 證據牆目前發布三筆紀錄：aiohttp 與 PHPUnit 是歷史漏洞的聚焦識別測試；aiohttp 另有後來獨立完成的官方雙版本本地 HTTP 四格對照；Ammonia 是 Vettalon 獵捕提出候選並產生草稿，經人工重現與送件、上游修補後再做限定回歸的原創發現。兩筆歷史紀錄保留原報告的 `needs_human`／`candidate` 狀態；Ammonia 原候選也是 `needs_human`，不把當時的候選輸出冒稱自動確認。尚未公開的協調揭露案件不列入本站。
 
-首頁案例卡的識別碼、類型與「公開案例／歷史識別／原創發現」集合數由同一份公開 manifest 產生；中英文卡片說明仍需逐案人工編輯。首頁計數只是證據牆公開紀錄的集合大小，不能當成掃描母體、召回率或誤報率的分母。新增公開案例時，兩種語言都必須有對應卡片，否則建置會失敗。
+首頁案例卡的識別碼、類型與「公開案例／歷史識別／原創發現」集合數由同一份公開 manifest 產生；中英文卡片說明仍需逐案人工編輯。首頁計數只是證據牆公開紀錄的集合大小，不能當成掃描母體、召回率或誤報率的分母。新增公開案例時，兩種語言都必須有對應卡片，否則建置會失敗。證據牆列表上方的政策說明（幾筆歷史識別、幾筆原創發現、幾筆上游通報）也由 manifest 計數產生（`src/evidence/policy.js`）。
+
+## 人工審閱者與 AI 使用聲明
+
+每筆案例可帶 `review` 欄：`{ reviewer, reviewedAt, aiUse: { zh, en } }`。案例頁側欄顯示「人工審閱：zhixuli0406（審閱日期）」與該案的 AI 使用說明。審閱者化名集中在 `src/evidence/cases.js` 的 `PUBLIC_REVIEWER` 常數，要換化名只改這一處；schema 只接受 GitHub 帳號格式（英數與單一連字號，最長 39 字元），拒絕 email、空白或真名式的自由文字。`review.reviewedAt` 必須等於案例的 `reviewedAt`，`cases.js` 用 `humanReview()` 從同一個日期帶入，不另外填審閱日期。`aiUse` 只寫紀錄中查得到的事：哪一段由 AI 模型執行、AI 判定停在哪個狀態、哪一段由人完成，以及紀錄文字由 AI 程式助理協助整理、經人工核對後發布。`review` 是選填欄位，沒有這欄的案例不顯示審閱行，通報漏斗也會把它算成「含未審閱紀錄」。
+
+## 通報漏斗
+
+`/evidence/` 與 `/en/evidence/` 列表下方有通報漏斗，依案例類型（原創發現、上游通報、歷史漏洞）各列 n 與四個階段：已通報上游 → 維護者確認收到 → 修補版本釋出 → 公告／CVE 公開。計算在 `src/evidence/funnel.js`，只讀結構化欄位：
+
+- 已通報上游、維護者確認收到：讀 `disclosure.reportedAt` 與 `disclosure.acknowledgement`。歷史案例不是 Vettalon 通報的，這兩段標「不適用」；非歷史案例沒有 `disclosure` 時標「—」。
+- 修補版本釋出：每筆案例都有必填的 `fixedVersion`，日期讀 `disclosure.fixedReleaseAt`，沒有就顯示「—」。
+- 公告／CVE 公開：讀 `publishedAt`。
+
+`disclosure` 只允許出現在 `discovery`／`reported` 類型，`reported` 類型必填。它的每個日期都必須是該案時間軸上已有的日期，`reportedAt` 不得晚於 `publishedAt`，確認與修補日期不得早於通報日期；維護者確認的日期查不到時填 `null`，但仍要附公開連結（Ammonia 是修補 PR #267）。漏斗不從內文推算數字，也不補日期。樣本少於 10 筆時只列筆數，不換算比例；達到 10 筆後才顯示 Wilson 95% 區間，不顯示單點百分比。每格若所有案例都有 `review`，標「人工核對」。Vettalon 自動輸出的候選與 `needs_human` 不計入漏斗。
+
+## 逐案驗證設定（case profiles）
+
+回歸摘要、產品輸出節錄與雙版本證據包的固定預期值，放在 `src/evidence/schema.js` 的 `caseProfiles`，以案例 ID 為鍵。Ammonia 的五項政策測試（ID、角色、脆弱版預期、測試名稱）、5 項測試／7 組輸入、兩版 exit code 與通過／失敗／filtered 計數、產品輸出的行雜湊、版本、位置、標題與草稿檔名，全部照原本的硬編碼值搬進它自己的 profile，檢查強度不變。帶 `regression`、`origin` 或 `pairedBundle` 的案例若在 `caseProfiles` 沒有對應 ID，validator 直接拒絕。之後新增第二筆上游通報案例時，要為該案 ID 加一組 profile，不能沿用 Ammonia 的預期值。測試可用 `validateManifest(input, { profiles })` 傳入測試專用 profile；正式建置一律用內建的 `caseProfiles`。
 
 ## 新增或修訂案例
 
@@ -30,6 +48,6 @@ npm run check
 
 建置前 `package-aiohttp-evidence.py --check` 與 `validate-aiohttp-bundle.py` 核對精確 ZIP 成員、大小、位元組、敏感字串與解壓後的離線 verifier；Ammonia 有對應的獨立閘門。接著 `validate-evidence.mjs` 逐一核對 manifest 與公開附件的固定路徑、schema、大小、UTF-8 及 SHA-256；預渲染後再核對 dist 複本。`publication-text-gate.mjs` 掃描輸出文字資產，拒絕私有路徑或測試 sentinel。這些檢查證明所選資料與建置產物一致，不是可信執行簽章，也不能代替人工查核來源。上線前還需檢查中英文列表、搜尋、篩選、空狀態、逐案頁、附件下載、行動版、鍵盤操作、canonical／hreflang 與 sitemap。
 
-`tests/evidence-render.test.mjs` 驗證三筆案例的證據類型、四段順序、實際附件與上游連結，以及 PHPUnit 沒有修補版對照的明示。人工瀏覽器驗收仍需在窄螢幕確認不橫向溢出、按 Tab 能走完所有連結，並開啟／下載附件確認部署後可達；SSR 的字串測試不代表上述行為已完成。
+`tests/evidence-render.test.mjs` 驗證三筆案例的證據類型、四段順序、實際附件與上游連結，以及 PHPUnit 沒有修補版對照的明示。`tests/evidence-review-funnel.test.mjs` 驗證審閱者欄位、`disclosure` 日期規則、以案例 ID 為鍵的 profile、漏斗計數與日期、n 少於 10 不顯示比例，以及建置輸出含漏斗與審閱行。人工瀏覽器驗收仍需在窄螢幕確認不橫向溢出、按 Tab 能走完所有連結，並開啟／下載附件確認部署後可達；SSR 的字串測試不代表上述行為已完成。
 
 原報告節錄的瀏覽器預覽需點擊後才讀取；`load-dossier.js` 對同源固定附件設 5 秒總期限與 64 KiB 串流上限，驗證實際位元組 SHA-256、strict UTF-8、JSON 與 schema 後才顯示。成功預覽只代表公開附件與頁面摘要一致，不代表歷史執行、漏洞可利用性或原始報告真實性。
