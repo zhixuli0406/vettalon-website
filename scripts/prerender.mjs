@@ -19,6 +19,7 @@ const { cases } = await import(join(root, 'src/evidence/cases.js'));
 const { homepageEvidence } = await import(join(root, 'src/evidence/homepage.js'));
 const { render } = await import(join(root, 'dist-server/entry-server.js'));
 const { downloadCopy } = await import(join(root, 'src/download-copy.js'));
+const { DESKTOP_VERSION } = await import(join(root, 'src/downloads.js'));
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -45,6 +46,7 @@ function softwareApp(locale) {
     name: 'Vettalon',
     applicationCategory: 'DeveloperApplication',
     operatingSystem: 'macOS 11+ (Apple Silicon only; Intel Macs not supported), Windows 10/11 (x64), Linux (x86_64)',
+    softwareVersion: DESKTOP_VERSION,
     description: c.meta.description,
     url: SITE_URL + LOCALE_META[locale].path,
     softwareHelp: GITHUB,

@@ -2,6 +2,7 @@
 // 內容紀律：誠實、不誇大，數字直接呈現並附限制。
 
 import { PLAN, LEGAL_NAME_EN, LEGAL_NAME_ZH, TAX_ID, ADDRESS_EN, ADDRESS_ZH } from './plan.js';
+import { DESKTOP_VERSION } from './downloads.js';
 
 export const GITHUB = 'https://github.com/zhixuli0406/vettalon';
 export const SITE_URL = 'https://vettalon.dudustudio.monster';
@@ -154,7 +155,7 @@ export const content = {
         today: (end) => `今天購買，安全更新至少到 ${end}。`,
         link: { label: '支援期與安全更新', href: pagePath('zh', 'support') },
       },
-      download: { label: '下載桌面 App', href: downloadPath('zh') },
+      download: { label: `下載桌面 App ${DESKTOP_VERSION}`, href: downloadPath('zh') },
     },
     faq: {
       tag: '常見問題',
@@ -182,7 +183,7 @@ export const content = {
     footer: {
       tagline: '多模型對抗式資安稽核。由 Dudu Technology Ltd. 開發。',
       groups: [
-        { title: '產品', links: [{ t: 'GitHub 原始碼', href: GITHUB }, { t: '證據牆', href: pagePath('zh', 'evidence') }, { t: '價格', href: pagePath('zh') + '#editions' }, { t: '下載桌面 App', href: downloadPath('zh') }, { t: '企業版', href: CONTACT }] },
+        { title: '產品', links: [{ t: 'GitHub 原始碼', href: GITHUB }, { t: '證據牆', href: pagePath('zh', 'evidence') }, { t: '價格', href: pagePath('zh') + '#editions' }, { t: `下載桌面 App ${DESKTOP_VERSION}`, href: downloadPath('zh') }, { t: '企業版', href: CONTACT }] },
         { title: '原廠', links: [{ t: 'Dudu Technology Ltd.', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
         { title: '聯絡', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
         { title: '法律', links: [{ t: '服務條款', href: pagePath('zh', 'terms') }, { t: '隱私權政策', href: pagePath('zh', 'privacy') }, { t: '退款政策', href: pagePath('zh', 'refund') }, { t: '支援期與安全更新', href: pagePath('zh', 'support') }] },
@@ -312,7 +313,7 @@ export const content = {
         today: (end) => `Buy today and security updates are free until at least ${end}.`,
         link: { label: 'Support and security updates', href: pagePath('en', 'support') },
       },
-      download: { label: 'Download the desktop app', href: downloadPath('en') },
+      download: { label: `Download desktop app ${DESKTOP_VERSION}`, href: downloadPath('en') },
     },
     faq: {
       tag: 'FAQ',
@@ -340,7 +341,7 @@ export const content = {
     footer: {
       tagline: 'Multi-model adversarial security auditing. Built by Dudu Technology Ltd.',
       groups: [
-        { title: 'Product', links: [{ t: 'Source on GitHub', href: GITHUB }, { t: 'Evidence wall', href: pagePath('en', 'evidence') }, { t: 'Pricing', href: pagePath('en') + '#editions' }, { t: 'Download', href: downloadPath('en') }, { t: 'Enterprise', href: CONTACT }] },
+        { title: 'Product', links: [{ t: 'Source on GitHub', href: GITHUB }, { t: 'Evidence wall', href: pagePath('en', 'evidence') }, { t: 'Pricing', href: pagePath('en') + '#editions' }, { t: `Download desktop app ${DESKTOP_VERSION}`, href: downloadPath('en') }, { t: 'Enterprise', href: CONTACT }] },
         { title: 'Vendor', links: [{ t: 'Dudu Technology Ltd.', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
         { title: 'Contact', links: [{ t: EMAIL, href: 'mailto:' + EMAIL }] },
         { title: 'Legal', links: [{ t: 'Terms of Service', href: pagePath('en', 'terms') }, { t: 'Privacy Policy', href: pagePath('en', 'privacy') }, { t: 'Refund Policy', href: pagePath('en', 'refund') }, { t: 'Support and security updates', href: pagePath('en', 'support') }] },
