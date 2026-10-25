@@ -38,7 +38,7 @@ export const content = {
     meta: {
       title: 'Vettalon｜多模型對抗式資安稽核器',
       description:
-        'Vettalon 用多個 AI 模型交叉覆核程式碼風險，保留候選與反證供人工判斷。掃描由本機編排；深掃會將選取的程式碼與上下文送到你設定的模型。免費核心提供供應鏈獵捕，Pro 提供企業報告與桌面 App。',
+        'Vettalon 讓不同 AI 模型交叉覆核程式碼風險。0.5.0 新增限定 Python 目標的來源綁定重現與修補檢查，並留下可核對的收據供人工判斷。深掃會將選取的程式碼送到你設定的模型。',
       keywords:
         'Vettalon, 程式碼安全稽核, SAST, 多模型, AI 資安, 供應鏈安全, 漏洞掃描, Dudu Technology Ltd., 嘟嘟數位科技有限公司',
     },
@@ -68,7 +68,7 @@ export const content = {
     },
     product: {
       tag: '核心能力',
-      lead: '一條管線把靜態掃描、多模型 AI 審查、對抗式覆核與沙箱 PoC 串起來。',
+      lead: '一條管線串起靜態掃描、多模型覆核、來源綁定重現與修補檢查；每一步都留下可回查的證據。',
       cards: [
         {
           name: '多模型對抗覆核',
@@ -85,6 +85,11 @@ export const content = {
           desc: '稽核 OSS 相依套件原始碼，留下需要驗證的候選。獵捕會下載公開套件並向 OSV 查詢 name@version；AI 審查另依模型設定送出套件程式碼。揭露由人決定。',
           points: ['Cargo／npm／pip／Go lockfile', 'OSV 分「已知／可能新」', '只產揭露草稿，永不自動送出'],
         },
+        {
+          name: '來源綁定重現與修補檢查',
+          desc: '從報告選定 finding，在隔離副本中重現效果，或檢查候選 diff 是否擋住攻擊並通過指定測試。原始碼、目標、容器映像與驗證結果都會寫進獨立收據。',
+          points: ['每個階段使用斷網的新容器', '不修改工作目錄或 finding 狀態', '目前限 Python command／path／SQL 目標'],
+        },
       ],
     },
     how: {
@@ -94,8 +99,8 @@ export const content = {
         { n: '01', t: 'Intake', d: '統計語言、找進入點、讀 git 歷史把常出安全修補的檔案標為熱點，再依風險排序模組。' },
         { n: '02', t: '多模型找洞', d: '前 N 個高風險模組分配給各 finder；高風險模組自動再交一家不同家族覆審。' },
         { n: '03', t: '對抗式覆核', d: '每個候選交給不同家族的 verifier 試圖駁倒。覆核獨立性只算有給出判定的覆核。' },
-        { n: '04', t: '沙箱 PoC', d: '對合理的高風險發現，在斷網、唯讀、非 root 的 Docker 容器裡嘗試產生並執行最小 PoC。' },
-        { n: '05', t: '報告', d: '輸出 JSON／SARIF，寫出前一律跑驗證器；可利用性分級、CWE／CAPEC 攻擊情境、提交草稿一併附上。' },
+        { n: '04', t: '來源綁定驗證', d: '對符合條件的 Python finding，以綁定來源的結構化目標分別執行攻擊、良性控制與全新重跑；未知結果或控制組失敗都不算驗證成功。' },
+        { n: '05', t: '報告與可核對收據', d: '輸出 JSON／SARIF，並為重現或修補檢查另寫收據，綁定來源、目標、容器映像與候選 diff。檢查不會修改工作目錄，也不會自動改變 finding 狀態。' },
       ],
     },
     benchmarks: {
@@ -123,8 +128,8 @@ export const content = {
           type: 'Apache 2.0',
           price: '免費',
           priceNote: '開源授權，可商用',
-          desc: '命令列稽核器：開源靜態掃描 + 多模型 AI 審查 + 對抗式覆核 + SARIF 輸出。適合塞進 CI、設政策門檻。',
-          points: ['scan / hunt / disclose 子命令', 'SARIF 2.1 可上 GitHub code scanning', '政策門檻 --gate 控 CI 結果'],
+          desc: '開源命令列稽核器，提供靜態掃描、多模型覆核、供應鏈獵捕，以及限定 Python 目標的來源綁定重現與修補檢查。適合放進 CI 或設政策門檻。',
+          points: ['scan／hunt／reproduce／fix check／disclose', 'JSON／SARIF 與獨立驗證收據', '深掃時 AI 引擎全部不可用會標記 incomplete 並回傳 exit 4'],
           cta: '看 GitHub',
           href: GITHUB,
         },
@@ -133,8 +138,8 @@ export const content = {
           type: '個人',
           price: P.proPrice,
           priceNote: `一次買斷，永久使用。含 ${P.updateMonths} 個月的功能更新與新版本，之後 Update Plan ${P.proRenewal}／年，不續也能繼續用。安全更新至少免費 ${P.supportYears} 年，不需要 Update Plan。`,
-          desc: '桌面 App 與本機 dashboard、對齊台灣資安檢測報告慣例的企業報告（PDF／Word／HTML）。讀同一份掃描 JSON；供應鏈獵捕與揭露草稿已含在免費 CLI。',
-          points: ['桌面 App＋本機 dashboard', '企業報告 PDF／Word／HTML', '整合核心掃描工作流程', `單人授權，最多 ${P.proDevices} 台裝置`, `安全更新至少免費到購買日起第 ${P.supportYears} 年同月月底`, '桌面 App 支援 Apple Silicon Mac、Windows、Linux，不支援 Intel Mac'],
+          desc: '桌面 App、dashboard 與企業報告使用同一套稽核核心。你可以從 finding 畫面執行來源綁定重現或檢查候選修補，再把更新後的報告帶回介面審查。',
+          points: ['桌面 App＋本機 dashboard', '來源綁定 PoC／修補檢查，目前限支援的 Python 目標', '企業報告 PDF／Word／HTML', `單人授權，最多 ${P.proDevices} 台裝置`, `安全更新至少免費到購買日起第 ${P.supportYears} 年同月月底`, '桌面 App 支援 Apple Silicon Mac、Windows、Linux，不支援 Intel Mac'],
           cta: '購買 Pro',
           href: BUY_PRO,
         },
@@ -164,7 +169,8 @@ export const content = {
         { q: '為什麼要多個模型？', a: '不同家族模型可用不同角度挑戰候選，留下可供人工判斷的理由。實際偵測成效仍須用有公開輸入、對照與逐案結果的測試衡量。' },
         { q: '選配的 Jev 排序會外洩程式碼嗎？', a: '不會。Jev 只排序模組審查順序，送出的只有 metadata（路徑、大小、git 熱點數），送出前逐檔比對原始碼 fail-closed。預設關閉，要明確開啟才連網。' },
         { q: '供應鏈獵捕會送出我的私有碼嗎？', a: '獵捕處理公開相依套件，會連套件登錄處並向 OSV 查詢 name@version；AI 審查可能把選取的套件原始碼送到你設定的模型。它不會自動送出漏洞通報，揭露草稿由人決定。' },
-        { q: '開源版和企業版差在哪？', a: '開源核心提供命令列掃描、供應鏈獵捕、揭露草稿與 SARIF。企業版加上桌面 App、本機 dashboard 與企業報告排版，讀的是同一份掃描 JSON。' },
+        { q: '開源版和企業版差在哪？', a: '開源核心提供 CLI、CI、供應鏈獵捕，以及限定 Python 目標的來源綁定重現與修補檢查。Pro 使用相同核心，另外提供桌面操作、dashboard、企業報告與授權管理。' },
+        { q: 'Vettalon 會直接套用修補嗎？', a: '不會。Fix check 只在隔離副本套用候選 diff，檢查攻擊效果是否消失、指定測試是否仍通過，並另寫驗證收據。你的工作目錄與原本的 finding 狀態都不會被更動。' },
         { q: 'Pro 的授權驗證會連網嗎？', a: '只有啟用時，以及之後每 30 天一次。送出的是授權金鑰、一組裝置 ID（本機識別碼的雜湊值，無法還原）和版本號，不含程式碼或報告；其餘時間可以完全離線使用。開源核心 vettalon 不做授權檢查。' },
         { q: 'Intel Mac 可以用嗎？', a: '桌面 App 不行，只支援 Apple Silicon（M1 以上）的 Mac，Windows 與 Linux 不受影響。購買前請點左上角蘋果選單 →「關於這台 Mac」確認：顯示「晶片 Apple M…」可以使用，顯示「處理器 … Intel」則無法使用。免費的開源 CLI 仍可在 Intel Mac 上執行。' },
         { q: 'Update Plan 到期後還有安全更新嗎？', a: `有。每筆購買的安全更新至少免費提供到購買日起第 ${P.supportYears} 年同一個月的月底，例如 2026 年 10 月購買，至少到 2031 年 10 月底。安全更新和 Update Plan 分開計算，Update Plan 只涵蓋新功能與新的主要版本；如果新版本要付費，我們會替你能免費使用的版本另外出安全修補。桌面 App 0.4.0 起，「設定 → 關於 Vettalon」會顯示你的結束年月。` },
@@ -176,7 +182,7 @@ export const content = {
       lead: '',
       options: [
         { t: '自助試用', d: '從 GitHub 取得開源核心，在你的 repo 上跑一次深掃。', cta: '看 GitHub', href: GITHUB },
-        { t: '企業版', d: '企業版（桌面 App、企業報告）與商業授權由 Dudu Technology Ltd. 直接提供；供應鏈獵捕已含在免費 CLI。', cta: '聯絡 Dudu Technology Ltd.', href: CONTACT },
+        { t: '企業版', d: 'Desktop、來源綁定重現、修補檢查、dashboard、企業報告或導入需求，由 Dudu Technology Ltd. 直接提供。', cta: '聯絡 Dudu Technology Ltd.', href: CONTACT },
         { t: '原廠回饋', d: '找到 bug 或有功能需求，直接到 GitHub 開 issue。', cta: '回報問題', href: GITHUB + '/issues' },
       ],
     },
@@ -196,7 +202,7 @@ export const content = {
     meta: {
       title: 'Vettalon | Multi-model adversarial security auditor',
       description:
-        'Vettalon uses different AI model families to challenge code-risk candidates and preserve reasons for human review. Scans are orchestrated locally; deep review sends selected code and context to the models you configure. The free core includes supply-chain hunting; Pro adds reports and a desktop app.',
+        'Vettalon cross-checks code risks across different AI models. Version 0.5.0 adds source-bound reproduction and fix checks for supported Python targets, with reviewable receipts for human judgment. Deep scans send selected code to the models you configure.',
       keywords:
         'Vettalon, code security audit, SAST, multi-model, AI security, supply chain security, vulnerability scanning, Dudu Technology Ltd.',
     },
@@ -226,7 +232,7 @@ export const content = {
     },
     product: {
       tag: 'Capabilities',
-      lead: 'One pipeline ties together OSS static scanners, multi-model AI review, adversarial cross-checking and sandboxed PoCs.',
+      lead: 'One pipeline connects static scanning, multi-model review, source-bound reproduction, and fix checking—with evidence you can trace at every step.',
       cards: [
         {
           name: 'Multi-model adversarial review',
@@ -243,6 +249,11 @@ export const content = {
           desc: "Audit public dependency source and preserve candidates for review. Hunting downloads public packages and queries OSV with name@version; AI review may send selected package code to your configured model. Humans decide on disclosure.",
           points: ['Cargo / npm / pip / Go lockfiles', 'OSV splits known vs possibly-new', 'Drafts only — nothing is ever auto-sent'],
         },
+        {
+          name: 'Source-bound reproduction and fix checks',
+          desc: 'Select a finding from a report, reproduce its effect in an isolated copy, or check whether a candidate diff blocks the attack and passes the requested tests. Source, target, container image, and verdict are recorded in a separate receipt.',
+          points: ['Fresh network-disabled container for each phase', 'No working-tree or finding-status changes', 'Currently limited to Python command, path, and SQL targets'],
+        },
       ],
     },
     how: {
@@ -252,8 +263,8 @@ export const content = {
         { n: '01', t: 'Intake', d: 'Census languages, find entry points, read git history to flag files that keep getting security fixes, then rank modules by risk.' },
         { n: '02', t: 'Multi-model finding', d: 'The top-ranked modules are dealt to finders; high-risk modules get a second read from a different family.' },
         { n: '03', t: 'Adversarial review', d: 'Each candidate goes to a verifier from another family that tries to refute it. Independence counts only reviews that gave a verdict.' },
-        { n: '04', t: 'Sandbox PoC', d: 'For plausible high-risk findings, a minimal PoC is generated and run in a no-network, read-only, non-root Docker container.' },
-        { n: '05', t: 'Report', d: 'JSON / SARIF output, validated before writing; exploitability tiers, CWE/CAPEC attack scenarios and disclosure drafts are included.' },
+        { n: '04', t: 'Source-bound verification', d: 'For supported Python findings, run the attack, benign control, and a fresh rerun against a source-bound structured target. Unknown results and failed controls never count as verified.' },
+        { n: '05', t: 'Reports and reviewable receipts', d: 'Export JSON or SARIF and write a separate receipt for reproduction or fix checks, bound to the source, target, container image, and candidate diff. Checks do not modify the working tree or automatically change finding status.' },
       ],
     },
     benchmarks: {
@@ -281,8 +292,8 @@ export const content = {
           type: 'Open source · Apache 2.0',
           price: 'Free',
           priceNote: 'Open-source license, commercial use allowed',
-          desc: 'The command-line auditor: OSS static scanners + multi-model AI review + adversarial cross-checking + SARIF output. Drop it into CI and set policy gates.',
-          points: ['scan / hunt / disclose subcommands', 'SARIF 2.1 for GitHub code scanning', 'Policy gates (--gate) control CI outcome'],
+          desc: 'The open-source command-line auditor includes static scanning, multi-model review, supply-chain hunting, and source-bound reproduction and fix checks for supported Python targets. Use it in CI or set policy gates.',
+          points: ['scan / hunt / reproduce / fix check / disclose', 'JSON / SARIF and separate verification receipts', 'Deep scans return exit 4 and incomplete when every AI engine is unavailable'],
           cta: 'View on GitHub',
           href: GITHUB,
         },
@@ -291,8 +302,8 @@ export const content = {
           type: 'Individual',
           price: P.proPrice,
           priceNote: `One-time purchase, yours to keep. Includes ${P.updateMonths} months of feature updates and new versions; after that the Update Plan is ${P.proRenewal}/year, or keep using your version. Security updates stay free for at least ${P.supportYears} years, no Update Plan needed.`,
-          desc: 'Desktop app and local dashboard, plus enterprise reports aligned with Taiwan security-assessment conventions (PDF / Word / HTML). Reads the same scan JSON; supply-chain hunting and disclosure drafts are already in the free CLI.',
-          points: ['Desktop app + local dashboard', 'Enterprise reports: PDF / Word / HTML', 'Integrated core scan workflow', `One user, up to ${P.proDevices} devices`, `Free security updates until at least the end of the same month ${P.supportYears} years after purchase`, 'Desktop app runs on Apple Silicon Macs, Windows and Linux; Intel Macs are not supported'],
+          desc: 'The desktop app, dashboard, and enterprise reports use the same audit core. Run source-bound reproduction or check a candidate fix from a finding, then bring the updated report back into the interface for review.',
+          points: ['Desktop app + local dashboard', 'Source-bound PoC and fix checks for supported Python targets', 'Enterprise reports: PDF / Word / HTML', `One user, up to ${P.proDevices} devices`, `Free security updates until at least the end of the same month ${P.supportYears} years after purchase`, 'Desktop app runs on Apple Silicon Macs, Windows and Linux; Intel Macs are not supported'],
           cta: 'Get Pro',
           href: BUY_PRO,
         },
@@ -322,7 +333,8 @@ export const content = {
         { q: 'Why multiple models?', a: 'Different model families can challenge a candidate from different angles and preserve their reasons for human review. Detection performance still needs public inputs, controls, and per-case results to measure it.' },
         { q: 'Does the optional Jev ranker leak code?', a: 'No. Jev only reorders which modules are audited first, and sends metadata only (paths, sizes, git hotspot counts), checked against the source file-by-file and failing closed before each request. It is off by default and only reaches the network when you explicitly enable it.' },
         { q: 'Does supply-chain hunting send my private code?', a: "Hunting works on public dependency packages, reaches package registries, and queries OSV with name@version. AI review may send selected package code to your configured model. It does not submit vulnerability reports automatically; a human decides what to do with each draft." },
-        { q: 'Open-source vs enterprise?', a: 'The free core provides command-line scanning, supply-chain hunting, disclosure drafts, and SARIF. Pro adds a desktop app, local dashboard, and enterprise report layouts; both read the same scan JSON.' },
+        { q: 'Open-source vs enterprise?', a: 'The open-source core provides CLI and CI workflows, supply-chain hunting, and source-bound reproduction and fix checks for supported Python targets. Pro uses the same core and adds the desktop interface, dashboard, enterprise reports, and license management.' },
+        { q: 'Does Vettalon apply the fix to my code?', a: 'No. Fix check applies the candidate diff only to an isolated copy, verifies that the attack is blocked and the requested tests still pass, then writes a separate receipt. Your working tree and original finding status remain unchanged.' },
         { q: 'Does the Pro license check go online?', a: 'Only when you activate, and then once every 30 days. It sends the license key, a device ID (a one-way hash of the system identifier of this computer) and the app version, never code or reports; the rest of the time Pro works fully offline. The open-source vettalon core never checks a license.' },
         { q: 'Does it run on Intel Macs?', a: 'The desktop app does not. It needs a Mac with Apple Silicon (M1 or later); Windows and Linux are unaffected. Before buying, open the Apple menu > About This Mac: "Chip Apple M…" is supported, "Processor … Intel" is not. The free open-source CLI still runs on Intel Macs.' },
         { q: 'Do security updates continue after the Update Plan ends?', a: `Yes. Every purchase gets free security updates until at least the end of the same calendar month ${P.supportYears} years after the purchase date; a purchase in October 2026 is covered until at least the end of October 2031. Security updates are separate from the Update Plan, which covers new features and new major versions only. If a newer version requires payment, we release security fixes for the version you can use for free. From desktop app 0.4.0, Settings > About Vettalon shows your end month.` },
@@ -334,7 +346,7 @@ export const content = {
       lead: '',
       options: [
         { t: 'Self-serve', d: 'Get the open-source core from GitHub and run a deep audit on your repo.', cta: 'View on GitHub', href: GITHUB },
-        { t: 'Enterprise', d: 'The enterprise edition (desktop app and reports) and commercial licensing come directly from Dudu Technology Ltd.; supply-chain hunting is included in the free CLI.', cta: 'Contact Dudu Technology Ltd.', href: CONTACT },
+        { t: 'Enterprise', d: 'Desktop, source-bound reproduction, fix checks, dashboards, enterprise reports, or deployment needs come directly from Dudu Technology Ltd.', cta: 'Contact Dudu Technology Ltd.', href: CONTACT },
         { t: 'Feedback', d: 'Found a bug or want a feature? Open an issue on GitHub.', cta: 'Report an issue', href: GITHUB + '/issues' },
       ],
     },
