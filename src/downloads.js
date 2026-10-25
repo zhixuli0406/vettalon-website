@@ -3,16 +3,16 @@
 // (`npm run check:downloads` confirms every link answers before a deploy).
 // There is no Intel Mac build: the desktop app supports Apple Silicon only.
 
-export const DESKTOP_VERSION = '0.4.1';
+export const DESKTOP_VERSION = '0.5.0';
 const BASE = `https://github.com/zhixuli0406/vettalon-releases/releases/download/desktop-v${DESKTOP_VERSION}/`;
 
 const file = (name, bytes, sha256) => ({ name, bytes, sha256, url: BASE + name });
 
 export const FILES = {
-  mac: file(`Vettalon_${DESKTOP_VERSION}_aarch64.dmg`, 10148297, '5efa9e5deaa830c7277905caf778a95db4f17972c5135005f351442a10e4357a'),
-  windows: file(`Vettalon_${DESKTOP_VERSION}_x64-setup.exe`, 6794178, '901302766aada7cb4e4c0c3003552a83971747fbd1cea319ec9ea2ffb40fb914'),
-  deb: file(`Vettalon_${DESKTOP_VERSION}_amd64.deb`, 11029210, '13e23d4d408b8dbec9dcb464e9f4c03ddaa35cb1147926d8c1406c76575e07c7'),
-  appimage: file(`Vettalon_${DESKTOP_VERSION}_amd64.AppImage`, 88427000, '92881e5b14d8a10f8270a62a14507a04e827ee1971e380f6e34bb07aade995c7'),
+  mac: file(`Vettalon_${DESKTOP_VERSION}_aarch64.dmg`, 10313345, '3bdbd88735ddffa9c124ada80570e8ae2085dfcc52e517ef9ad720db5355868c'),
+  windows: file(`Vettalon_${DESKTOP_VERSION}_x64-setup.exe`, 6909367, 'f6383449c689834b551017b7cc59a52311715244bfcd6cefba7c3d6ea3577f42'),
+  deb: file(`Vettalon_${DESKTOP_VERSION}_amd64.deb`, 11256180, '7d548750e47467530722dd8a1654ec63a3a79e5791e06ff4dbc8cd642121f1cf'),
+  appimage: file(`Vettalon_${DESKTOP_VERSION}_amd64.AppImage`, 88574456, 'c882cedc48804d3f1f915cb3f5950b42537c55f06ca4c24ba976a94c7b780580'),
 };
 
 export const formatSize = (bytes) => `${(bytes / 1e6).toFixed(1)} MB`;

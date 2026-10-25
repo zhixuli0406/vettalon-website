@@ -3,11 +3,12 @@
 // built on Ubuntu 22.04. PDF export drives a locally installed Chromium.
 
 import { PLAN } from './plan.js';
+import { DESKTOP_VERSION } from './downloads.js';
 
 export const downloadCopy = {
   zh: {
     title: '下載 Vettalon 桌面 App',
-    metaDescription: '下載 Vettalon Pro／Team 桌面 App：macOS（限 Apple Silicon，不支援 Intel Mac）、Windows 10／11、Linux。安裝後輸入授權金鑰即可啟用。',
+    metaDescription: `下載 Vettalon Pro／Team 桌面 App ${DESKTOP_VERSION}：macOS（限 Apple Silicon，不支援 Intel Mac）、Windows 10／11、Linux。安裝後輸入授權金鑰即可啟用。`,
     eyebrow: 'Vettalon Pro／Team 桌面 App',
     lead: '安裝後輸入購買時 email 收到的授權金鑰即可啟用。',
     version: (v) => `版本 ${v}`,
@@ -56,7 +57,7 @@ export const downloadCopy = {
   },
   en: {
     title: 'Download the Vettalon desktop app',
-    metaDescription: 'Download the Vettalon Pro / Team desktop app for macOS (Apple Silicon only, Intel Macs are not supported), Windows 10/11 and Linux. Activate it with your license key.',
+    metaDescription: `Download Vettalon Pro / Team desktop app ${DESKTOP_VERSION} for macOS (Apple Silicon only, Intel Macs are not supported), Windows 10/11 and Linux. Activate it with your license key.`,
     eyebrow: 'Vettalon Pro / Team desktop app',
     lead: 'After installing, enter the license key emailed to you at purchase.',
     version: (v) => `Version ${v}`,

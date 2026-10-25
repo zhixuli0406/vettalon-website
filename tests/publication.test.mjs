@@ -62,7 +62,7 @@ test('actual prerender safely encodes HTML-sensitive JSON-LD values', async () =
   const temp = await mkdtemp(join(tmpdir(),'vettalon-jsonld-'));
   try {
     for (const dir of ['src','scripts','dist','dist-server']) await mkdir(join(temp,dir));
-    for (const file of ['src/i18n.js','src/legal.js','src/plan.js','src/download-copy.js','scripts/prerender.mjs','scripts/evidence-artifacts.mjs','scripts/evidence-bundles.mjs']) await copyFile(file,join(temp,file));
+    for (const file of ['src/i18n.js','src/legal.js','src/plan.js','src/download-copy.js','src/downloads.js','scripts/prerender.mjs','scripts/evidence-artifacts.mjs','scripts/evidence-bundles.mjs']) await copyFile(file,join(temp,file));
     try { await copyFile('scripts/json-ld.mjs',join(temp,'scripts/json-ld.mjs')); } catch (error) { if(error.code !== 'ENOENT') throw error; }
     const data=structuredClone(cases);
     const payload='</script><img src=x onerror=alert(1)> & \u2028 \u2029';

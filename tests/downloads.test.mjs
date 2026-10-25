@@ -48,6 +48,9 @@ test('pricing, FAQ and the download page say Intel Macs are not supported', () =
     assert.ok(c.editions.cards.filter((card) => /Pro|Team/.test(card.name)).every((card) => card.points.some((p) => /Intel/.test(p))));
     assert.ok(c.faq.items.some((item) => /Intel/.test(item.q)));
     assert.match(downloadCopy[locale].metaDescription, /Intel/);
+    assert.match(downloadCopy[locale].metaDescription, new RegExp(DESKTOP_VERSION.replaceAll('.', '\\.')));
+    assert.match(c.editions.download.label, new RegExp(DESKTOP_VERSION.replaceAll('.', '\\.')));
+    assert.ok(c.footer.groups.flatMap((group) => group.links).some((link) => link.href === c.editions.download.href && link.t.includes(DESKTOP_VERSION)));
     assert.equal(c.editions.download.href, locale === 'en' ? '/en/download/' : '/download/');
   }
 });
