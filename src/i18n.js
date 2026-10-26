@@ -36,9 +36,9 @@ export const LOCALE_META = {
 export const content = {
   zh: {
     meta: {
-      title: 'Vettalon｜多模型對抗式資安稽核器',
+      title: 'Vettalon｜安全 finding 的獨立第二意見',
       description:
-        'Vettalon 讓不同 AI 模型交叉覆核程式碼風險。0.5.0 新增限定 Python 目標的來源綁定重現與修補檢查，並留下可核對的收據供人工判斷。深掃會將選取的程式碼送到你設定的模型。',
+        'Vettalon 替 AI 工具與掃描器產出的安全 finding 提供獨立第二意見：不同家族的模型逐筆反駁，留下證據等級與缺口，最後由人判定。0.5.0 對限定 Python 目標提供來源綁定重現與修補檢查。深掃會將選取的程式碼送到你設定的模型。',
       keywords:
         'Vettalon, 程式碼安全稽核, SAST, 多模型, AI 資安, 供應鏈安全, 漏洞掃描, Dudu Technology Ltd., 嘟嘟數位科技有限公司',
     },
@@ -55,11 +55,11 @@ export const content = {
       menu: '選單',
     },
     hero: {
-      kicker: 'Dudu Technology Ltd. · 多模型對抗式資安稽核',
-      h1a: '讓多個 AI 模型',
-      h1em: '互相拆台',
-      h1b: '，把真漏洞挑出來',
-      lead: 'Vettalon 不靠單一模型的自我判斷。不同家族的模型分頭找洞、交叉覆核，留下值得人工確認的候選與理由。掃描由你的機器編排；深掃時，選取的程式碼與上下文會送到你設定的模型。',
+      kicker: 'Dudu Technology Ltd. · 安全 finding 的獨立第二意見',
+      h1a: '別讓一個模型',
+      h1em: '說了算',
+      h1b: '，讓另一家模型來拆台',
+      lead: 'AI 工具與掃描器丟出的安全 finding 越來越多。Vettalon 用不同家族的模型逐筆反駁，留下證據等級、還缺的證明與最強反證，沒做完的標成沒做完，最後由人判定。掃描由你的機器編排；深掃時，選取的程式碼與上下文會送到你設定的模型。',
       terminalCaption: '範例輸出，取自 GitHub README（fixtures/demo-app，deep 模式）。',
       ctaPrimary: '看 GitHub 原始碼',
       ctaSecondary: '快速開始',
@@ -187,7 +187,7 @@ export const content = {
       ],
     },
     footer: {
-      tagline: '多模型對抗式資安稽核。由 Dudu Technology Ltd. 開發。',
+      tagline: '安全 finding 的獨立第二意見。由 Dudu Technology Ltd. 開發。',
       groups: [
         { title: '產品', links: [{ t: 'GitHub 原始碼', href: GITHUB }, { t: '證據牆', href: pagePath('zh', 'evidence') }, { t: '價格', href: pagePath('zh') + '#editions' }, { t: `下載桌面 App ${DESKTOP_VERSION}`, href: downloadPath('zh') }, { t: '企業版', href: CONTACT }] },
         { title: '原廠', links: [{ t: 'Dudu Technology Ltd.', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
@@ -200,9 +200,9 @@ export const content = {
 
   en: {
     meta: {
-      title: 'Vettalon | Multi-model adversarial security auditor',
+      title: 'Vettalon | A second opinion on security findings',
       description:
-        'Vettalon cross-checks code risks across different AI models. Version 0.5.0 adds source-bound reproduction and fix checks for supported Python targets, with reviewable receipts for human judgment. Deep scans send selected code to the models you configure.',
+        'Vettalon gives an independent second opinion on security findings from AI tools and scanners: a model from a different vendor refutes each one, evidence levels and proof gaps stay visible, and a human makes the call. Version 0.5.0 adds source-bound reproduction and fix checks for supported Python targets. Deep scans send selected code to the models you configure.',
       keywords:
         'Vettalon, code security audit, SAST, multi-model, AI security, supply chain security, vulnerability scanning, Dudu Technology Ltd.',
     },
@@ -219,11 +219,11 @@ export const content = {
       menu: 'Menu',
     },
     hero: {
-      kicker: 'Dudu Technology Ltd. · Multi-model security audit',
-      h1a: 'Let several AI models ',
-      h1em: 'argue each other down',
-      h1b: ' and keep the real bugs',
-      lead: "Vettalon doesn't trust one model's judgment alone. Different model families hunt for issues and challenge each other's candidates, preserving reasons for human review. Scans are orchestrated on your machine; deep review sends selected code and context to the models you configure.",
+      kicker: 'Dudu Technology Ltd. · A second opinion on security findings',
+      h1a: "Don't let one model ",
+      h1em: 'have the last word',
+      h1b: ' on a security finding',
+      lead: "AI tools and scanners raise more security findings than anyone can check. Vettalon has a model from a different vendor try to refute each one, keeps the evidence level, the missing proof and the strongest counterevidence, marks unfinished work as unfinished, and leaves the decision to a human. Scans are orchestrated on your machine; deep review sends selected code and context to the models you configure.",
       terminalCaption: 'Sample output from the GitHub README (fixtures/demo-app, deep mode). The terminal summary prints in Traditional Chinese.',
       ctaPrimary: 'View source on GitHub',
       ctaSecondary: 'Quick start',
@@ -351,7 +351,7 @@ export const content = {
       ],
     },
     footer: {
-      tagline: 'Multi-model adversarial security auditing. Built by Dudu Technology Ltd.',
+      tagline: 'A second opinion on security findings. Built by Dudu Technology Ltd.',
       groups: [
         { title: 'Product', links: [{ t: 'Source on GitHub', href: GITHUB }, { t: 'Evidence wall', href: pagePath('en', 'evidence') }, { t: 'Pricing', href: pagePath('en') + '#editions' }, { t: `Download desktop app ${DESKTOP_VERSION}`, href: downloadPath('en') }, { t: 'Enterprise', href: CONTACT }] },
         { title: 'Vendor', links: [{ t: 'Dudu Technology Ltd.', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
