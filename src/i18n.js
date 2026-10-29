@@ -94,7 +94,7 @@ export const content = {
     },
     how: {
       tag: '怎麼運作',
-      lead: '深掃的每個階段都留痕，報告寫出前先跑驗證器。',
+      lead: '深掃的每個階段都留痕，報告寫出前先跑驗證器。報告分列發生可能性與影響程度，只有另一個家族的模型也評了影響，嚴重程度才會往下調；沒有發現也沒列出檢查項目的模組不算審過。',
       steps: [
         { n: '01', t: 'Intake', d: '統計語言、找進入點、讀 git 歷史把常出安全修補的檔案標為熱點，再依風險排序模組。' },
         { n: '02', t: '多模型找洞', d: '前 N 個高風險模組分配給各 finder；高風險模組自動再交一家不同家族覆審。' },
@@ -258,7 +258,7 @@ export const content = {
     },
     how: {
       tag: 'How it works',
-      lead: 'Every stage of a deep audit is recorded, and a validator runs before any report is written.',
+      lead: 'Every stage of a deep audit is recorded, and a validator runs before any report is written. Reports separate likelihood and impact, and severity only goes down when a model from another family also rates the impact. A module with no findings and no listed checks does not count as reviewed.',
       steps: [
         { n: '01', t: 'Intake', d: 'Census languages, find entry points, read git history to flag files that keep getting security fixes, then rank modules by risk.' },
         { n: '02', t: 'Multi-model finding', d: 'The top-ranked modules are dealt to finders; high-risk modules get a second read from a different family.' },

@@ -49,7 +49,7 @@ npm run preview -- --host 127.0.0.1 --port 18873 --strictPort
 
 ## 桌面 App 下載頁
 
-`/download/` 與 `/en/download/` 目前列出 Desktop 0.6.0 的 macOS（限 Apple Silicon）、Windows、Linux 安裝檔，載入後依瀏覽器判斷作業系統並推薦對應檔案。Mac 的晶片只能從 Chromium 的 client hints 或 WebGL 顯示卡名稱判斷；判斷為 Intel Mac 時改顯示不支援的警告，判斷不出來時仍提供下載並附上確認晶片的方法。價格區、Pro／Team 卡片、FAQ 與 JSON-LD 都標明桌面 App 不支援 Intel Mac。
+`/download/` 與 `/en/download/` 目前列出 Desktop 0.7.0 的 macOS（限 Apple Silicon）、Windows、Linux 安裝檔，載入後依瀏覽器判斷作業系統並推薦對應檔案。Mac 的晶片只能從 Chromium 的 client hints 或 WebGL 顯示卡名稱判斷；判斷為 Intel Mac 時改顯示不支援的警告，判斷不出來時仍提供下載並附上確認晶片的方法。價格區、Pro／Team 卡片、FAQ 與 JSON-LD 都標明桌面 App 不支援 Intel Mac。
 
 安裝檔資訊集中在 `src/downloads.js`（版本、檔名、位元組數、SHA-256），文案在 `src/download-copy.js`。桌面版發佈後：
 
