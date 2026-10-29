@@ -16,6 +16,9 @@ test('release copy describes source-bound verification in both locales', () => {
     assert.match(text, locale === 'zh' ? /不修改工作目錄/ : /No working-tree/i);
     assert.match(text, /incomplete/);
     assert.match(text, /exit 4/);
+    assert.match(c.how.lead, locale === 'zh'
+      ? /報告分列發生可能性與影響程度/
+      : /Reports separate likelihood and impact/);
     assert.match(downloadCopy[locale].lead, new RegExp(DESKTOP_VERSION.replaceAll('.', '\\.')));
   }
 });
