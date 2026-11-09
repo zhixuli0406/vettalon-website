@@ -36,9 +36,9 @@ export const LOCALE_META = {
 export const content = {
   zh: {
     meta: {
-      title: 'Vettalon｜安全 finding 的獨立第二意見',
+      title: 'Vettalon｜安全 finding 的第二意見，附可重跑的紀錄',
       description:
-        'Vettalon 替 AI 工具與掃描器產出的安全 finding 提供獨立第二意見：不同家族的模型逐筆反駁，留下證據等級與缺口，最後由人判定。0.5.0 對限定 Python 目標提供來源綁定重現與修補檢查。深掃會將選取的程式碼送到你設定的模型。',
+        'Vettalon 替 AI 工具與掃描器產出的安全 finding 提供第二意見，並留下可重跑的紀錄：不同家族的模型逐筆反駁，留下證據等級與缺口，最後由人判定。0.5.0 對限定 Python 目標提供來源綁定重現與修補檢查。深掃會將選取的程式碼送到你設定的模型。',
       keywords:
         'Vettalon, 程式碼安全稽核, SAST, 多模型, AI 資安, 供應鏈安全, 漏洞掃描, Dudu Technology Ltd., 嘟嘟數位科技有限公司',
     },
@@ -55,7 +55,7 @@ export const content = {
       menu: '選單',
     },
     hero: {
-      kicker: 'Dudu Technology Ltd. · 安全 finding 的獨立第二意見',
+      kicker: 'Dudu Technology Ltd. · 安全 finding 的第二意見',
       h1a: '別讓一個模型',
       h1em: '說了算',
       h1b: '，讓另一家模型來拆台',
@@ -98,7 +98,7 @@ export const content = {
       steps: [
         { n: '01', t: 'Intake', d: '統計語言、找進入點、讀 git 歷史把常出安全修補的檔案標為熱點，再依風險排序模組。' },
         { n: '02', t: '多模型找洞', d: '前 N 個高風險模組分配給各 finder；高風險模組自動再交一家不同家族覆審。' },
-        { n: '03', t: '對抗式覆核', d: '每個候選交給不同家族的 verifier 試圖駁倒。覆核獨立性只算有給出判定的覆核。' },
+        { n: '03', t: '對抗式覆核', d: '每個候選交給不同家族的 verifier 試圖駁倒。覆核模型組成只算有給出判定的覆核。換一家廠商不代表判斷獨立，能實際執行的就以執行結果為準。' },
         { n: '04', t: '來源綁定驗證', d: '對符合條件的 Python finding，以綁定來源的結構化目標分別執行攻擊、良性控制與全新重跑；未知結果或控制組失敗都不算驗證成功。' },
         { n: '05', t: '報告與可核對收據', d: '輸出 JSON／SARIF，並為重現或修補檢查另寫收據，綁定來源、目標、容器映像與候選 diff。檢查不會修改工作目錄，也不會自動改變 finding 狀態。' },
       ],
@@ -187,7 +187,7 @@ export const content = {
       ],
     },
     footer: {
-      tagline: '安全 finding 的獨立第二意見。由 Dudu Technology Ltd. 開發。',
+      tagline: '安全 finding 的第二意見，附可重跑的紀錄。由 Dudu Technology Ltd. 開發。',
       groups: [
         { title: '產品', links: [{ t: 'GitHub 原始碼', href: GITHUB }, { t: '證據牆', href: pagePath('zh', 'evidence') }, { t: '價格', href: pagePath('zh') + '#editions' }, { t: `下載桌面 App ${DESKTOP_VERSION}`, href: downloadPath('zh') }, { t: '企業版', href: CONTACT }] },
         { title: '原廠', links: [{ t: 'Dudu Technology Ltd.', href: 'https://www.dudustudio.monster/' }, { t: 'DuDuClaw', href: 'https://duduclaw.dudustudio.monster/' }] },
@@ -202,7 +202,7 @@ export const content = {
     meta: {
       title: 'Vettalon | A second opinion on security findings',
       description:
-        'Vettalon gives an independent second opinion on security findings from AI tools and scanners: a model from a different vendor refutes each one, evidence levels and proof gaps stay visible, and a human makes the call. Version 0.5.0 adds source-bound reproduction and fix checks for supported Python targets. Deep scans send selected code to the models you configure.',
+        'Vettalon gives a second opinion on security findings from AI tools and scanners, backed by records you can rerun: a model from a different vendor refutes each one, evidence levels and proof gaps stay visible, and a human makes the call. Version 0.5.0 adds source-bound reproduction and fix checks for supported Python targets. Deep scans send selected code to the models you configure.',
       keywords:
         'Vettalon, code security audit, SAST, multi-model, AI security, supply chain security, vulnerability scanning, Dudu Technology Ltd.',
     },
@@ -262,7 +262,7 @@ export const content = {
       steps: [
         { n: '01', t: 'Intake', d: 'Census languages, find entry points, read git history to flag files that keep getting security fixes, then rank modules by risk.' },
         { n: '02', t: 'Multi-model finding', d: 'The top-ranked modules are dealt to finders; high-risk modules get a second read from a different family.' },
-        { n: '03', t: 'Adversarial review', d: 'Each candidate goes to a verifier from another family that tries to refute it. Independence counts only reviews that gave a verdict.' },
+        { n: '03', t: 'Adversarial review', d: 'Each candidate goes to a verifier from another family that tries to refute it. The verifier mix counts only reviews that gave a verdict. Another vendor does not make the judgement independent; where a finding can be run, the run decides.' },
         { n: '04', t: 'Source-bound verification', d: 'For supported Python findings, run the attack, benign control, and a fresh rerun against a source-bound structured target. Unknown results and failed controls never count as verified.' },
         { n: '05', t: 'Reports and reviewable receipts', d: 'Export JSON or SARIF and write a separate receipt for reproduction or fix checks, bound to the source, target, container image, and candidate diff. Checks do not modify the working tree or automatically change finding status.' },
       ],
